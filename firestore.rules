@@ -1,0 +1,30 @@
+rules_version = '2';
+
+// 個人用アプリ。許可したアドレス1つだけが読み書きできる。
+// ↓ここに自分のGmailアドレスを書いて、Firebase Console の Firestore「ルール」に貼る。
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner() {
+      return request.auth != null &&
+        request.auth.token.email == 'ryujyu111583@gmail.com';
+    }
+
+    match /settings/{docId} {
+      allow read, write: if isOwner();
+    }
+
+    match /studyLog/{day} {
+      allow read, write: if isOwner();
+    }
+
+    match /mistakes/{mistakeId} {
+      allow read, write: if isOwner();
+    }
+
+    match /pushSubscriptions/{subId} {
+      // サーバー側（Admin SDK）が失効した購読を消すため delete も許可する
+      allow read, create, delete: if isOwner();
+      allow update: if false;
+    }
+  }
+}

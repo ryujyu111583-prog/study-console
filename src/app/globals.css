@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --surface-2: #f5f8fa;
+  --ink: #101a21;
+  --muted: #556675;
+  --faint: #8496a3;
+  --line: #d7e0e7;
+  --line-strong: #bcc9d3;
+  --gk: #b8541c;
+  --gk-soft: #f6e4d8;
+  --en: #1b5fae;
+  --en-soft: #dce7f6;
+  --ok: #2c7357;
+  --danger: #a83232;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c1217;
+    --surface: #141c23;
+    --surface-2: #1a242c;
+    --ink: #e4ebf0;
+    --muted: #94a4b1;
+    --faint: #6d7d8a;
+    --line: #24303a;
+    --line-strong: #33434f;
+    --gk: #ee8a48;
+    --gk-soft: #2e2015;
+    --en: #6ba6ee;
+    --en-soft: #14202e;
+    --ok: #5dbe92;
+    --danger: #e87676;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-linestrong: var(--line-strong);
+  --color-gk: var(--gk);
+  --color-gksoft: var(--gk-soft);
+  --color-en: var(--en);
+  --color-ensoft: var(--en-soft);
+  --color-ok: var(--ok);
+  --color-danger: var(--danger);
+
+  --font-sans: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  /* iPhoneのノッチと下端バーを避ける */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

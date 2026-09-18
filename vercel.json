@@ -1,0 +1,9 @@
+{
+  "crons": [
+    {
+      "comment": "JST 6:30 に朝のリマインド。Vercel の cron は UTC なので 21:30 前日 = JST 6:30",
+      "path": "/api/send-reminders",
+      "schedule": "30 21 * * *"
+    }
+  ]
+}
