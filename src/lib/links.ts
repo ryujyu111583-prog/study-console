@@ -59,6 +59,12 @@ export const LINK_GROUPS: LinkGroup[] = [
         note: "1本に音声と練習問題がぶら下がる。演習枠向き",
       },
       {
+        name: "UTokyo Channel 講義シリーズ",
+        host: "ch.u-tokyo.ac.jp",
+        url: "https://ch.u-tokyo.ac.jp/series/?id=LiTy9GYDIDKz",
+        note: "東京大学公式の講義動画。英語の講義をリスニング枠に",
+      },
+      {
         name: "YouGlish",
         host: "youglish.com",
         url: "https://youglish.com/",
