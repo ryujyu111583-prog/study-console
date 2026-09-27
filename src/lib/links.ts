@@ -228,4 +228,16 @@ export const LINK_GROUPS: LinkGroup[] = [
       },
     ],
   },
+  {
+    id: "invest",
+    label: "投資",
+    items: [
+      {
+        name: "海外ETFデビュー講座",
+        host: "media.rakuten-sec.net",
+        url: "https://media.rakuten-sec.net/category/debut-etf",
+        note: "トウシルの連載。広瀬隆雄による初心者向けの海外ETF入門。章立てで順に読める",
+      },
+    ],
+  },
 ];

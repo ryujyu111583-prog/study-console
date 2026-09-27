@@ -9,7 +9,7 @@ export default function LinksView() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4" role="tablist">
+      <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5" role="tablist">
         {LINK_GROUPS.map((g) => (
           <button
             key={g.id}
