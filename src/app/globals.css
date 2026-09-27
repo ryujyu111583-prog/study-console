@@ -13,6 +13,8 @@
   --gk-soft: #f6e4d8;
   --en: #1b5fae;
   --en-soft: #dce7f6;
+  --et: #2f7d4f;
+  --et-soft: #dcefe3;
   --ok: #2c7357;
   --danger: #a83232;
 }
@@ -31,6 +33,8 @@
     --gk-soft: #2e2015;
     --en: #6ba6ee;
     --en-soft: #14202e;
+    --et: #5fc28a;
+    --et-soft: #13261b;
     --ok: #5dbe92;
     --danger: #e87676;
   }
@@ -49,6 +53,8 @@
   --color-gksoft: var(--gk-soft);
   --color-en: var(--en);
   --color-ensoft: var(--en-soft);
+  --color-et: var(--et);
+  --color-etsoft: var(--et-soft);
   --color-ok: var(--ok);
   --color-danger: var(--danger);
 

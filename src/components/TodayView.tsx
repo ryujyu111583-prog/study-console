@@ -20,8 +20,18 @@ import { bucketOf, pickDrill, subscribeMistakes, type Mistake } from "@/lib/mist
 import { currentWeek } from "@/lib/plan";
 import { DEFAULT_SETTINGS, subscribeSettings, type Settings } from "@/lib/settings";
 
-const TRACKS: Track[] = ["gk", "en"];
-const TRACK_MENU: Record<Track, string> = { gk: "30分", en: "15分" };
+const TRACKS: Track[] = ["gk", "en", "et"];
+const TRACK_MENU: Record<Track, string> = { gk: "30分", en: "15分", et: "15分" };
+const ACCENT: Record<Track, string> = {
+  gk: "text-gk bg-gksoft",
+  en: "text-en bg-ensoft",
+  et: "text-et bg-etsoft",
+};
+const CELL: Record<Track, { full: string; min: string }> = {
+  gk: { full: "bg-gk border-gk", min: "bg-gksoft border-gk" },
+  en: { full: "bg-en border-en", min: "bg-ensoft border-en" },
+  et: { full: "bg-et border-et", min: "bg-etsoft border-et" },
+};
 
 export default function TodayView() {
   const [logs, setLogs] = useState<LogMap>({});
@@ -62,10 +72,10 @@ export default function TodayView() {
 
       {/* 今日の記録 */}
       <section className="flex flex-col gap-2">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {TRACKS.map((track) => {
             const state = (logs[today]?.[track] ?? "") as TrackState;
-            const accent = track === "gk" ? "text-gk bg-gksoft" : "text-en bg-ensoft";
+            const accent = ACCENT[track];
             return (
               <button
                 key={track}
@@ -108,17 +118,11 @@ export default function TodayView() {
                   {days.map((key) => {
                     const value = logs[key]?.[track] ?? "";
                     const filled =
-                      track === "gk"
-                        ? value === "full"
-                          ? "bg-gk border-gk"
-                          : value === "min"
-                            ? "bg-gksoft border-gk"
-                            : "bg-surface2 border-line"
-                        : value === "full"
-                          ? "bg-en border-en"
-                          : value === "min"
-                            ? "bg-ensoft border-en"
-                            : "bg-surface2 border-line";
+                      value === "full"
+                        ? CELL[track].full
+                        : value === "min"
+                          ? CELL[track].min
+                          : "bg-surface2 border-line";
                     return (
                       <span
                         key={key}

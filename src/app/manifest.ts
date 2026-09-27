@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "学習コンソール",
     short_name: "学習",
-    description: "G検定と英語の毎日を記録する個人用アプリ",
+    description: "G検定・英語・海外ETFの毎日を記録する個人用アプリ",
     start_url: "/",
     display: "standalone",
     background_color: "#eef1f4",

@@ -6,6 +6,7 @@ import { recordSession, TRACK_CODE, TRACK_LABEL, type Track } from "@/lib/log";
 const PRESETS: { track: Track; minutes: number; label: string }[] = [
   { track: "gk", minutes: 30, label: "G検定 30分" },
   { track: "en", minutes: 15, label: "英語 15分" },
+  { track: "et", minutes: 15, label: "海外ETF 15分" },
   { track: "gk", minutes: 5, label: "5分ブロック" },
 ];
 
@@ -96,7 +97,7 @@ export default function Timer() {
     setSaved(null);
   };
 
-  const accent = track === "gk" ? "text-gk" : "text-en";
+  const accent = { gk: "text-gk", en: "text-en", et: "text-et" }[track];
 
   return (
     <section className="rounded-xl border border-line bg-surface p-4">
@@ -113,7 +114,7 @@ export default function Timer() {
         {mmss(remaining)}
       </p>
 
-      <div className="mt-3 grid grid-cols-3 gap-1.5">
+      <div className="mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
         {PRESETS.map((p, i) => (
           <button
             key={p.label}

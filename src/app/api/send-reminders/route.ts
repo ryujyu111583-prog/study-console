@@ -36,7 +36,7 @@ export async function GET(request: Request) {
   // すでに今日のぶんが付いているなら送らない。催促は未了のときだけ意味がある。
   const todayLog = await db.doc(`studyLog/${today}`).get();
   const data = todayLog.exists ? todayLog.data() : null;
-  if (data && (data.gk || data.en)) {
+  if (data && (data.gk || data.en || data.et)) {
     return NextResponse.json({ sent: 0, reason: "already logged" });
   }
 
@@ -50,7 +50,7 @@ export async function GET(request: Request) {
     const left = differenceInCalendarDays(parseISO(examDate), jstNow());
     if (left >= 0) parts.push(`残り${left}日`);
   }
-  parts.push("G検定30分、英語15分。無理なら2分版でいい。");
+  parts.push("G検定30分、英語15分、海外ETF15分。無理なら2分版でいい。");
 
   const subsSnap = await db.collection("pushSubscriptions").get();
   let sent = 0;

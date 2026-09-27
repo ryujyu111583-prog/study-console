@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "学習コンソール",
-  description: "G検定と英語の毎日を記録する個人用アプリ",
+  description: "G検定・英語・海外ETFの毎日を記録する個人用アプリ",
   appleWebApp: {
     capable: true,
     title: "学習",
