@@ -1,12 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { recordSession, TRACK_CODE, TRACK_LABEL, type Track } from "@/lib/log";
+import { recordSession } from "@/lib/log";
+import { TRACK_CODE, TRACK_COLOR, TRACK_LABEL, TRACKS, type Track } from "@/lib/tracks";
 
-const PRESETS: { track: Track; minutes: number; label: string }[] = [
-  { track: "gk", minutes: 30, label: "G検定 30分" },
-  { track: "en", minutes: 15, label: "英語 15分" },
-  { track: "gk", minutes: 5, label: "5分ブロック" },
+const DURATIONS: { minutes: number; label: string }[] = [
+  { minutes: 30, label: "30分" },
+  { minutes: 15, label: "15分" },
+  { minutes: 5, label: "5分ブロック" },
 ];
 
 function mmss(totalSeconds: number) {
@@ -31,24 +32,24 @@ async function notifyDone(track: Track, minutes: number) {
 }
 
 export default function Timer() {
-  const [preset, setPreset] = useState(0);
-  const [remaining, setRemaining] = useState(PRESETS[0].minutes * 60);
+  const [track, setTrack] = useState<Track>(TRACKS[0]);
+  const [minutes, setMinutes] = useState(DURATIONS[0].minutes);
+  const [remaining, setRemaining] = useState(DURATIONS[0].minutes * 60);
   const [running, setRunning] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
   // 実時刻で終了時刻を持つ。setInterval の遅延が積み上がってもズレない。
   const endAtRef = useRef<number | null>(null);
-
-  const { track, minutes } = PRESETS[preset];
 
   const stop = useCallback(() => {
     setRunning(false);
     endAtRef.current = null;
   }, []);
 
-  const selectPreset = (index: number) => {
+  const select = (nextTrack: Track, nextMinutes: number) => {
     stop();
-    setPreset(index);
-    setRemaining(PRESETS[index].minutes * 60);
+    setTrack(nextTrack);
+    setMinutes(nextMinutes);
+    setRemaining(nextMinutes * 60);
     setSaved(null);
   };
 
@@ -96,7 +97,11 @@ export default function Timer() {
     setSaved(null);
   };
 
-  const accent = track === "gk" ? "text-gk" : "text-en";
+  const accent = TRACK_COLOR[track].text;
+  const chip = (active: boolean) =>
+    `rounded-lg border px-2 py-1.5 text-xs font-medium ${
+      active ? "border-linestrong bg-surface2 text-ink" : "border-line bg-surface text-muted"
+    }`;
 
   return (
     <section className="rounded-xl border border-line bg-surface p-4">
@@ -113,18 +118,22 @@ export default function Timer() {
         {mmss(remaining)}
       </p>
 
-      <div className="mt-3 grid grid-cols-3 gap-1.5">
-        {PRESETS.map((p, i) => (
+      <div className="mt-3 grid grid-cols-4 gap-1.5">
+        {TRACKS.map((t) => (
+          <button key={t} onClick={() => select(t, minutes)} className={chip(t === track)}>
+            {TRACK_LABEL[t]}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+        {DURATIONS.map((d) => (
           <button
-            key={p.label}
-            onClick={() => selectPreset(i)}
-            className={`rounded-lg border px-2 py-1.5 text-xs font-medium ${
-              i === preset
-                ? "border-linestrong bg-surface2 text-ink"
-                : "border-line bg-surface text-muted"
-            }`}
+            key={d.minutes}
+            onClick={() => select(track, d.minutes)}
+            className={chip(d.minutes === minutes)}
           >
-            {p.label}
+            {d.label}
           </button>
         ))}
       </div>

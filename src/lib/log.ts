@@ -12,23 +12,19 @@ import {
 } from "firebase/firestore";
 import { dayKey } from "./date";
 import { db } from "./firebase";
+import { hasAnyRecord, type DayRecord, type Track, type TrackState } from "./tracks";
 
-export type Track = "gk" | "en";
-/** 未記録 / フル / 最低ライン（2分版）の3状態。 */
-export type TrackState = "" | "full" | "min";
-
-export type DayLog = {
+export type DayLog = DayRecord & {
   date: string;
-  gk?: TrackState;
-  en?: TrackState;
-  gkMinutes?: number;
+  statMinutes?: number;
+  invMinutes?: number;
+  mlMinutes?: number;
   enMinutes?: number;
+  /** 旧「G検定」のタイマー分数。書き込みはしない。 */
+  gkMinutes?: number;
 };
 
 export type LogMap = Record<string, DayLog>;
-
-export const TRACK_LABEL: Record<Track, string> = { gk: "G検定", en: "英語" };
-export const TRACK_CODE: Record<Track, string> = { gk: "GK", en: "EN" };
 
 export function stateLabel(state: TrackState): string {
   if (state === "full") return "フル";
@@ -61,24 +57,20 @@ export async function setTrackState(key: string, track: Track, state: TrackState
 
 /** タイマー完了時に呼ぶ。分を加算し、未記録ならフルに引き上げる。 */
 export async function recordSession(track: Track, minutes: number, key = dayKey()) {
-  const field = track === "gk" ? "gkMinutes" : "enMinutes";
   await setDoc(
     doc(db, "studyLog", key),
-    { date: key, [field]: increment(minutes), [track]: "full" },
+    { date: key, [`${track}Minutes`]: increment(minutes), [track]: "full" },
     { merge: true },
   );
 }
 
 /**
- * 連続日数。片方のトラックでも記録があればその日はカウントする。
+ * 連続日数。どれか1つのトラックでも記録があればその日はカウントする。
  * 今日がまだ未記録なら、昨日までの連続を返す（日中に「0日」と出て心が折れるのを防ぐ）。
  */
 export function streakFrom(logs: LogMap, today = new Date()): number {
   const cursor = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const done = (key: string) => {
-    const entry = logs[key];
-    return Boolean(entry && (entry.gk || entry.en));
-  };
+  const done = (key: string) => hasAnyRecord(logs[key]);
 
   if (!done(dayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
 

@@ -1,8 +1,7 @@
-import { differenceInCalendarDays, parseISO } from "date-fns";
 import { NextResponse } from "next/server";
 import webpush from "web-push";
 import { getAdminDb } from "@/lib/firebaseAdmin";
-import { currentWeek } from "@/lib/plan";
+import { hasAnyRecord, type DayRecord } from "@/lib/tracks";
 
 export const dynamic = "force-dynamic";
 
@@ -35,22 +34,13 @@ export async function GET(request: Request) {
 
   // すでに今日のぶんが付いているなら送らない。催促は未了のときだけ意味がある。
   const todayLog = await db.doc(`studyLog/${today}`).get();
-  const data = todayLog.exists ? todayLog.data() : null;
-  if (data && (data.gk || data.en)) {
+  // 統計・投資・ML・英語のどれか1つでも付いていれば記録済み（旧 gk は ML として数える）
+  const data = todayLog.exists ? (todayLog.data() as DayRecord) : null;
+  if (hasAnyRecord(data)) {
     return NextResponse.json({ sent: 0, reason: "already logged" });
   }
 
-  const settingsDoc = await db.doc("settings/main").get();
-  const examDate = (settingsDoc.exists ? (settingsDoc.data()?.examDate as string) : "") || "";
-
-  const week = currentWeek(jstNow());
-  const parts: string[] = [];
-  if (week) parts.push(`${week.code} ${week.topic}`);
-  if (examDate) {
-    const left = differenceInCalendarDays(parseISO(examDate), jstNow());
-    if (left >= 0) parts.push(`残り${left}日`);
-  }
-  parts.push("G検定30分、英語15分。無理なら2分版でいい。");
+  const body = "統計・投資・ML・英語のどれか1つ。無理なら2分版でいい。";
 
   const subsSnap = await db.collection("pushSubscriptions").get();
   let sent = 0;
@@ -62,7 +52,7 @@ export async function GET(request: Request) {
           { endpoint: sub.endpoint, keys: sub.keys },
           JSON.stringify({
             title: "今日のぶんが残っています",
-            body: parts.join("\n"),
+            body,
             url: "/",
           }),
         );

@@ -14,7 +14,6 @@ import {
   type Mistake,
   type MistakeBucket,
 } from "@/lib/mistakes";
-import { currentWeek } from "@/lib/plan";
 
 const ORDER: MistakeBucket[] = ["recurring", "watch", "resolved"];
 
@@ -36,7 +35,7 @@ export default function MistakesView() {
         concept: concept.trim(),
         type,
         correct: correct.trim(),
-        week: currentWeek()?.code ?? "",
+        week: "",
       });
       setConcept("");
       setCorrect("");
@@ -140,7 +139,7 @@ export default function MistakesView() {
                     </button>
                     <button
                       onClick={() => void markWrong(m)}
-                      className="rounded-md border border-line px-2.5 py-1 text-[11px] text-gk"
+                      className="rounded-md border border-line px-2.5 py-1 text-[11px] text-ml"
                     >
                       また間違えた
                     </button>

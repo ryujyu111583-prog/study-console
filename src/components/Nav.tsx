@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 
 const LINKS = [
   { href: "/", label: "今日" },
-  { href: "/plan", label: "計画" },
   { href: "/mistakes", label: "誤答" },
   { href: "/links", label: "リンク" },
   { href: "/settings", label: "設定" },
@@ -15,7 +14,7 @@ export default function Nav() {
   const pathname = usePathname();
 
   return (
-    <nav className="grid grid-cols-5 gap-1">
+    <nav className="grid grid-cols-4 gap-1">
       {LINKS.map((link) => {
         const active = pathname === link.href;
         return (
