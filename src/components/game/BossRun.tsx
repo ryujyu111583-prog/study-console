@@ -9,6 +9,7 @@ import { pickQuestions, type Question } from "@/lib/game/quiz";
 import { play } from "@/lib/game/sfx";
 import { answerQuiz, recordBoss } from "@/lib/game/state";
 import type { Area } from "@/lib/game/world";
+import { lastBeforeToday, neglectOf } from "@/lib/game/vitality";
 
 /** ボス戦：その地方の問題を10問。正答数がそのまま結果になる。 */
 export default function BossRun({ area, onExit }: { area: Area; onExit: () => void }) {
@@ -20,10 +21,12 @@ export default function BossRun({ area, onExit }: { area: Area; onExit: () => vo
   const [answered, setAnswered] = useState(false);
   const [finished, setFinished] = useState(false);
   const q = questions[index];
+  // 放置ボーナスは挑んだ時点の値で固定する（1問目で「触れた日」が今日になっても、その日のうちは続く）
+  const [mult] = useState(() => (area.track === "ml" ? neglectOf(lastBeforeToday(game.areaTouch[area.id])).multiplier : 1));
 
   const onAnswer = (correct: boolean) => {
     setAnswered(true);
-    void answerQuiz(area.track, correct);
+    void answerQuiz(game, area.id, area.track, correct, mult);
     if (correct) {
       setScore((s) => s + 1);
       play("hit");

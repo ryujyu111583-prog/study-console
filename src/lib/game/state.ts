@@ -17,6 +17,7 @@ import { HERO_STEP, MEMBER_STEP, REWARD, levelFor } from "./levels";
 import { BOX_DAYS, type CardState } from "./quiz";
 import { bossOutcome, type ReportItem } from "./rewards";
 import { skillById } from "./skills";
+import { FAINT_GOLD, vitality, type AreaTouch, type Inn } from "./vitality";
 
 export type GameDoc = {
   bonusXp: Record<Track, number>;
@@ -35,6 +36,12 @@ export type GameDoc = {
   /** 日付ごとに答えたクイズの数・見たカードの数（デイリークエストと上限の判定用） */
   quizLog: Record<string, number>;
   cardLog: Record<string, number>;
+  /** 日付ごとの G検定のクイズ・カードの数（HP の判定用。ML の記録が無くても、触れた日は減らない） */
+  gkLog: Record<string, number>;
+  /** 宿屋の滞在（vitality.ts） */
+  inn: Inn;
+  /** 地方に最後に触れた日（放置ボーナス用） */
+  areaTouch: AreaTouch;
 };
 
 const zero = (): Record<Track, number> => ({ stat: 0, inv: 0, ml: 0, en: 0 });
@@ -52,6 +59,9 @@ export const EMPTY_GAME: GameDoc = {
   title: "",
   quizLog: {},
   cardLog: {},
+  gkLog: {},
+  inn: { since: null, stays: [] },
+  areaTouch: {},
 };
 
 const gameRef = () => doc(db, "settings", "game");
@@ -72,6 +82,9 @@ export function subscribeGame(onChange: (g: GameDoc) => void) {
       title: d.title ?? "",
       quizLog: d.quizLog ?? {},
       cardLog: d.cardLog ?? {},
+      gkLog: d.gkLog ?? {},
+      inn: { since: d.inn?.since ?? null, stays: d.inn?.stays ?? [] },
+      areaTouch: d.areaTouch ?? {},
     });
   });
 }
@@ -127,6 +140,7 @@ export function computeStats(logs: LogMap, game: GameDoc) {
         (e.statMinutes ?? 0) + (e.invMinutes ?? 0) + (e.mlMinutes ?? 0) + (e.enMinutes ?? 0) + (e.gkMinutes ?? 0),
       0,
     );
+  const vit = vitality(logs, game.gkLog, game.inn);
 
   return {
     xp,
@@ -134,7 +148,9 @@ export function computeStats(logs: LogMap, game: GameDoc) {
     heroLevel: levelFor(heroXp, HERO_STEP),
     memberLevel,
     sp,
-    gold: base.gold + game.bonusGold - game.spentGold,
+    // 気絶で落とした分を引く。0 より下にはしない
+    gold: Math.max(0, base.gold + game.bonusGold - game.spentGold - vit.faints * FAINT_GOLD),
+    vit,
     atk: 5 + equipped.reduce((s, i) => s + (i.atk ?? 0), 0),
     def: 3 + equipped.reduce((s, i) => s + (i.def ?? 0), 0),
     monthMinutes,
@@ -151,16 +167,26 @@ export async function addBonus(track: Track, xp: number, gold = 0) {
   );
 }
 
-/** クイズに1問答えた。正解なら経験値とゴールド。 */
-export async function answerQuiz(track: Track, correct: boolean, multiplier = 1) {
+/**
+ * クイズに1問答えた。正解なら経験値とゴールド（multiplier はメタルと放置ボーナスの倍率）。
+ * どの地方に触れたかを残し、G検定なら HP 用の記録にも数える。
+ */
+export async function answerQuiz(game: GameDoc, areaId: string, track: Track, correct: boolean, multiplier = 1) {
+  const today = dayKey();
+  const touch = game.areaTouch[areaId];
   await setDoc(
     gameRef(),
     {
-      quizLog: { [dayKey()]: increment(1) },
+      quizLog: { [today]: increment(1) },
+      ...(track === "ml" ? { gkLog: { [today]: increment(1) } } : {}),
+      // 今日はじめて触れたときだけ、前回の日を prev に移す
+      ...(touch?.last === today
+        ? {}
+        : { areaTouch: { [areaId]: { last: today, ...(touch?.last ? { prev: touch.last } : {}) } } }),
       ...(correct
         ? {
-            bonusXp: { [track]: increment(REWARD.quizXp * multiplier) },
-            bonusGold: increment(REWARD.quizGold * multiplier),
+            bonusXp: { [track]: increment(Math.round(REWARD.quizXp * multiplier)) },
+            bonusGold: increment(Math.round(REWARD.quizGold * multiplier)),
           }
         : {}),
     },
@@ -188,6 +214,7 @@ export async function reviewCard(game: GameDoc, cardId: string, track: Track, pr
     gameRef(),
     {
       cardLog: { [today]: increment(1) },
+      ...(track === "ml" ? { gkLog: { [today]: increment(1) } } : {}),
       ...(underCap ? { bonusXp: { [track]: increment(REWARD.cardXp) } } : {}),
     },
     { merge: true },
@@ -201,6 +228,22 @@ export async function openChest(gold: number) {
 
 export async function claimDailyBonus(gold: number) {
   await setDoc(gameRef(), { bonusGold: increment(gold), daily: { bonus: dayKey() } }, { merge: true });
+}
+
+/** 宿屋に泊まる。今日から、出るまでの日は HP が減らない */
+export async function checkIn() {
+  await setDoc(gameRef(), { inn: { since: dayKey() } }, { merge: true });
+}
+
+/** 宿屋を出る。今日からまた HP が減る対象になる（泊まった日は昨日まで） */
+export async function checkOut(game: GameDoc) {
+  const since = game.inn.since;
+  if (!since) return;
+  const y = new Date();
+  y.setDate(y.getDate() - 1);
+  const to = dayKey(y);
+  const stays = since <= to ? [...game.inn.stays, { from: since, to }] : game.inn.stays;
+  await setDoc(gameRef(), { inn: { since: null, stays } }, { merge: true });
 }
 
 export async function setTitle(title: string) {

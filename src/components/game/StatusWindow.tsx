@@ -7,6 +7,7 @@ import Sprite from "@/components/game/Sprite";
 import { streakFrom } from "@/lib/log";
 import { HERO_STEP, fmt, heroTitle, levelProgress } from "@/lib/game/levels";
 import { BUDDY_LOOK } from "@/lib/game/sprites";
+import { HP_MAX, restChecker } from "@/lib/game/vitality";
 import { daysUntilExam } from "@/lib/game/world";
 
 function Bar({ ratio, color }: { ratio: number; color: string }) {
@@ -24,9 +25,10 @@ function Bar({ ratio, color }: { ratio: number; color: string }) {
 export default function StatusWindow() {
   const { stats, logs, game } = useGame();
   const pathname = usePathname();
-  const streak = streakFrom(logs);
+  const streak = streakFrom(logs, new Date(), restChecker(game.inn));
   const ex = levelProgress(stats.heroXp, HERO_STEP);
-  const hpColor = streak >= 7 ? "var(--ok)" : streak >= 3 ? "var(--gold)" : "var(--danger)";
+  const { hp } = stats.vit;
+  const hpColor = hp > 50 ? "var(--ok)" : hp > 20 ? "var(--gold)" : "var(--danger)";
   const title = game.title || heroTitle(stats.heroLevel);
 
   if (pathname !== "/") {
@@ -37,8 +39,9 @@ export default function StatusWindow() {
             勇者 <span className="text-gold">Lv{stats.heroLevel}</span>
           </span>
           <span className="tabular-nums" style={{ color: hpColor }}>
-            連続{streak}日
+            HP{hp}
           </span>
+          <span className="tabular-nums">連続{streak}日</span>
           <span className="text-gold tabular-nums">{fmt(stats.gold)}G</span>
           <span className="text-faint tabular-nums">魔王城 {daysUntilExam()}日</span>
         </span>
@@ -67,8 +70,10 @@ export default function StatusWindow() {
           </Link>
           <div className="grid grid-cols-[24px_1fr_auto] items-center gap-2 text-sm">
             <span>HP</span>
-            <Bar ratio={streak / 30} color={hpColor} />
-            <span className="min-w-[72px] text-right tabular-nums">連続 {streak}日</span>
+            <Bar ratio={hp / HP_MAX} color={hpColor} />
+            <span className="min-w-[72px] text-right tabular-nums" style={{ color: hpColor }}>
+              {hp}/{HP_MAX}
+            </span>
             <span>EX</span>
             <Bar ratio={ex.ratio} color="var(--ex)" />
             <span className="min-w-[72px] text-right tabular-nums">{fmt(stats.heroXp)}</span>
@@ -77,7 +82,7 @@ export default function StatusWindow() {
             <span className="min-w-[72px] text-right text-gold tabular-nums">{fmt(stats.gold)} G</span>
           </div>
           <p className="text-right text-xs text-faint">
-            次のLvまで {fmt(ex.toNext)} ・ 今月 {fmt(stats.monthMinutes)}分
+            連続 {streak}日 ・ 次のLvまで {fmt(ex.toNext)} ・ 今月 {fmt(stats.monthMinutes)}分
           </p>
         </div>
         <div className="flex flex-col items-center justify-end">

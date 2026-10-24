@@ -17,6 +17,7 @@ const COMMANDS = [
 ];
 
 const SUB_LINKS = [
+  { href: "/rules", label: "ルール" },
   { href: "/book", label: "冒険の書" },
   { href: "/links", label: "リンク" },
   { href: "/settings", label: "設定" },

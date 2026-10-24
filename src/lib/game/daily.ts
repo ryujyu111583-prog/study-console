@@ -7,6 +7,7 @@ import { RESOLVE_STREAK, type Mistake } from "../mistakes";
 import { TRACKS, hasAnyRecord } from "../tracks";
 import { AREAS } from "./world";
 import { SKILLS } from "./skills";
+import { restChecker } from "./vitality";
 import type { GameDoc, Stats } from "./state";
 
 export const DAILY_BONUS_GOLD = 100;
@@ -45,7 +46,7 @@ export type Achievement = {
 };
 
 export function achievements(logs: LogMap, mistakes: Mistake[], game: GameDoc, stats: Stats): Achievement[] {
-  const streak = streakFrom(logs);
+  const streak = streakFrom(logs, new Date(), restChecker(game.inn));
   const days = Object.values(logs).filter((e) => hasAnyRecord(e)).length;
   const defeated = mistakes.filter((m) => m.correctStreak >= RESOLVE_STREAK).length;
   const bosses = AREAS.filter((a) => game.bosses[a.id]?.clearedAt).length;

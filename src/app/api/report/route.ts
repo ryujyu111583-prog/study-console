@@ -10,6 +10,7 @@ import {
   type BossRecord,
   type ReportItem,
 } from "@/lib/game/rewards";
+import type { AreaTouch } from "@/lib/game/vitality";
 import { MISTAKE_TYPES } from "@/lib/mistakeTypes";
 
 export const dynamic = "force-dynamic";
@@ -45,10 +46,10 @@ export async function POST(request: Request) {
   const reward = reportRewards(report);
   const area = bossOf(report);
 
-  // DB にはボス戦の前回記録が要るときと、本当に書くときだけつなぐ
-  const prevBoss = area
-    ? ((await getAdminDb().doc("settings/game").get()).data()?.bosses?.[area.id] as BossRecord | undefined)
-    : undefined;
+  // DB にはボス戦の前回記録・地方に触れた日が要るときと、本当に書くときだけつなぐ
+  const gameData = report.area ? (await getAdminDb().doc("settings/game").get()).data() : undefined;
+  const prevBoss = area ? (gameData?.bosses?.[area.id] as BossRecord | undefined) : undefined;
+  const touch = report.area ? (gameData?.areaTouch?.[report.area] as AreaTouch[string] | undefined) : undefined;
   const boss = area ? bossOutcome(prevBoss, area, report.score ?? 0, today) : null;
   const misses = (report.misses ?? []).map((m) => ({
     concept: m.concept,
@@ -85,6 +86,11 @@ export async function POST(request: Request) {
       bonusXp: { [report.track]: FieldValue.increment(item.xp) },
       bonusGold: FieldValue.increment(item.gold),
       ...(report.total ? { quizLog: { [today]: FieldValue.increment(report.total) } } : {}),
+      // G検定の報告は、その日の HP を守る（vitality.ts の gkDone）
+      ...(report.track === "ml" ? { gkLog: { [today]: FieldValue.increment(Math.max(1, report.total ?? 0)) } } : {}),
+      ...(report.area && touch?.last !== today
+        ? { areaTouch: { [report.area]: { last: today, ...(touch?.last ? { prev: touch.last } : {}) } } }
+        : {}),
       ...(area && boss ? { bosses: { [area.id]: boss.record } } : {}),
     },
     { merge: true },

@@ -15,6 +15,7 @@ import { play } from "@/lib/game/sfx";
 import { skillById } from "@/lib/game/skills";
 import { monsterFor, rollWild, type Species } from "@/lib/game/sprites";
 import { addBonus, answerQuiz } from "@/lib/game/state";
+import { NEGLECT_COLOR, lastBeforeToday, neglectOf, type Neglect } from "@/lib/game/vitality";
 import { AREAS, areaById } from "@/lib/game/world";
 import { RESOLVE_STREAK, bucketOf, markCorrect, markWrong, type Mistake } from "@/lib/mistakes";
 
@@ -22,6 +23,21 @@ type Mode = "wild" | "ledger";
 type Effect = "" | "hit" | "defeat";
 
 const QUIZ_AREAS = AREAS.filter((a) => hasQuiz(a.id));
+
+const NO_NEGLECT: Neglect = { days: 0, level: 0, multiplier: 1 };
+
+/** 放置ボーナスは G検定の地方だけ */
+const areaNeglect = (touch: Parameters<typeof lastBeforeToday>[0], track: string) =>
+  track === "ml" ? neglectOf(lastBeforeToday(touch)) : NO_NEGLECT;
+
+/** 台帳の問題の放置：最後に戦った日から数える。G検定（地方なしの古いものも ML 扱い）だけ */
+export function mistakeNeglect(m: Mistake): Neglect {
+  if ((areaById(m.area)?.track ?? "ml") !== "ml") return NO_NEGLECT;
+  const at = m.lastCheckedAt ?? m.createdAt;
+  return neglectOf(at ? dayKey(at.toDate()) : undefined);
+}
+
+const neglectNote = (n: Neglect) => (n.level ? `放置${n.days}日 経験値×${n.multiplier}` : "");
 
 /** ダメージ表示と揺れつきのモンスター枠 */
 function Stage({
@@ -64,8 +80,13 @@ function Stage({
 /** 野生：地方を選んで4択クイズと戦う */
 function WildBattle() {
   const { game, say } = useGame();
-  const [areaId, setAreaId] = useState("g1");
-  const [queue, setQueue] = useState<Question[]>(() => pickQuestions("g1", 10));
+  // いちばん放っておいた G検定の地方から始める
+  const [areaId, setAreaId] = useState(() =>
+    QUIZ_AREAS.filter((a) => a.track === "ml").reduce((best, a) =>
+      areaNeglect(game.areaTouch[a.id], a.track).days > areaNeglect(game.areaTouch[best.id], best.track).days ? a : best,
+    ).id,
+  );
+  const [queue, setQueue] = useState<Question[]>(() => pickQuestions(areaId, 10));
   const [index, setIndex] = useState(0);
   const [answered, setAnswered] = useState<boolean | null>(null);
   const [effect, setEffect] = useState<Effect>("");
@@ -75,6 +96,7 @@ function WildBattle() {
   const area = areaById(areaId)!;
   const question = queue[index % queue.length];
   const isMetal = foe.look.kind === "metal";
+  const neglect = areaNeglect(game.areaTouch[areaId], area.track);
   const todayCount = game.quizLog[dayKey()] ?? 0;
 
   const changeArea = (id: string) => {
@@ -89,15 +111,15 @@ function WildBattle() {
 
   const onAnswer = (correct: boolean) => {
     setAnswered(correct);
-    const mult = isMetal ? REWARD.metalMultiplier : 1;
-    void answerQuiz(area.track, correct, mult);
+    const mult = (isMetal ? REWARD.metalMultiplier : 1) * neglect.multiplier;
+    void answerQuiz(game, areaId, area.track, correct, mult);
     if (correct) {
       setEffect("defeat");
       play(isMetal ? "levelUp" : "defeat");
       setPopup({ text: isMetal ? "会心の一撃！" : "HIT!", key: Date.now() });
       say([
         `${foe.name}を たおした！`,
-        `${REWARD.quizXp * mult} の経験値と ${REWARD.quizGold * mult}G を獲得。${isMetal ? "（メタル5倍！）" : ""}`,
+        `${Math.round(REWARD.quizXp * mult)} の経験値と ${Math.round(REWARD.quizGold * mult)}G を獲得。${isMetal ? "（メタル5倍！）" : ""}${neglect.level ? `（放置×${neglect.multiplier}）` : ""}`,
       ]);
     } else if (isMetal) {
       setEffect("defeat");
@@ -133,22 +155,33 @@ function WildBattle() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-1" role="group" aria-label="地方">
-        {QUIZ_AREAS.map((a) => (
-          <button
-            key={a.id}
-            type="button"
-            onClick={() => changeArea(a.id)}
-            aria-pressed={a.id === areaId}
-            className={`rounded-md border px-1.5 py-0.5 text-[11px] ${a.id === areaId ? "border-ink text-ink" : "border-line text-faint"}`}
-          >
-            {a.name}
-          </button>
-        ))}
+        {QUIZ_AREAS.map((a) => {
+          const n = areaNeglect(game.areaTouch[a.id], a.track);
+          return (
+            <button
+              key={a.id}
+              type="button"
+              onClick={() => changeArea(a.id)}
+              aria-pressed={a.id === areaId}
+              title={neglectNote(n) || undefined}
+              className={`rounded-md border px-1.5 py-0.5 text-[11px] ${a.id === areaId ? "border-ink text-ink" : "border-line text-faint"}`}
+              style={n.level ? { borderColor: NEGLECT_COLOR[n.level], color: NEGLECT_COLOR[n.level] } : undefined}
+            >
+              {a.name}
+              {n.level > 0 && ` ×${n.multiplier}`}
+            </button>
+          );
+        })}
       </div>
       <Stage look={foe.look} name={foe.name} effect={effect} popup={popup}>
         <p className="text-xs text-faint">
           {area.topic} ・ {index + 1}/{queue.length} ・ 今日 {todayCount}問
         </p>
+        {neglect.level > 0 && (
+          <p className="text-xs" style={{ color: NEGLECT_COLOR[neglect.level] }}>
+            {neglectNote(neglect)}（今日いっぱい続く）
+          </p>
+        )}
       </Stage>
       <section className="win" aria-label="問題">
         <QuizCard key={`${areaId}-${question.id}-${index}`} question={question} onAnswer={onAnswer}>
@@ -187,6 +220,9 @@ function LedgerBattle({ queue }: { queue: Mistake[] }) {
   const question = questionById(m.qid);
   const track = areaById(m.area)?.track ?? "ml";
   const hp = RESOLVE_STREAK - m.correctStreak;
+  // 放置ボーナスは戦う前の値（1回戦うと最後に戦った日が今日になる）
+  const neglect = mistakeNeglect(m);
+  const xpOf = (n: number) => Math.round(n * neglect.multiplier);
   const unlocked = game.skills.map((id) => skillById(id)).filter((s) => !!s);
 
   const next = () => {
@@ -206,11 +242,11 @@ function LedgerBattle({ queue }: { queue: Mistake[] }) {
     if (finishing) {
       setEffect("defeat");
       play("defeat");
-      await addBonus(track, REWARD.defeatXp, REWARD.defeatGold);
-      say([`${monster.name}を やっつけた！`, `${REWARD.defeatXp} の経験値と ${REWARD.defeatGold}G を獲得！`, "台帳では「解消済み」になった。"]);
+      await addBonus(track, xpOf(REWARD.defeatXp), xpOf(REWARD.defeatGold));
+      say([`${monster.name}を やっつけた！`, `${xpOf(REWARD.defeatXp)} の経験値と ${xpOf(REWARD.defeatGold)}G を獲得！`, "台帳では「解消済み」になった。"]);
     } else {
-      await addBonus(track, REWARD.hitXp);
-      say([`${monster.name}に ダメージ！`, `${REWARD.hitXp} の経験値。あと ${hp - 1} 回で倒せる。`]);
+      await addBonus(track, xpOf(REWARD.hitXp));
+      say([`${monster.name}に ダメージ！`, `${xpOf(REWARD.hitXp)} の経験値。あと ${hp - 1} 回で倒せる。`]);
     }
   };
 
@@ -229,6 +265,11 @@ function LedgerBattle({ queue }: { queue: Mistake[] }) {
           {m.type} ・ 誤答 {m.wrongCount}回{bucketOf(m) === "recurring" && " ・ 再発"}
           {areaById(m.area) && ` ・ ${areaById(m.area)?.name}`}
         </p>
+        {neglect.level > 0 && (
+          <p className="text-xs" style={{ color: NEGLECT_COLOR[neglect.level] }}>
+            {neglectNote(neglect)}
+          </p>
+        )}
         <div className="flex gap-1.5" aria-label={`残りHP ${hp}`}>
           {Array.from({ length: RESOLVE_STREAK }, (_, i) => (
             <span key={i} className={`h-3 w-3 border-2 ${i < hp ? "border-ink bg-danger" : "border-line"}`} />
@@ -292,11 +333,13 @@ function LedgerBattle({ queue }: { queue: Mistake[] }) {
 
 export default function BattleView() {
   const { mistakes } = useGame();
+  // 放っておいた G検定の問題を先に出す。同じ放置段階の中では、再発 → 要注意の順
   const queue = useMemo(
-    () => [
-      ...mistakes.filter((m) => bucketOf(m) === "recurring"),
-      ...mistakes.filter((m) => bucketOf(m) === "watch"),
-    ],
+    () =>
+      [
+        ...mistakes.filter((m) => bucketOf(m) === "recurring"),
+        ...mistakes.filter((m) => bucketOf(m) === "watch"),
+      ].sort((a, b) => mistakeNeglect(b).level - mistakeNeglect(a).level),
     [mistakes],
   );
   const [mode, setMode] = useState<Mode>("wild");

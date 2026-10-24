@@ -2,6 +2,7 @@
 
 import Timer from "@/components/Timer";
 import DailyPanel from "@/components/game/DailyPanel";
+import InnPanel from "@/components/game/InnPanel";
 import { useGame } from "@/components/game/GameProvider";
 import { dayKey, recentDayKeys, shortDate } from "@/lib/date";
 import { MEMBER_JOB, MEMBER_STEP, REWARD, levelProgress } from "@/lib/game/levels";
@@ -34,6 +35,7 @@ export default function TodayView() {
 
   return (
     <div className="flex flex-col gap-4">
+      <InnPanel />
       <DailyPanel />
 
       <section className="grid grid-cols-4 gap-2" aria-label="仲間（今日の記録）">

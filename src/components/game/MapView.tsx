@@ -12,6 +12,7 @@ import { buildWorld } from "@/lib/game/overworld";
 import { hasQuiz } from "@/lib/game/quiz";
 import { play } from "@/lib/game/sfx";
 import { recordBoss } from "@/lib/game/state";
+import { NEGLECT_COLOR, lastBeforeToday, neglectOf } from "@/lib/game/vitality";
 import { AREAS, G_ROAD, areaById, daysUntilExam, type Area } from "@/lib/game/world";
 import { TRACK_LABEL, type Track } from "@/lib/tracks";
 
@@ -35,6 +36,7 @@ export default function MapView() {
   const area = areaById(selected) ?? AREAS[0];
   const record = game.bosses[area.id];
   const monsters = mistakes.filter((m) => m.area === area.id).length;
+  const neglect = area.track === "ml" && hasQuiz(area.id) ? neglectOf(lastBeforeToday(game.areaTouch[area.id])) : null;
   const cleared = AREAS.filter((a) => game.bosses[a.id]?.clearedAt).length;
   const heroAt = G_ROAD.find((id) => !game.bosses[id]?.clearedAt) ?? AREAS.find((a) => !game.bosses[a.id]?.clearedAt)?.id ?? "maou";
   const revealed = !!game.bosses.maou?.clearedAt;
@@ -122,6 +124,13 @@ export default function MapView() {
             <p className="text-xs text-faint">
               この地のモンスター {monsters}匹 ・ 初回報酬 {fmt(area.xp)}EX / {fmt(area.gold)}G
             </p>
+            {neglect && (
+              <p className="text-xs" style={{ color: NEGLECT_COLOR[neglect.level] || "var(--faint)" }}>
+                {neglect.level
+                  ? `放置 ${neglect.days}日 ・ クイズの経験値×${neglect.multiplier}`
+                  : `最後に来てから ${neglect.days}日（7日で ×1.5、14日で ×2）`}
+              </p>
+            )}
           </div>
         </div>
         <p className="text-sm leading-relaxed">

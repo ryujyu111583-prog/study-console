@@ -79,17 +79,19 @@ export async function recordSession(track: Track, minutes: number, key = dayKey(
 /**
  * 連続日数。どれか1つのトラックでも記録があればその日はカウントする。
  * 今日がまだ未記録なら、昨日までの連続を返す（日中に「0日」と出て心が折れるのを防ぐ）。
+ * rest（宿屋に泊まった日）は数えないが、連続も切らない。
  */
-export function streakFrom(logs: LogMap, today = new Date()): number {
+export function streakFrom(logs: LogMap, today = new Date(), rest: (key: string) => boolean = () => false): number {
   const cursor = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const done = (key: string) => hasAnyRecord(logs[key]);
 
   if (!done(dayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
 
   let count = 0;
-  while (count < 400 && done(dayKey(cursor))) {
-    count++;
-    cursor.setDate(cursor.getDate() - 1);
+  for (let i = 0; i < 400; i++, cursor.setDate(cursor.getDate() - 1)) {
+    const key = dayKey(cursor);
+    if (done(key)) count++;
+    else if (!rest(key)) break;
   }
   return count;
 }

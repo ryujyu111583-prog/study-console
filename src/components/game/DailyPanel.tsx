@@ -8,6 +8,7 @@ import { DAILY_BONUS_GOLD, chestReward, dailyQuests } from "@/lib/game/daily";
 import { play } from "@/lib/game/sfx";
 import { claimDailyBonus, openChest } from "@/lib/game/state";
 import { streakFrom } from "@/lib/log";
+import { restChecker } from "@/lib/game/vitality";
 
 /** ホームの一番上：今日やること（デイリークエスト）と宝箱。 */
 export default function DailyPanel() {
@@ -24,7 +25,7 @@ export default function DailyPanel() {
   const chest = async () => {
     setBusy(true);
     try {
-      const { gold, rare } = chestReward(streakFrom(logs), today);
+      const { gold, rare } = chestReward(streakFrom(logs, new Date(), restChecker(game.inn)), today);
       await openChest(gold);
       play("chest");
       say(
