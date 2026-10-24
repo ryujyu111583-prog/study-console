@@ -1,3 +1,5 @@
+import { skillById } from "./skills";
+
 /**
  * Obsidian vault のノートを開くリンク。スマホなら Obsidian アプリが開く。
  * vault 名はスマホ側の vault 名と同じである必要がある（違うときは NEXT_PUBLIC_OBSIDIAN_VAULT で変える）。
@@ -12,7 +14,10 @@ const ML = "Learning/ML/";
 const ST = "Learning/Statistics/";
 const IV = "Learning/Investing/";
 
-/** スキル・地方 → ノート。対応するノートがまだ無いもの（英語）は載せない。 */
+/**
+ * スキル・地方 → ノート。対応するノートがまだ無いもの（英語）は載せない。
+ * 新しく足したスキルは、コースのデータ（courses/）の note に直接書いてもいい。
+ */
 export const NOTES: Record<string, string> = {
   // スキル
   "ml-trio": `${ML}ML基礎04_線形回帰と3点セット`,
@@ -61,4 +66,4 @@ export const NOTES: Record<string, string> = {
   ledger: `${ML}誤答台帳`,
 };
 
-export const noteFor = (id: string | undefined) => (id ? NOTES[id] : undefined);
+export const noteFor = (id: string | undefined) => (id ? (NOTES[id] ?? skillById(id)?.note) : undefined);

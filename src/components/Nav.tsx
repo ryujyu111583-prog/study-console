@@ -9,7 +9,7 @@ const COMMANDS = [
   { href: "/", label: "仲間", sub: "今日の記録" },
   { href: "/battle", label: "たたかう", sub: "誤答と戦闘" },
   { href: "/map", label: "地図", sub: "ボスと魔王城" },
-  { href: "/skills", label: "スキル", sub: "ツリーと特技" },
+  { href: "/skills", label: "スキル", sub: "ツリーと修行" },
   { href: "/shop", label: "装備", sub: "武器屋・防具屋" },
   { href: "/mistakes", label: "誤答台帳", sub: "モンスター図鑑" },
 ];

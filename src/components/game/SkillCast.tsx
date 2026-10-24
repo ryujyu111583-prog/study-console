@@ -17,7 +17,7 @@ export default function SkillCast({ node, onDone }: { node: SkillNode; onDone?: 
   const ok = async () => {
     setBusy(true);
     try {
-      const first = await castSkill(game, node.id, node.track);
+      const first = await castSkill(game, node);
       say(
         first
           ? [`勇者は ${node.skill} を唱えた！`, `「${node.topic}」を言えた！ ${REWARD.skillXp} の経験値を獲得！`]

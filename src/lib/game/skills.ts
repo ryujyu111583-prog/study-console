@@ -1,76 +1,107 @@
 /**
- * スキルツリー。ノードは実際の学習論点で、開くと「特技」が手に入る。
- * 特技は「この論点を口で説明できるか」を確かめる呪文。唱えて言えたら経験値が入る（1日1回）。
- * SP は仲間のレベルが1上がるごとに1。
+ * スキルツリー。トラックごとのコース（courses/）を、出題の形が違う「系統」に分けて持つ。
+ * - 系統：単語・一問一答・○×・作文・瞬発力・説明… 何を育てるかはコースが決める
+ * - ノード：開くと特技（説明の系統）か、修行に出る問題の束が手に入る
+ * - SP は仲間のレベルが1上がるごとに1。系統の熟練度 Lv は、その系統の修行で上がる
  */
 import type { Track } from "../tracks";
+import { EN_COURSE } from "./courses/en";
+import { INV_COURSE } from "./courses/inv";
+import { ML_COURSE } from "./courses/ml";
+import { STAT_COURSE } from "./courses/stat";
+import type { BranchDef, Course, DrillItem, DrillMode, NodeDef } from "./courses/types";
 
-export type SkillNode = {
-  id: string;
-  track: Track;
-  /** 論点 */
-  topic: string;
-  /** 特技の名前 */
-  skill: string;
-  /** 唱えるときの問い */
-  prompt: string;
-  cost: number;
-  requires: string[];
-  /** ツリー上の位置（列0〜2、段0〜） */
-  col: number;
-  row: number;
+export type { DrillItem, DrillMode } from "./courses/types";
+
+export const COURSES: Record<Track, Course> = {
+  stat: STAT_COURSE,
+  inv: INV_COURSE,
+  ml: ML_COURSE,
+  en: EN_COURSE,
 };
 
-export const SKILLS: SkillNode[] = [
-  // ML（G検定）— G検定MOCの背骨：3点セット → 最適化 → 深層学習 → 生成AI
-  { id: "ml-trio", track: "ml", topic: "3点セット", skill: "トリニティ", prompt: "モデル・損失・最適化の3つを、線形回帰を例に説明できる？", cost: 1, requires: [], col: 1, row: 0 },
-  { id: "ml-overfit", track: "ml", topic: "過学習のブレーキ", skill: "オーバーフィット・ガード", prompt: "過学習を止める3方向（正則化・単純化・データ追加）を言える？", cost: 1, requires: ["ml-trio"], col: 0, row: 1 },
-  { id: "ml-gd", track: "ml", topic: "勾配降下法", skill: "グラディエント", prompt: "勾配降下法で学習率が大きすぎ／小さすぎると何が起きる？", cost: 1, requires: ["ml-trio"], col: 2, row: 1 },
-  { id: "ml-l1l2", track: "ml", topic: "L1 / L2 正則化", skill: "スパースの刃", prompt: "L1 が疎になり L2 がならない理由を説明できる？", cost: 1, requires: ["ml-overfit"], col: 0, row: 2 },
-  { id: "ml-adam", track: "ml", topic: "SGD → AdaGrad → RMSprop → Adam", skill: "アダムの加護", prompt: "AdaGrad の弱点と、RMSprop がそれをどう直したかを言える？", cost: 2, requires: ["ml-gd"], col: 2, row: 2 },
-  { id: "ml-vanish", track: "ml", topic: "誤差逆伝播と勾配消失", skill: "バックプロパ", prompt: "シグモイドで勾配が消える理由を、微分の最大値 0.25 を使って言える？", cost: 2, requires: ["ml-gd"], col: 1, row: 2 },
-  { id: "ml-cnn", track: "ml", topic: "CNN と ResNet", skill: "コンボリューション", prompt: "ResNet のスキップ接続が深い層の学習を可能にした理由は？", cost: 2, requires: ["ml-vanish"], col: 0, row: 3 },
-  { id: "ml-rnn", track: "ml", topic: "RNN と LSTM", skill: "リカレント", prompt: "LSTM のゲートが RNN の何を解決した？", cost: 2, requires: ["ml-vanish"], col: 2, row: 3 },
-  { id: "ml-trans", track: "ml", topic: "Transformer", skill: "アテンション", prompt: "Transformer が並列化できる理由を「逐次性」という言葉で説明できる？", cost: 3, requires: ["ml-rnn"], col: 1, row: 4 },
-  { id: "ml-gen", track: "ml", topic: "生成AI", skill: "ジェネシス", prompt: "拡散モデルと LLM がそれぞれ何を学習しているかを言える？", cost: 3, requires: ["ml-trans", "ml-cnn"], col: 1, row: 5 },
+export type SkillNode = NodeDef & { track: Track; branch: string };
+export type Branch = Omit<BranchDef, "nodes"> & { track: Track };
 
-  // 統計
-  { id: "st-desc", track: "stat", topic: "記述統計", skill: "アベレージ", prompt: "平均・中央値・分散・標準偏差を、外れ値がある例で使い分けられる？", cost: 1, requires: [], col: 1, row: 0 },
-  { id: "st-corr", track: "stat", topic: "相関と因果", skill: "コリレーション", prompt: "相関があっても因果と言えない例を1つ出せる？", cost: 1, requires: ["st-desc"], col: 0, row: 1 },
-  { id: "st-dist", track: "stat", topic: "確率分布", skill: "ノーマル・ウェーブ", prompt: "正規分布・二項分布・ポアソン分布をどんな現象に使うか言える？", cost: 1, requires: ["st-desc"], col: 2, row: 1 },
-  { id: "st-est", track: "stat", topic: "推定と信頼区間", skill: "インターバル", prompt: "95% 信頼区間の正しい意味を言える？", cost: 2, requires: ["st-dist"], col: 2, row: 2 },
-  { id: "st-test", track: "stat", topic: "仮説検定", skill: "有意裁判", prompt: "帰無仮説・p値・第1種／第2種の誤りを裁判にたとえて説明できる？", cost: 2, requires: ["st-est"], col: 1, row: 3 },
-  { id: "st-reg", track: "stat", topic: "回帰分析", skill: "リグレッション", prompt: "最小二乗法が何を最小にしているか、決定係数が何を表すかを言える？", cost: 2, requires: ["st-corr", "st-est"], col: 0, row: 3 },
-  { id: "st-anova", track: "stat", topic: "分散分析と実験計画", skill: "アノーヴァ", prompt: "分散分析で「群間」と「群内」のばらつきを比べる理由は？", cost: 3, requires: ["st-test"], col: 1, row: 4 },
-  { id: "st-bayes", track: "stat", topic: "ベイズ推定", skill: "ベイズの瞳", prompt: "事前分布・尤度・事後分布の関係を一文で言える？", cost: 3, requires: ["st-test", "st-reg"], col: 0, row: 5 },
+export const BRANCHES: Branch[] = Object.values(COURSES).flatMap((c) =>
+  c.branches.map(({ nodes: _nodes, ...b }) => ({ ...b, track: c.track })),
+);
 
-  // 英語
-  { id: "en-vocab", track: "en", topic: "語彙", skill: "ボキャブラ", prompt: "今週覚えた単語を5つ、例文つきで言える？", cost: 1, requires: [], col: 1, row: 0 },
-  { id: "en-gram", track: "en", topic: "文法の骨格", skill: "グラマー・アーマー", prompt: "関係代名詞と分詞構文で、同じ文を2通りに書ける？", cost: 1, requires: ["en-vocab"], col: 0, row: 1 },
-  { id: "en-listen", track: "en", topic: "リスニング", skill: "イヤー・オブ・BBC", prompt: "6 Minute English の今回のテーマを英語で30秒要約できる？", cost: 1, requires: ["en-vocab"], col: 2, row: 1 },
-  { id: "en-shadow", track: "en", topic: "シャドーイング", skill: "シャドウ・ボイス", prompt: "スクリプトを見ずに1分シャドーイングできた？", cost: 2, requires: ["en-listen"], col: 2, row: 2 },
-  { id: "en-read", track: "en", topic: "長文読解", skill: "スキミング", prompt: "英語の記事1本を、段落ごとに1行で要約できる？", cost: 2, requires: ["en-gram"], col: 0, row: 2 },
-  { id: "en-tech", track: "en", topic: "技術英語", skill: "ペーパー・リーダー", prompt: "論文の Abstract を読んで、手法と結果を日本語で一文ずつ言える？", cost: 3, requires: ["en-read"], col: 0, row: 3 },
-  { id: "en-speak", track: "en", topic: "スピーキング", skill: "スピーチ", prompt: "自分の仕事（CAE）を英語で1分説明できる？", cost: 3, requires: ["en-shadow", "en-read"], col: 1, row: 4 },
+export const SKILLS: SkillNode[] = Object.values(COURSES).flatMap((c) =>
+  c.branches.flatMap((b) => b.nodes.map((n) => ({ ...n, track: c.track, branch: b.id }))),
+);
 
-  // 投資
-  { id: "iv-comp", track: "inv", topic: "複利", skill: "コンパウンド", prompt: "72の法則で、年利6%なら何年で2倍になるか言える？", cost: 1, requires: [], col: 1, row: 0 },
-  { id: "iv-div", track: "inv", topic: "分散投資", skill: "ディバーシファイ", prompt: "分散で減らせるリスクと減らせないリスクの違いは？", cost: 1, requires: ["iv-comp"], col: 0, row: 1 },
-  { id: "iv-index", track: "inv", topic: "インデックス投資", skill: "インデックス", prompt: "信託報酬の差が30年後にどれくらい効くか説明できる？", cost: 1, requires: ["iv-comp"], col: 2, row: 1 },
-  { id: "iv-rr", track: "inv", topic: "リスクとリターン", skill: "シャープ・アイ", prompt: "標準偏差をリスクと呼ぶ理由と、シャープレシオの意味を言える？", cost: 2, requires: ["iv-div"], col: 0, row: 2 },
-  { id: "iv-alloc", track: "inv", topic: "資産配分", skill: "アロケーション", prompt: "株と債券の比率をどう決めるか、自分の場合で言える？", cost: 2, requires: ["iv-rr", "iv-index"], col: 1, row: 3 },
-  { id: "iv-tax", track: "inv", topic: "税制（NISA・iDeCo）", skill: "タックス・シールド", prompt: "NISA と iDeCo の違いを、引き出せる時期と節税の仕組みで言える？", cost: 2, requires: ["iv-index"], col: 2, row: 3 },
-  { id: "iv-crash", track: "inv", topic: "暴落への備え", skill: "ホールド", prompt: "暴落時にやってはいけないことと、その理由を言える？", cost: 3, requires: ["iv-alloc"], col: 1, row: 4 },
-];
+// データの書き間違いは、画面で変な挙動になる前にここで止める。
+{
+  const ids = new Set<string>();
+  for (const n of SKILLS) {
+    if (ids.has(n.id)) throw new Error(`スキルの id が重複している: ${n.id}`);
+    ids.add(n.id);
+  }
+  for (const n of SKILLS) {
+    for (const r of n.requires) {
+      if (SKILLS.find((s) => s.id === r)?.branch !== n.branch) {
+        throw new Error(`${n.id} の前提 ${r} が同じ系統に無い`);
+      }
+    }
+  }
+  for (const b of BRANCHES) {
+    for (const f of b.from ?? []) {
+      if (!BRANCHES.some((x) => x.id === f)) throw new Error(`${b.id} の from にある ${f} が無い`);
+    }
+  }
+}
 
 export const skillById = (id: string) => SKILLS.find((s) => s.id === id);
 
 export const skillsOf = (track: Track) => SKILLS.filter((s) => s.track === track);
 
-export function canUnlock(node: SkillNode, unlocked: string[], sp: number) {
+export const branchById = (id: string) => BRANCHES.find((b) => b.id === id);
+
+export const branchesOf = (track: Track) => BRANCHES.filter((b) => b.track === track);
+
+export const nodesOf = (branchId: string) => SKILLS.filter((s) => s.branch === branchId);
+
+export const MODE_LABEL: Record<DrillMode, string> = {
+  recall: "口頭で説明",
+  card: "単語カード",
+  qa: "一問一答",
+  yesno: "○×（Yes / No）",
+  compose: "作文",
+  speed: "制限時間つき",
+};
+
+/** 説明の系統の特技か。戦闘中に唱えられるのはこれだけ。 */
+export const isSpell = (node: SkillNode) => branchById(node.branch)?.mode === "recall";
+
+export function canUnlock(node: SkillNode, unlocked: string[], sp: number, branchLv: number) {
   return (
     !unlocked.includes(node.id) &&
     node.requires.every((r) => unlocked.includes(r)) &&
+    branchLv >= (node.lv ?? 1) &&
     sp >= node.cost
   );
+}
+
+/** 修行の1問。どの系統・ノードから来たかと、その系統での出し方を持つ。 */
+export type DrillCard = DrillItem & { mode: DrillMode; node: SkillNode; branch: Branch };
+
+/** 開いたノードの問題を集める。瞬発力の系統は from の系統から借りてくる。 */
+export function poolOf(branch: Branch, unlocked: string[]): DrillCard[] {
+  const sources = branch.mode === "speed" ? (branch.from ?? []) : [branch.id];
+  return sources.flatMap((id) => {
+    const src = branchById(id);
+    if (!src) return [];
+    return nodesOf(id)
+      .filter((n) => unlocked.includes(n.id))
+      .flatMap((n) => (n.items ?? []).map((item) => ({ ...item, mode: src.mode, node: n, branch: src })));
+  });
+}
+
+/** 瞬発力の系統で、開いた段位のうちいちばん短い制限時間。まだ開いていなければ undefined。 */
+export function speedLimit(branch: Branch, unlocked: string[]) {
+  const secs = nodesOf(branch.id)
+    .filter((n) => unlocked.includes(n.id) && n.seconds)
+    .map((n) => n.seconds!);
+  return secs.length > 0 ? Math.min(...secs) : undefined;
 }

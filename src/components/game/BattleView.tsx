@@ -8,7 +8,7 @@ import SkillCast from "@/components/game/SkillCast";
 import Sprite from "@/components/game/Sprite";
 import { REWARD } from "@/lib/game/levels";
 import { play } from "@/lib/game/sfx";
-import { skillById } from "@/lib/game/skills";
+import { isSpell, skillById, type SkillNode } from "@/lib/game/skills";
 import { monsterFor } from "@/lib/game/sprites";
 import { addBonus } from "@/lib/game/state";
 import { areaById } from "@/lib/game/world";
@@ -89,7 +89,8 @@ export default function BattleView() {
     say([`${monster.name}の反撃！`, "連続正答が 0 に戻った。", m.correct ? "正しい答えを読み直そう。" : "台帳に正解を書いておこう。"]);
   };
 
-  const unlocked = game.skills.map((id) => skillById(id)).filter((s) => !!s);
+  // 戦闘中に唱えられるのは「説明」の系統の特技だけ。単語カードなどはスキル画面の修行で回す。
+  const unlocked = game.skills.map((id) => skillById(id)).filter((s): s is SkillNode => !!s && isSpell(s));
 
   return (
     <div className="flex flex-col gap-4">

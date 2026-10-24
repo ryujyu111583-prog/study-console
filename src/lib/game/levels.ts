@@ -8,6 +8,8 @@ export const MAX_LEVEL = 99;
 export const HERO_STEP = 60;
 /** 仲間（4項目それぞれ）：15 × (L-1)²。 */
 export const MEMBER_STEP = 15;
+/** 系統の熟練度：10 × (L-1)²。1問正解で5なので、Lv2 に2問、Lv3 に8問、Lv4 に18問。 */
+export const BRANCH_STEP = 10;
 
 export const xpForLevel = (level: number, step: number) => step * (level - 1) ** 2;
 
@@ -56,6 +58,15 @@ export const REWARD = {
   defeatXp: 100,
   defeatGold: 30,
   skillXp: 15,
+  /** 修行で1問正解したときの、仲間の経験値と系統の熟練度 */
+  drillXp: 3,
+  drillBranchXp: 5,
+  /** 特技を唱えて言えたときの、系統の熟練度 */
+  skillBranchXp: 10,
 } as const;
+
+/** 修行の1回の問題数と、1系統1日あたり報酬が入る正解数の上限。 */
+export const DRILL_SIZE = 10;
+export const DRILL_DAILY_CAP = 20;
 
 export const fmt = (n: number) => n.toLocaleString("en-US");
