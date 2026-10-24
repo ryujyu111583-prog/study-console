@@ -36,4 +36,5 @@ const res = await fetch(`${base}/api/report${dryRun ? "?dryRun=1" : ""}`, {
 });
 const text = await res.text();
 console.log(`${res.status} ${text}`);
-process.exit(res.ok ? 0 : 1);
+// process.exit() だと Windows で通信の後片付け中に落ちる（UV_HANDLE_CLOSING）ので、終了コードだけ置く
+process.exitCode = res.ok ? 0 : 1;
