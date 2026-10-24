@@ -1,0 +1,23 @@
+# クイズと暗記カードの作り方
+
+アプリの問題（`src/data/quiz/*.json`）とカード（`src/data/cards.json`）は、vault のノートから Claude が作ったもの。元データは `scripts/quiz_source.py`。
+
+## 作り方の約束
+
+- 根拠は vault のノートの記述だけ。外部問題集（G検定の森など）の問題は写さない
+- 1問ごとに、根拠のノートのパスを持たせる（アプリの「📖 ノートで確かめる」になる）
+- 誤答の選択肢は、ノートの「引っかけどころ」「紛らわしいペア」から作る（片方の説明をもう片方に貼る、軸を取り違える）
+- 正解の位置は `build_quiz.py` が均等に散らす。`quiz_source.py` では正解を先頭に書く
+
+## Obsidian のノートを更新したとき
+
+1. `python scripts/build_quiz.py --check` を実行する。問題を作ったあとに変わったノートと、それを使っている地方が出る
+2. 出たノートを読み、`quiz_source.py` の該当する地方の問題を直す（書き換わった記述・増えた論点・消えた論点）
+3. `python scripts/build_quiz.py` で JSON を作り直す（ノートの指紋 `src/data/sources.json` も更新される）
+4. `npm run build` が通ったら、本人に確認して push する
+
+`--check` の出力が「OK」なら、作り直しは要らない。
+
+## 地方を増やすとき
+
+`quiz_source.py` の `QUIZ` に地方 ID（`src/lib/game/world.ts` の `AREAS`）をキーにして足し、`src/lib/game/quiz.ts` の `BANK` に import を1行足す。

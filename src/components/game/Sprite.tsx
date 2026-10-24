@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { monsterGrid, monsterPalette, type MonsterLook } from "@/lib/game/sprites";
+import { GRID, monsterGrid, monsterPalette, type MonsterLook } from "@/lib/game/sprites";
 
-/** 16x16 のドット絵を canvas に描き、CSS で拡大する（ぼかさない）。 */
+/** 32x32 のドット絵を canvas に描き、CSS で拡大する（ぼかさない）。 */
 export default function Sprite({
   look,
   size = 96,
@@ -21,7 +21,7 @@ export default function Sprite({
     const ctx = ref.current?.getContext("2d");
     if (!ctx) return;
     const palette = monsterPalette(look);
-    ctx.clearRect(0, 0, 16, 16);
+    ctx.clearRect(0, 0, GRID, GRID);
     monsterGrid(look).forEach((row, y) =>
       row.forEach((ch, x) => {
         if (ch === ".") return;
@@ -34,8 +34,8 @@ export default function Sprite({
   return (
     <canvas
       ref={ref}
-      width={16}
-      height={16}
+      width={GRID}
+      height={GRID}
       role={label ? "img" : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}

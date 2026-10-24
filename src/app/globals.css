@@ -51,8 +51,10 @@
   --color-gold: var(--gold);
   --color-ex: var(--ex);
 
-  --font-sans: "DotGothic16", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
-  --font-mono: "DotGothic16", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  /* 本文は読みやすい丸ゴシック。ドット文字は見出し・コマンド・数字だけ（.font-dot） */
+  --font-sans: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-dot: "DotGothic16", "MS Gothic", monospace;
 }
 
 html {
@@ -70,24 +72,32 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* ウィンドウ：白い太枠の角丸。外側に細い紺の線を足して二重枠に見せる */
-.win {
-  position: relative;
-  min-width: 0;
-  border: 3px solid var(--ink);
-  border-radius: 8px;
-  background: var(--surface);
-  box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--line);
-  padding: 10px 12px;
-}
-.win-label {
-  position: absolute;
-  top: -12px;
-  left: 12px;
-  background: var(--surface);
-  padding: 0 6px;
-  font-size: 13px;
-  line-height: 1.6;
+/* Tailwind のユーティリティ（余白・枠の色）で上書きできるよう components 層に置く */
+@layer components {
+  .font-dot {
+    font-family: var(--font-dot);
+  }
+
+  /* ウィンドウ：白い枠の角丸。外側に細い紺の線を足して二重枠に見せる */
+  .win {
+    position: relative;
+    min-width: 0;
+    border: 2px solid var(--ink);
+    border-radius: 6px;
+    background: var(--surface);
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--line);
+    padding: 8px 10px;
+  }
+  .win-label {
+    position: absolute;
+    top: -11px;
+    left: 10px;
+    background: var(--surface);
+    padding: 0 5px;
+    font-family: var(--font-dot);
+    font-size: 12px;
+    line-height: 1.6;
+  }
 }
 
 /* 選択中を示す ▶ の点滅 */

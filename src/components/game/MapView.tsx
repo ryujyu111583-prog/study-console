@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import BossRun from "@/components/game/BossRun";
 import { useGame } from "@/components/game/GameProvider";
 import NoteLink from "@/components/game/NoteLink";
 import Sprite from "@/components/game/Sprite";
 import { fmt } from "@/lib/game/levels";
-import { recordBoss } from "@/lib/game/state";
+import { noteFor } from "@/lib/game/obsidian";
+import { hasQuiz } from "@/lib/game/quiz";
 import { play } from "@/lib/game/sfx";
+import { recordBoss } from "@/lib/game/state";
 import { AREAS, G_ROAD, areaById, daysUntilExam, type Area } from "@/lib/game/world";
 import { TRACK_LABEL, type Track } from "@/lib/tracks";
-
-import { noteFor } from "@/lib/game/obsidian";
 
 const noteLabel = (id: string) => noteFor(id)?.split("/").pop() ?? "";
 
@@ -36,12 +37,14 @@ export default function MapView() {
   );
   const [score, setScore] = useState(7);
   const [busy, setBusy] = useState(false);
+  const [running, setRunning] = useState(false);
   const area = areaById(selected) ?? AREAS[0];
   const record = game.bosses[area.id];
   const monsters = mistakes.filter((m) => m.area === area.id).length;
   const cleared = AREAS.filter((a) => game.bosses[a.id]?.clearedAt).length;
 
   const pick = (a: Area) => {
+    if (running) return;
     setSelected(a.id);
     setScore(a.pass);
     say([`${a.name}（${a.topic}）`, `ボス：${a.boss}`, a.howTo]);
@@ -158,8 +161,26 @@ export default function MapView() {
             </p>
           </div>
         </div>
-        <p className="text-sm leading-relaxed">{area.howTo}</p>
+        <p className="text-sm leading-relaxed">
+          {hasQuiz(area.id) ? `この地方の問題を${area.questions}問。${area.pass}問以上で撃破。` : area.howTo}
+        </p>
         <NoteLink id={area.id} label={`予習：${noteLabel(area.id)}`} />
+        {running ? (
+          <BossRun area={area} onExit={() => setRunning(false)} />
+        ) : hasQuiz(area.id) ? (
+          <button
+            type="button"
+            onClick={() => {
+              setRunning(true);
+              play("select");
+              say([`${area.boss}が 立ちはだかった！`, `${area.questions}問中 ${area.pass}問 正解で撃破。`]);
+            }}
+            className="font-dot rounded-md border-2 border-ink py-2 text-base"
+          >
+            {area.boss}に挑む（{area.questions}問）
+          </button>
+        ) : (
+          <>
         <div className="flex items-center gap-2">
           <span className="text-sm">結果</span>
           <button type="button" onClick={() => setScore((s) => Math.max(0, s - 1))} className="h-9 w-9 rounded-md border-2 border-ink" aria-label="1減らす">
@@ -188,6 +209,8 @@ export default function MapView() {
         >
           {area.boss}に挑む
         </button>
+          </>
+        )}
       </section>
     </div>
   );

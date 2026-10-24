@@ -4,7 +4,16 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { subscribeAllLogs, type LogMap } from "@/lib/log";
 import { subscribeMistakes, type Mistake } from "@/lib/mistakes";
 import { MEMBER_JOB, heroTitle } from "@/lib/game/levels";
-import { EMPTY_GAME, computeStats, subscribeGame, type GameDoc, type Stats } from "@/lib/game/state";
+import { reportLine } from "@/lib/game/reportText";
+import type { ReportItem } from "@/lib/game/rewards";
+import {
+  EMPTY_GAME,
+  computeStats,
+  subscribeGame,
+  subscribeReports,
+  type GameDoc,
+  type Stats,
+} from "@/lib/game/state";
 import { play } from "@/lib/game/sfx";
 import { TRACK_LABEL, TRACKS } from "@/lib/tracks";
 
@@ -13,6 +22,8 @@ type GameContext = {
   game: GameDoc;
   mistakes: Mistake[];
   stats: Stats;
+  /** Claude からの報告（新しい順） */
+  reports: ReportItem[];
   ready: boolean;
   /** 下のメッセージ窓に出す（最大3行） */
   say: (lines: string | string[]) => void;
@@ -40,10 +51,31 @@ export default function GameProvider({
   const [mistakes, setMistakes] = useState<Mistake[]>([]);
   const [message, setMessage] = useState(greeting);
   const [levelUp, setLevelUp] = useState(0);
+  const [reports, setReports] = useState<ReportItem[]>([]);
 
   useEffect(() => subscribeAllLogs(setLogs), []);
   useEffect(() => subscribeGame(setGame), []);
   useEffect(() => subscribeMistakes(setMistakes), []);
+  useEffect(() => subscribeReports(setReports), []);
+
+  // まだ見ていない報告があれば、開いたときにメッセージ窓で知らせる（見たかどうかは端末ごと）
+  useEffect(() => {
+    const latest = reports[0];
+    if (!latest) return;
+    let seen = "";
+    try {
+      seen = localStorage.getItem("sq-seen-report") ?? "";
+    } catch {}
+    if (latest.at <= seen) return;
+    const fresh = reports.filter((r) => r.at > seen);
+    setMessage(
+      [`Claude から報告が ${fresh.length}件 届いた！`, ...fresh.slice(0, 2).map(reportLine)].join("\n"),
+    );
+    play("quest");
+    try {
+      localStorage.setItem("sq-seen-report", latest.at);
+    } catch {}
+  }, [reports]);
 
   const ready = logs !== null && game !== null;
   const stats = useMemo(() => computeStats(logs ?? {}, game ?? EMPTY_GAME), [logs, game]);
@@ -82,6 +114,7 @@ export default function GameProvider({
         game: game ?? EMPTY_GAME,
         mistakes,
         stats,
+        reports,
         ready,
         say,
         message,

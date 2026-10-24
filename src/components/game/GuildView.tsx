@@ -1,0 +1,98 @@
+"use client";
+
+import NoteLink from "@/components/game/NoteLink";
+
+/**
+ * ギルド（依頼所）：アプリの外で学ぶための入口。
+ * 外部サイトの成績は自動では取れないので、結果の画面を Claude に読ませて反映する（報告の流れは下の案内）。
+ */
+type Quest = {
+  title: string;
+  where: string;
+  url?: string;
+  note?: string;
+  what: string;
+  report: string;
+};
+
+const NOTEBOOK = "https://notebook.google.com/notebook/fa8c5812-3fc1-4ccc-90cf-772742ef47c3";
+
+const GROUPS: { label: string; color: string; quests: Quest[] }[] = [
+  {
+    label: "G検定",
+    color: "var(--ml)",
+    quests: [
+      { title: "NotebookLM のクイズ", where: "NotebookLM「G検定」", url: NOTEBOOK, what: "Studio →「クイズ」。vault のノート33件から出題される", report: "結果画面のスクショ" },
+      { title: "NotebookLM の単語帳", where: "NotebookLM「G検定」", url: NOTEBOOK, what: "Studio →「フラッシュカード」。覚えた枚数を数える", report: "終わった画面のスクショ" },
+      { title: "音声解説を聞く", where: "NotebookLM「G検定」", url: NOTEBOOK, what: "通勤中に1本。聞き終えたら、何の話だったかを一言で", report: "聞いたテーマと分数" },
+      { title: "公式の例題", where: "JDLA", url: "https://www.jdla.org/certificate/general/", what: "本番に近い難易度を確かめる", report: "正答数" },
+      { title: "MOC で次にやることを決める", where: "vault", note: "Learning/ML/G検定 MOC", what: "現在地と次の演習を確認する", report: "不要" },
+    ],
+  },
+  {
+    label: "統計",
+    color: "var(--stat)",
+    quests: [
+      { title: "カリキュラムを1回分進める", where: "vault", note: "Learning/Statistics/統計学×CAE カリキュラム", what: "S01〜S14 の「問い」に答え、答え合わせを開く", report: "回の番号と、自分の答えが合ったか" },
+      { title: "統計検定の公式情報", where: "統計検定", url: "https://www.toukei-kentei.jp/", what: "2級の出題範囲と試験日を確かめる", report: "不要" },
+    ],
+  },
+  {
+    label: "英語",
+    color: "var(--en)",
+    quests: [
+      { title: "6 Minute English を1本", where: "BBC Learning English", url: "https://www.bbc.co.uk/learningenglish", what: "聞く → スクリプトで確かめる → 1分シャドーイング", report: "回のタイトルと、内容クイズの正答数" },
+    ],
+  },
+  {
+    label: "投資",
+    color: "var(--inv)",
+    quests: [
+      { title: "投資基礎を1回分読む", where: "vault", note: "Learning/Investing/Investing Learning MOC", what: "各回の「Chromeで確認する」まで終える", report: "回の番号" },
+      { title: "NISA の最新情報", where: "金融庁", url: "https://www.fsa.go.jp/policy/nisa2/index.html", what: "制度の変更がないか確かめる", report: "不要" },
+    ],
+  },
+];
+
+export default function GuildView() {
+  return (
+    <div className="flex flex-col gap-3">
+      <section className="win flex flex-col gap-1.5 pt-4 text-sm" aria-label="報告のしかた">
+        <span className="win-label">依頼の報告のしかた</span>
+        <p>外のサイトの成績は、Claude に読ませてアプリに反映する。</p>
+        <ol className="list-decimal pl-5 text-xs leading-relaxed text-muted">
+          <li>依頼を終えたら、結果の画面をスクショする</li>
+          <li>Claude Code に貼って「Study Quest に報告して」と言う（Chrome で開いたままなら画面を直接読ませてもいい）</li>
+          <li>Claude が地方・正答数・誤答を読み取り、内容を確認してから送る → 経験値と台帳に反映</li>
+        </ol>
+      </section>
+
+      {GROUPS.map((g) => (
+        <section key={g.label} className="win flex flex-col pt-4" aria-label={g.label}>
+          <span className="win-label" style={{ color: g.color }}>
+            {g.label}
+          </span>
+          {g.quests.map((q, i) => (
+            <article key={q.title} className={`flex flex-col gap-0.5 py-2 ${i > 0 ? "border-t border-line" : ""}`}>
+              <p className="flex items-baseline justify-between gap-2">
+                <span className="font-dot">{q.title}</span>
+                <span className="text-[11px] text-faint">{q.where}</span>
+              </p>
+              <p className="text-xs text-muted">{q.what}</p>
+              <p className="flex items-center justify-between gap-2 text-[11px] text-faint">
+                <span>報告：{q.report}</span>
+                {q.url ? (
+                  <a href={q.url} target="_blank" rel="noopener noreferrer" className="text-ex underline">
+                    ひらく ↗
+                  </a>
+                ) : (
+                  <NoteLink path={q.note} label="ノートをひらく" />
+                )}
+              </p>
+            </article>
+          ))}
+        </section>
+      ))}
+    </div>
+  );
+}

@@ -4,14 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { play } from "@/lib/game/sfx";
 
-/** コマンド窓。選んでいる画面に ▶ が点滅する。 */
+/** コマンド窓。4列×2段に詰め、選んでいる画面に ▶ が点滅する。 */
 const COMMANDS = [
-  { href: "/", label: "仲間", sub: "今日の記録" },
-  { href: "/battle", label: "たたかう", sub: "誤答と戦闘" },
-  { href: "/map", label: "地図", sub: "ボスと魔王城" },
-  { href: "/skills", label: "スキル", sub: "ツリーと特技" },
-  { href: "/shop", label: "装備", sub: "武器屋・防具屋" },
-  { href: "/mistakes", label: "誤答台帳", sub: "モンスター図鑑" },
+  { href: "/", label: "仲間" },
+  { href: "/battle", label: "たたかう" },
+  { href: "/cards", label: "カード" },
+  { href: "/map", label: "地図" },
+  { href: "/guild", label: "ギルド" },
+  { href: "/skills", label: "スキル" },
+  { href: "/shop", label: "装備" },
+  { href: "/mistakes", label: "図鑑" },
 ];
 
 const SUB_LINKS = [
@@ -24,8 +26,8 @@ export default function Nav() {
   const pathname = usePathname();
 
   return (
-    <nav className="win flex flex-col gap-1" aria-label="コマンド">
-      <div className="grid grid-cols-2 gap-x-3 sm:grid-cols-3">
+    <nav className="win flex flex-col gap-0.5 py-1.5" aria-label="コマンド">
+      <div className="grid grid-cols-4 gap-x-1">
         {COMMANDS.map((c) => {
           const active = pathname === c.href;
           return (
@@ -34,16 +36,15 @@ export default function Nav() {
               href={c.href}
               aria-current={active ? "page" : undefined}
               onClick={() => play("select")}
-              className="relative py-1 pl-5 focus-visible:outline-2 focus-visible:outline-gold"
+              className="font-dot relative py-1 pl-3.5 text-sm focus-visible:outline-2 focus-visible:outline-gold"
             >
-              {active && <span className="cursor-blink absolute top-1 left-0">▶</span>}
-              <span className="block text-base leading-tight">{c.label}</span>
-              <span className="block text-[11px] leading-tight text-faint">{c.sub}</span>
+              {active && <span className="cursor-blink absolute top-1 left-0 text-xs">▶</span>}
+              {c.label}
             </Link>
           );
         })}
       </div>
-      <div className="flex justify-end gap-4 text-xs text-faint">
+      <div className="flex justify-end gap-4 text-[11px] text-faint">
         {SUB_LINKS.map((l) => (
           <Link
             key={l.href}

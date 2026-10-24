@@ -14,25 +14,9 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 
-/**
- * 「誤りの型」で分類することが、この台帳の本体。
- * 個別の概念を覚え直すより、型を自覚するほうが再発を防げる。
- */
-/**
- * 2026-09-19 改訂。旧版は作業時に考案した分類だったが、Obsidian の
- * ML基礎R05「誤り方の類型」(08-14の診断) で実証済みの型に差し替えた。
- * 思い出す経路は【鎖】【表】【索引】の3本あり、故障はその3つ＋問いの側の計4型。
- * 「用語止まり」はどの経路でも起きる共通症状なので独立させてある。
- */
-export const MISTAKE_TYPES = [
-  "つなぎ違い（鎖）",
-  "軸が立たない（表）",
-  "索引喪失（索引）",
-  "問いのずれ",
-  "用語止まり",
-] as const;
+import { MISTAKE_TYPES, type MistakeType } from "./mistakeTypes";
 
-export type MistakeType = (typeof MISTAKE_TYPES)[number];
+export { MISTAKE_TYPES, type MistakeType };
 
 export type Mistake = {
   id: string;
@@ -42,6 +26,8 @@ export type Mistake = {
   week: string;
   /** 世界地図のどの地方のモンスターか（world.ts の id）。古いものは空。 */
   area: string;
+  /** 内蔵クイズで間違えた問題のID。台帳の戦闘では同じ問題を出し直す */
+  qid: string;
   wrongCount: number;
   correctStreak: number;
   createdAt?: Timestamp;
@@ -79,6 +65,7 @@ export function subscribeMistakes(onChange: (items: Mistake[]) => void) {
           correct: data.correct ?? "",
           week: data.week ?? "",
           area: data.area ?? "",
+          qid: data.qid ?? "",
           wrongCount: data.wrongCount ?? 1,
           correctStreak: data.correctStreak ?? 0,
           createdAt: data.createdAt,
@@ -95,6 +82,7 @@ export async function addMistake(input: {
   correct: string;
   week: string;
   area: string;
+  qid?: string;
 }) {
   await addDoc(collection(db, "mistakes"), {
     ...input,

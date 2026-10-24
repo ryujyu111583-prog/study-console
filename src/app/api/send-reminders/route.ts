@@ -1,21 +1,10 @@
 import { NextResponse } from "next/server";
 import webpush from "web-push";
+import { jstDayKey } from "@/lib/date";
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import { hasAnyRecord, type DayRecord } from "@/lib/tracks";
 
 export const dynamic = "force-dynamic";
-
-/**
- * Vercel の cron は UTC で動く。JST の「今日」を得るために9時間ぶんずらしてから
- * 日付部分だけ読む。アプリ側が書く studyLog のキーと同じ形になる。
- */
-function jstNow(now = new Date()): Date {
-  return new Date(now.getTime() + 9 * 60 * 60 * 1000);
-}
-
-function jstDayKey(now = new Date()): string {
-  return jstNow(now).toISOString().slice(0, 10);
-}
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");

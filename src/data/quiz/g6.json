@@ -1,0 +1,132 @@
+[
+ {
+  "id": "g6-01",
+  "q": "ILSVRC 2012 で2位に大差をつけ、深層学習ブームの引き金になったのは？",
+  "choices": [
+   "AlexNet",
+   "ResNet",
+   "LeNet",
+   "VGG"
+  ],
+  "answer": 0,
+  "explain": "ReLU・ドロップアウト・GPU。",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "g6-02",
+  "q": "「YOLO は RPN を用いて候補領域を生成する」は正しいか？",
+  "choices": [
+   "SSDだけがRPNを使う",
+   "誤り。1段階検出器は候補領域を作らないのでRPNは存在しない",
+   "正しい",
+   "YOLOv3以降は使う"
+  ],
+  "answer": 1,
+  "explain": "RPNと聞いたら反射でFaster R-CNN。",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "g6-03",
+  "q": "候補領域の生成（RPN）をCNN内に取り込んだ2段階検出の完成形は？",
+  "choices": [
+   "YOLO",
+   "SSD",
+   "Faster R-CNN",
+   "R-CNN"
+  ],
+  "answer": 2,
+  "explain": "R-CNNはSelective Searchで遅い。Fast R-CNNはRoIプーリング。",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "g6-04",
+  "q": "車が3台写った画像で、3台を区別して塗り分け、背景も扱うセグメンテーションは？",
+  "choices": [
+   "Semantic",
+   "Selective",
+   "Instance",
+   "Panoptic"
+  ],
+  "answer": 3,
+  "explain": "Semantic＝個体を区別しない／Instance＝区別するが背景を扱わない／Panoptic＝両方。",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "g6-05",
+  "q": "U-Net の特徴は？",
+  "choices": [
+   "スキップ結合でエンコーダの特徴をデコーダへ直接渡す",
+   "候補領域を作らない",
+   "全結合層だけでできている",
+   "パッチを単語として扱う"
+  ],
+  "answer": 0,
+  "explain": "医用画像で定番。",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "g6-06",
+  "q": "Instance セグメンテーションの代表で、Faster R-CNN にマスクの枝を足したのは？",
+  "choices": [
+   "FCN",
+   "Mask R-CNN",
+   "SegNet",
+   "DeepLab"
+  ],
+  "answer": 1,
+  "explain": "FCNはSemanticの起点。",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "g6-07",
+  "q": "ViT について正しいものは？",
+  "choices": [
+   "少量データでもCNNより高精度",
+   "画素単位で自己注意を計算する",
+   "画像をパッチに切って単語として扱うが、大量データがないとCNNに勝ちにくい",
+   "畳み込み層が中心"
+  ],
+  "answer": 2,
+  "explain": "CNNの帰納バイアス（局所性・平行移動不変性）を持たないため。",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "g6-08",
+  "q": "人間の棋譜を使わず自己対戦だけで学習した囲碁AIは？",
+  "choices": [
+   "AlphaGo",
+   "OpenAI Five",
+   "AlphaStar",
+   "AlphaGo Zero"
+  ],
+  "answer": 3,
+  "explain": "Zero＝人間データがゼロ。三兄弟ともMCTSは使う。",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "g6-09",
+  "q": "画像とテキストを同じ空間に対応付け、zero-shot分類を可能にしたのは？",
+  "choices": [
+   "CLIP",
+   "WaveNet",
+   "DALL-E",
+   "VQA"
+  ],
+  "answer": 0,
+  "explain": "対照学習。",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "g6-10",
+  "q": "音声認識で、入力と出力の長さが違う系列を対応付けて学習を可能にしたのは？",
+  "choices": [
+   "WaveNet",
+   "CTC",
+   "MFCC",
+   "FFT"
+  ],
+  "answer": 1,
+  "explain": "MFCCは人間の聴覚特性に合わせた特徴量。",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ }
+]

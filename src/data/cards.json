@@ -1,0 +1,206 @@
+[
+ {
+  "id": "c01",
+  "front": "ドロップアウト vs プルーニング：落とす基準は？",
+  "back": "ドロップアウト＝サイコロ（ランダム・学習中・一時的・汎化）／プルーニング＝重要度（学習後・恒久削除・軽量化）",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c02",
+  "front": "AlphaGo / AlphaGo Zero / AlphaZero：人間の棋譜は？",
+  "back": "AlphaGo＝使う／AlphaGo Zero＝使わない／AlphaZero＝使わない（囲碁・将棋・チェス）。三者ともMCTSは使う",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c03",
+  "front": "word2vec vs ELMo：ベクトルは文脈で変わるか",
+  "back": "word2vec＝変わらない（静的）／ELMo＝変わる（動的・双方向LSTM）。\"bank\" で区別",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c04",
+  "front": "物体検出 1段階 vs 2段階：候補領域は？",
+  "back": "2段階（R-CNN系）＝作る（RPNはFaster R-CNN）／1段階（YOLO・SSD）＝作らない",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c05",
+  "front": "Semantic / Instance / Panoptic：個体の区別と背景",
+  "back": "Semantic＝区別しない・背景扱う／Instance＝区別する・背景扱わない／Panoptic＝区別する・背景扱う",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c06",
+  "front": "VAE vs 拡散モデル：生成の手数",
+  "back": "VAE＝1回で復元（ぼやける）／拡散＝何百ステップで剥がす（遅い）",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c07",
+  "front": "ResNet vs DenseNet：結合の仕方",
+  "back": "ResNet＝加算／DenseNet＝連結（concat）",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c08",
+  "front": "転移学習 / FT / マルチタスク：共有層は？",
+  "back": "転移＝凍結／FT＝溶かす（全体を再学習）／マルチタスク＝同時に学ぶ",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c09",
+  "front": "自己教師あり vs 教師なし：ラベルは？",
+  "back": "自己教師あり＝データ自身から擬似ラベル（穴埋め・次単語予測）／教師なし＝ラベルの概念がない",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c10",
+  "front": "適合率 vs 再現率：分母は？",
+  "back": "適合率＝予測が陽性（誤報を減らす）／再現率＝実際が陽性（見逃しを減らす）",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c11",
+  "front": "バギング vs ブースティング：下がるものは？",
+  "back": "バギング＝並列・バリアンスが下がる／ブースティング＝逐次・バイアスが下がる",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c12",
+  "front": "L1 vs L2 正則化：重みは0になるか",
+  "back": "L1＝なる（スパース・絶対値の和）／L2＝ならない（小さくするだけ・二乗和）",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c13",
+  "front": "LSTM vs GRU：状態とゲート",
+  "back": "LSTM＝セル状態C＋隠れ状態h、入力・忘却・出力の3ゲート／GRU＝hのみ、更新・リセットの2ゲート",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c14",
+  "front": "匿名加工情報 vs 仮名加工情報",
+  "back": "匿名＝復元できない・第三者提供可／仮名＝照合すれば戻せる・第三者提供不可",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c15",
+  "front": "専用実施権 vs 通常実施権",
+  "back": "専用＝特許権者自身も実施できない（マスターキー）／通常＝特許権者も実施できる（合鍵コピー）",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c16",
+  "front": "第1次AIの冬 vs 第2次AIの冬：原因",
+  "back": "第1次＝トイプロブレム／第2次＝知識獲得のボトルネック",
+  "note": "Learning/ML/ML基礎C1_直前チートシート"
+ },
+ {
+  "id": "c17",
+  "front": "フレーム問題 vs シンボルグラウンディング問題",
+  "back": "フレーム＝関係あることだけを切り出せない（1969 マッカーシー・ヘイズ）／SG＝記号が実世界に接地しない（1990 ハルナッド）",
+  "note": "Learning/ML/ML基礎C1_直前チートシート"
+ },
+ {
+  "id": "c18",
+  "front": "V(s) vs Q(s,a)：軸は？",
+  "back": "行動を指定するか。V＝状態だけ／Q＝状態＋その行動",
+  "note": "Learning/ML/ML基礎C1_直前チートシート"
+ },
+ {
+  "id": "c19",
+  "front": "PCA vs t-SNE",
+  "back": "PCA＝線形・分散最大化／t-SNE＝非線形・可視化専用（座標を特徴量に使うのは筋が悪い）",
+  "note": "Learning/ML/ML基礎C1_直前チートシート"
+ },
+ {
+  "id": "c20",
+  "front": "k-means vs 階層クラスタリング：k は？",
+  "back": "k-means＝事前に必要／階層＝不要（デンドログラムを切る高さで決まる）",
+  "note": "Learning/ML/ML基礎C1_直前チートシート"
+ },
+ {
+  "id": "c21",
+  "front": "協調フィルタリング vs コンテンツベース",
+  "back": "協調＝他ユーザーの行動から・コールドスタートに弱い／コンテンツ＝アイテムの特徴から・コールドスタートに強い",
+  "note": "Learning/ML/ML基礎C1_直前チートシート"
+ },
+ {
+  "id": "c22",
+  "front": "知識蒸留・プルーニング・量子化",
+  "back": "蒸留＝大きい教師の出力を小さい生徒へ／プルーニング＝重みを枝刈り／量子化＝低ビット表現（float32→int8）",
+  "note": "Learning/ML/ML基礎C1_直前チートシート"
+ },
+ {
+  "id": "c23",
+  "front": "シグモイド vs ReLU：微分の最大値",
+  "back": "シグモイド＝0.25（出力層で確率変換）／ReLU＝1（隠れ層のデフォルト）",
+  "note": "Learning/ML/ML基礎13_勾配消失とReLU"
+ },
+ {
+  "id": "c24",
+  "front": "Xavier初期化 vs He初期化",
+  "back": "Xavier＝シグモイド・tanh向け／He＝ReLU向け",
+  "note": "Learning/ML/ML基礎17_深層学習の学習テクニック"
+ },
+ {
+  "id": "c25",
+  "front": "Adam は何と何？",
+  "back": "モメンタム（慣性）＋ RMSProp（適応的学習率）",
+  "note": "Learning/ML/ML基礎17_深層学習の学習テクニック"
+ },
+ {
+  "id": "c26",
+  "front": "BERT vs GPT",
+  "back": "BERT＝エンコーダ・双方向・MLM＋NSP／GPT＝デコーダ・単方向・次単語予測",
+  "note": "Learning/ML/ML基礎C2_応用例チートシート"
+ },
+ {
+  "id": "c27",
+  "front": "EU AI法のリスク4段階と例",
+  "back": "禁止＝社会的スコアリング／高リスク＝採用・信用評価／限定的＝チャットボット（透明性義務）／最小＝スパムフィルタ",
+  "note": "Learning/ML/ML基礎20_AIの社会実装と法律_倫理"
+ },
+ {
+  "id": "c28",
+  "front": "請負 vs 準委任",
+  "back": "請負＝仕事の完成を約束（契約不適合責任）／準委任＝業務の遂行（善管注意義務）。結果を保証できないなら準委任",
+  "note": "Learning/ML/ML基礎24_法律の残り"
+ },
+ {
+  "id": "c29",
+  "front": "PoC疲れとは",
+  "back": "PoCを繰り返すばかりで本番運用に至らない状態。PoCの目的は本番移行の可否判断",
+  "note": "Learning/ML/ML基礎21_AIプロジェクトの社会実装"
+ },
+ {
+  "id": "c30",
+  "front": "概念ドリフトの主語",
+  "back": "データ（世界）の側が変わる。モデルは変わっていない → 監視して再学習（MLOps）",
+  "note": "Learning/ML/ML基礎21_AIプロジェクトの社会実装"
+ },
+ {
+  "id": "c31",
+  "front": "第1種の誤り vs 第2種の誤り",
+  "back": "第1種＝差がないのに差ありとする（過剰反応）／第2種＝差があるのに見逃す",
+  "note": "Learning/Statistics/統計学×CAE カリキュラム"
+ },
+ {
+  "id": "c32",
+  "front": "実質金利の求め方",
+  "back": "実質金利 ≒ 名目金利 − インフレ率",
+  "note": "Learning/Investing/投資基礎01_なぜ投資するのか_インフレと複利"
+ },
+ {
+  "id": "c33",
+  "front": "72の法則",
+  "back": "72 ÷ 年率(%) ≒ 倍（または半分）になるまでの年数",
+  "note": "Learning/Investing/投資基礎01_なぜ投資するのか_インフレと複利"
+ },
+ {
+  "id": "c34",
+  "front": "NISA vs iDeCo：税が効く段階",
+  "back": "NISA＝出口（利益が非課税・いつでも出せる）／iDeCo＝入口（所得控除）・途中（非課税）・出口（控除あり）、60歳まで出せない",
+  "note": "Learning/Investing/投資基礎06_NISAとiDeCo_器と中身"
+ }
+]

@@ -14,6 +14,8 @@ import type { LogMap } from "../log";
 import { TRACKS, trackState, type Track } from "../tracks";
 import { itemById, type Item, type Slot } from "./items";
 import { HERO_STEP, MEMBER_STEP, REWARD, levelFor } from "./levels";
+import { BOX_DAYS, type CardState } from "./quiz";
+import { bossOutcome, type ReportItem } from "./rewards";
 import { skillById } from "./skills";
 
 export type GameDoc = {
@@ -30,6 +32,9 @@ export type GameDoc = {
   daily: { chest?: string; bonus?: string };
   /** 冒険の書で選んだ称号（空なら Lv の称号） */
   title: string;
+  /** 日付ごとに答えたクイズの数・見たカードの数（デイリークエストと上限の判定用） */
+  quizLog: Record<string, number>;
+  cardLog: Record<string, number>;
 };
 
 const zero = (): Record<Track, number> => ({ stat: 0, inv: 0, ml: 0, en: 0 });
@@ -45,6 +50,8 @@ export const EMPTY_GAME: GameDoc = {
   skillUsed: {},
   daily: {},
   title: "",
+  quizLog: {},
+  cardLog: {},
 };
 
 const gameRef = () => doc(db, "settings", "game");
@@ -63,6 +70,8 @@ export function subscribeGame(onChange: (g: GameDoc) => void) {
       skillUsed: d.skillUsed ?? {},
       daily: d.daily ?? {},
       title: d.title ?? "",
+      quizLog: d.quizLog ?? {},
+      cardLog: d.cardLog ?? {},
     });
   });
 }
@@ -142,6 +151,50 @@ export async function addBonus(track: Track, xp: number, gold = 0) {
   );
 }
 
+/** クイズに1問答えた。正解なら経験値とゴールド。 */
+export async function answerQuiz(track: Track, correct: boolean, multiplier = 1) {
+  await setDoc(
+    gameRef(),
+    {
+      quizLog: { [dayKey()]: increment(1) },
+      ...(correct
+        ? {
+            bonusXp: { [track]: increment(REWARD.quizXp * multiplier) },
+            bonusGold: increment(REWARD.quizGold * multiplier),
+          }
+        : {}),
+    },
+    { merge: true },
+  );
+}
+
+// ---- 暗記カード（settings/srs に {cardId: {box, due}}） ----
+
+const srsRef = () => doc(db, "settings", "srs");
+
+export function subscribeSrs(onChange: (s: Record<string, CardState>) => void) {
+  return onSnapshot(srsRef(), (snap) => onChange((snap.data() ?? {}) as Record<string, CardState>));
+}
+
+/** カードを1枚見た。覚えていたら箱を上げ、忘れていたら箱1へ。経験値は1日の上限まで。 */
+export async function reviewCard(game: GameDoc, cardId: string, track: Track, prev: CardState | undefined, remembered: boolean) {
+  const box = remembered ? Math.min(5, (prev?.box ?? 0) + 1) : 1;
+  const due = new Date();
+  due.setDate(due.getDate() + BOX_DAYS[box]);
+  await setDoc(srsRef(), { [cardId]: { box, due: dayKey(due) } }, { merge: true });
+  const today = dayKey();
+  const underCap = (game.cardLog[today] ?? 0) < REWARD.cardDailyCap;
+  await setDoc(
+    gameRef(),
+    {
+      cardLog: { [today]: increment(1) },
+      ...(underCap ? { bonusXp: { [track]: increment(REWARD.cardXp) } } : {}),
+    },
+    { merge: true },
+  );
+  return box;
+}
+
 export async function openChest(gold: number) {
   await setDoc(gameRef(), { bonusGold: increment(gold), daily: { chest: dayKey() } }, { merge: true });
 }
@@ -191,22 +244,24 @@ export async function recordBoss(
   area: { id: string; track: Track; pass: number; xp: number; gold: number },
   score: number,
 ) {
-  const prev = game.bosses[area.id];
-  const firstClear = score >= area.pass && !prev?.clearedAt;
+  const out = bossOutcome(game.bosses[area.id], area, score, dayKey());
   await setDoc(
     gameRef(),
     {
-      bosses: {
-        [area.id]: {
-          best: Math.max(prev?.best ?? 0, score),
-          ...(firstClear ? { clearedAt: dayKey() } : {}),
-        },
-      },
-      ...(firstClear
-        ? { bonusXp: { [area.track]: increment(area.xp) }, bonusGold: increment(area.gold) }
+      bosses: { [area.id]: out.record },
+      ...(out.firstClear
+        ? { bonusXp: { [area.track]: increment(out.xp) }, bonusGold: increment(out.gold) }
         : {}),
     },
     { merge: true },
   );
-  return { firstClear, cleared: score >= area.pass };
+  return out;
+}
+
+// ---- Claude からの報告（/api/report が settings/reports に書く） ----
+
+export function subscribeReports(onChange: (items: ReportItem[]) => void) {
+  return onSnapshot(doc(db, "settings", "reports"), (snap) =>
+    onChange(((snap.data()?.items ?? []) as ReportItem[]).slice().reverse()),
+  );
 }

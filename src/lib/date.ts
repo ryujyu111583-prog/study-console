@@ -12,6 +12,14 @@ export function recentDayKeys(count: number, from: Date = new Date()): string[] 
   return keys;
 }
 
+/**
+ * サーバー（UTC で動く）から見た JST の「今日」。アプリ側の dayKey と同じ形になる。
+ * 9時間ぶんずらしてから日付部分だけ読む。
+ */
+export function jstDayKey(now = new Date()): string {
+  return new Date(now.getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
 export function shortDate(key: string): string {
   return key.slice(5).replace("-", "/");
 }

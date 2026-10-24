@@ -31,7 +31,7 @@ export default function StatusWindow() {
 
   if (pathname !== "/") {
     return (
-      <Link href="/" className="win flex flex-col gap-1 py-1.5 text-sm" aria-label="ステータス（ホームへ）">
+      <Link href="/" className="win font-dot flex flex-col gap-1 py-1.5 text-sm" aria-label="ステータス（ホームへ）">
         <span className="flex items-baseline justify-between gap-2">
           <span>
             勇者 <span className="text-gold">Lv{stats.heroLevel}</span>
@@ -49,14 +49,14 @@ export default function StatusWindow() {
 
   return (
     <div className="flex flex-col gap-3">
-      <Link href="/map" className="win flex items-baseline justify-between gap-2 py-2">
+      <Link href="/map" className="win font-dot flex items-baseline justify-between gap-2 py-1.5">
         <span className="text-sm">魔王城（G検定 2027/1/16）まで</span>
         <span>
           あと <b className="text-xl font-normal text-gold tabular-nums">{daysUntilExam()}</b> 日
         </span>
       </Link>
 
-      <section className="win grid grid-cols-[1fr_auto] gap-x-3" aria-label="ステータス">
+      <section className="win font-dot grid grid-cols-[1fr_auto] gap-x-3" aria-label="ステータス">
         <div className="flex min-w-0 flex-col gap-1">
           <p className="flex items-baseline justify-between">
             <span className="text-lg">勇者</span>

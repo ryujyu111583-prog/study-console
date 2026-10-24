@@ -9,7 +9,6 @@ import { play } from "@/lib/game/sfx";
 import { nextState, setTrackState, stateLabel } from "@/lib/log";
 import { TRACK_COLOR, TRACK_LABEL, TRACKS, trackState, type Track } from "@/lib/tracks";
 
-const STATE_TEXT = { "": "● 未", full: "● フル", min: "● 最低ライン" } as const;
 const MEMBER_COLOR: Record<Track, string> = {
   stat: "var(--stat)",
   inv: "var(--inv)",
@@ -37,7 +36,7 @@ export default function TodayView() {
     <div className="flex flex-col gap-4">
       <DailyPanel />
 
-      <section className="grid grid-cols-2 gap-3" aria-label="仲間（今日の記録）">
+      <section className="grid grid-cols-4 gap-2" aria-label="仲間（今日の記録）">
         {TRACKS.map((track) => {
           const state = trackState(logs[today], track);
           const lv = levelProgress(stats.xp[track], MEMBER_STEP);
@@ -46,34 +45,31 @@ export default function TodayView() {
               key={track}
               type="button"
               onClick={() => cycle(track)}
-              className="win flex flex-col gap-0.5 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+              aria-label={`${TRACK_LABEL[track]}（${MEMBER_JOB[track]}）Lv${lv.level}、今日は${stateLabel(state)}`}
+              className={`win flex flex-col items-center gap-0.5 px-1 py-1.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold ${
+                state === "full" ? "border-ok" : state === "min" ? "border-gold" : ""
+              }`}
             >
-              <span className="flex items-baseline justify-between">
-                <span className="text-lg" style={{ color: MEMBER_COLOR[track] }}>
-                  {TRACK_LABEL[track]}
-                </span>
-                <span className="text-sm text-gold">Lv {lv.level}</span>
+              <span className="font-dot text-base leading-tight" style={{ color: MEMBER_COLOR[track] }}>
+                {TRACK_LABEL[track]}
               </span>
-              <span className="text-xs text-faint">
-                {MEMBER_JOB[track]}
-                {stats.sp[track] > 0 && <span className="ml-1 text-gold">SP {stats.sp[track]}</span>}
+              <span className="font-dot text-[11px] text-gold">
+                Lv{lv.level}
+                {stats.sp[track] > 0 && <span className="ml-0.5 text-ok">+</span>}
               </span>
               <span
-                className={`mt-1 text-sm ${state === "full" ? "text-ok" : state === "min" ? "text-gold" : "text-faint"}`}
+                className={`text-[11px] ${state === "full" ? "text-ok" : state === "min" ? "text-gold" : "text-faint"}`}
               >
-                {STATE_TEXT[state]}
+                {state === "full" ? "フル" : state === "min" ? "最低" : "未"}
               </span>
-              <span className="mt-1 block h-1.5 border border-faint bg-surface2">
-                <span
-                  className="block h-full"
-                  style={{ width: `${lv.ratio * 100}%`, background: MEMBER_COLOR[track] }}
-                />
+              <span className="block h-1 w-full bg-surface2">
+                <span className="block h-full" style={{ width: `${lv.ratio * 100}%`, background: MEMBER_COLOR[track] }} />
               </span>
             </button>
           );
         })}
       </section>
-      <p className="-mt-2 text-center text-xs text-faint">仲間をタップ：未 → フル → 最低ライン</p>
+      <p className="-mt-2 text-center text-[11px] text-faint">仲間をタップ：未 → フル → 最低ライン（「+」はSPあり）</p>
 
       <div id="timer" className="scroll-mt-4">
         <Timer />
@@ -112,26 +108,6 @@ export default function TodayView() {
         </p>
       </section>
 
-      <section className="win pt-4 text-sm" aria-label="経験値の決まり">
-        <span className="win-label">経験値とゴールドの決まり</span>
-        <dl className="grid grid-cols-[1fr_auto_auto] gap-x-4 gap-y-0.5">
-          {[
-            ["記録 フル", `+${REWARD.fullXp}`, `+${REWARD.fullGold}G`],
-            ["記録 最低ライン", `+${REWARD.minXp}`, `+${REWARD.minGold}G`],
-            ["修行（タイマー）1分", `+${REWARD.minuteXp}`, `+${REWARD.minuteGold}G`],
-            ["モンスターに「言えた」", `+${REWARD.hitXp}`, ""],
-            ["モンスター撃破（3連続正答）", `+${REWARD.defeatXp}`, `+${REWARD.defeatGold}G`],
-            ["特技を唱えて言えた（1日1回）", `+${REWARD.skillXp}`, ""],
-          ].map(([what, xp, gold]) => (
-            <div key={what} className="contents">
-              <dt>{what}</dt>
-              <dd className="text-right text-gold tabular-nums">{xp}</dd>
-              <dd className="text-right text-gold tabular-nums">{gold}</dd>
-            </div>
-          ))}
-        </dl>
-        <p className="mt-2 text-xs text-faint">記録は過去の分もさかのぼって経験値になる。ボスは地図から。</p>
-      </section>
     </div>
   );
 }

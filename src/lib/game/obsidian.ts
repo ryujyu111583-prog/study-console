@@ -1,12 +1,15 @@
 /**
  * Obsidian vault のノートを開くリンク。スマホなら Obsidian アプリが開く。
- * vault 名はスマホ側の vault 名と同じである必要がある（違うときは NEXT_PUBLIC_OBSIDIAN_VAULT で変える）。
+ * Obsidian は Dropbox の vault-share フォルダ全体を1つの vault として開いていて、
+ * ノートはその中の ryuju/ の下にある（2026-10-24 に PC の obsidian.json で確認）。
+ * 端末によって違うときは NEXT_PUBLIC_OBSIDIAN_VAULT／NEXT_PUBLIC_OBSIDIAN_PREFIX で変える。
  */
-export const VAULT = process.env.NEXT_PUBLIC_OBSIDIAN_VAULT ?? "ryuju";
+export const VAULT = process.env.NEXT_PUBLIC_OBSIDIAN_VAULT ?? "vault-share";
+const PREFIX = process.env.NEXT_PUBLIC_OBSIDIAN_PREFIX ?? "ryuju/";
 
-/** path は vault からの相対パス（.md なし） */
+/** path は ryuju/ からの相対パス（.md なし） */
 export const noteUrl = (path: string) =>
-  `obsidian://open?vault=${encodeURIComponent(VAULT)}&file=${encodeURIComponent(path)}`;
+  `obsidian://open?vault=${encodeURIComponent(VAULT)}&file=${encodeURIComponent(PREFIX + path)}`;
 
 const ML = "Learning/ML/";
 const ST = "Learning/Statistics/";
@@ -52,8 +55,8 @@ export const NOTES: Record<string, string> = {
   g8: `${ML}ML基礎20_AIの社会実装と法律_倫理`,
   g9: `${ML}ML基礎C1_直前チートシート`,
   maou: `${ML}G検定 MOC`,
-  s1: `${ST}統計学 MOC`,
-  s2: `${ST}統計学 MOC`,
+  s1: `${ST}統計学×CAE カリキュラム`,
+  s2: `${ST}統計学×CAE カリキュラム`,
   i1: `${IV}投資基礎01_なぜ投資するのか_インフレと複利`,
   i2: `${IV}投資基礎02_リスクとリターン_リスクは振れ幅`,
 

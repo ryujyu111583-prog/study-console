@@ -11,10 +11,10 @@ import { streakFrom } from "@/lib/log";
 
 /** ホームの一番上：今日やること（デイリークエスト）と宝箱。 */
 export default function DailyPanel() {
-  const { logs, mistakes, game, say } = useGame();
+  const { logs, game, say } = useGame();
   const [busy, setBusy] = useState(false);
   const today = dayKey();
-  const quests = dailyQuests(logs, mistakes, today);
+  const quests = dailyQuests(logs, game, today);
   const doneCount = quests.filter((q) => q.done).length;
   const allDone = doneCount === quests.length;
   const claimed = game.daily.bonus === today;

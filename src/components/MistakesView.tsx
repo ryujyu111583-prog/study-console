@@ -39,6 +39,7 @@ export default function MistakesView() {
         correct: correct.trim(),
         week: "",
         area,
+        qid: "",
       });
       say([`${monsterFor(type).name}を 図鑑に登録した。`, "明日から戦闘に現れる。"]);
       setConcept("");

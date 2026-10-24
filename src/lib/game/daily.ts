@@ -1,7 +1,6 @@
 /**
  * デイリークエストと宝箱、実績。どれも記録から判定する純粋な関数。
  */
-import type { Timestamp } from "firebase/firestore";
 import { dayKey } from "../date";
 import { streakFrom, type LogMap } from "../log";
 import { RESOLVE_STREAK, type Mistake } from "../mistakes";
@@ -10,29 +9,20 @@ import { AREAS } from "./world";
 import { SKILLS } from "./skills";
 import type { GameDoc, Stats } from "./state";
 
-const dayOf = (t: Timestamp | undefined) => (t ? dayKey(t.toDate()) : "");
-
 export const DAILY_BONUS_GOLD = 100;
 
 export type Quest = { id: string; label: string; hint: string; href: string; done: boolean };
 
-export function dailyQuests(logs: LogMap, mistakes: Mistake[], today = dayKey()): Quest[] {
-  const entry = logs[today];
-  const minutes = entry
-    ? (entry.statMinutes ?? 0) + (entry.invMinutes ?? 0) + (entry.mlMinutes ?? 0) + (entry.enMinutes ?? 0)
-    : 0;
-  // 作成と同時に lastCheckedAt も入るので、両者が違えば「その後に戦った」
-  const fought = mistakes.some(
-    (m) =>
-      dayOf(m.lastCheckedAt) === today &&
-      m.lastCheckedAt?.toMillis() !== m.createdAt?.toMillis(),
-  );
-  const added = mistakes.some((m) => dayOf(m.createdAt) === today);
+export const QUIZ_GOAL = 5;
+export const CARD_GOAL = 10;
 
+export function dailyQuests(logs: LogMap, game: GameDoc, today = dayKey()): Quest[] {
+  const quiz = game.quizLog[today] ?? 0;
+  const cards = game.cardLog[today] ?? 0;
   return [
-    { id: "record", label: "仲間の記録をつける", hint: "4項目のどれか1つ", href: "/", done: hasAnyRecord(entry) },
-    { id: "battle", label: "モンスターと戦う", hint: "1回戦うか、誤答を1つ登録", href: "/battle", done: fought || added },
-    { id: "train", label: "修行する", hint: "タイマーを1回最後まで", href: "/#timer", done: minutes > 0 },
+    { id: "record", label: "仲間の記録をつける", hint: "4項目のどれか1つ", href: "/", done: hasAnyRecord(logs[today]) },
+    { id: "quiz", label: `クイズに${QUIZ_GOAL}問答える`, hint: `たたかう・ボス戦 ${Math.min(quiz, QUIZ_GOAL)}/${QUIZ_GOAL}`, href: "/battle", done: quiz >= QUIZ_GOAL },
+    { id: "cards", label: `カードを${CARD_GOAL}枚めくる`, hint: `暗記カード ${Math.min(cards, CARD_GOAL)}/${CARD_GOAL}`, href: "/cards", done: cards >= CARD_GOAL },
   ];
 }
 
