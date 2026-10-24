@@ -3,12 +3,12 @@ import PwaRegister from "@/components/PwaRegister";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "学習コンソール",
-  description: "G検定と英語の毎日を記録する個人用アプリ",
+  title: "Study Quest",
+  description: "G検定・統計・英語・投資の毎日を冒険にする個人用アプリ",
   appleWebApp: {
     capable: true,
-    title: "学習",
-    statusBarStyle: "default",
+    title: "Quest",
+    statusBarStyle: "black",
   },
   icons: {
     apple: "/icons/icon-192.png",
@@ -16,10 +16,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#eef1f4" },
-    { media: "(prefers-color-scheme: dark)", color: "#0c1217" },
-  ],
+  themeColor: "#05060f",
   viewportFit: "cover",
 };
 
@@ -29,7 +26,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className="h-full antialiased">
+    <html lang="ja" className="h-full">
+      <head>
+        {/* next/font はビルド時に Google Fonts へ通信するので使わない（構築記録の判断どおり）。実行時に読む */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap"
+        />
+      </head>
       <body className="min-h-full">
         <PwaRegister />
         {children}

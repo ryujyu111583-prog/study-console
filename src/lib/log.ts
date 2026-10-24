@@ -51,6 +51,18 @@ export function subscribeLog(days: number, onChange: (logs: LogMap) => void) {
   });
 }
 
+/** 全期間のログを購読する（経験値とゴールドの計算用）。1日1ドキュメントなので数百件で収まる。 */
+export function subscribeAllLogs(onChange: (logs: LogMap) => void) {
+  const q = query(collection(db, "studyLog"), orderBy("date", "desc"));
+  return onSnapshot(q, (snap) => {
+    const map: LogMap = {};
+    snap.forEach((d) => {
+      map[d.id] = { date: d.id, ...(d.data() as Omit<DayLog, "date">) };
+    });
+    onChange(map);
+  });
+}
+
 export async function setTrackState(key: string, track: Track, state: TrackState) {
   await setDoc(doc(db, "studyLog", key), { date: key, [track]: state }, { merge: true });
 }

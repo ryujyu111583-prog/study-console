@@ -1,6 +1,9 @@
 "use client";
 
 import Nav from "@/components/Nav";
+import GameProvider from "@/components/game/GameProvider";
+import MessageWindow from "@/components/game/MessageWindow";
+import StatusWindow from "@/components/game/StatusWindow";
 import { useAuth } from "@/lib/useAuth";
 
 /**
@@ -9,9 +12,12 @@ import { useAuth } from "@/lib/useAuth";
  */
 export default function AuthGate({
   title,
+  greeting = "勇者よ、よくぞ戻った！ 今日の修行を始めよう。",
   children,
 }: {
   title: string;
+  /** 開いたときにメッセージ窓に出す一言 */
+  greeting?: string;
   children: React.ReactNode;
 }) {
   const { status, login, loginError, stalled } = useAuth();
@@ -29,6 +35,7 @@ export default function AuthGate({
   if (status !== "signed-in") {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center justify-center gap-4 px-4">
+        <p className="text-2xl tracking-widest text-gold">Study Quest</p>
         <p className="text-sm text-muted">
           {status === "not-allowed"
             ? "このアカウントでは開けません"
@@ -43,7 +50,7 @@ export default function AuthGate({
         )}
         <button
           onClick={login}
-          className="rounded-xl bg-ink px-5 py-2.5 text-sm font-medium text-bg"
+          className="win px-6 py-2 text-base"
         >
           Googleでログイン
         </button>
@@ -55,15 +62,14 @@ export default function AuthGate({
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col gap-5 px-4 pt-5 pb-16">
-      <header className="flex flex-col gap-0.5">
-        <p className="font-mono text-[11px] font-semibold tracking-widest text-faint uppercase">
-          Study Console
-        </p>
-        <h1 className="text-lg font-bold">{title}</h1>
-      </header>
-      <Nav />
-      {children}
-    </main>
+    <GameProvider greeting={greeting}>
+      <main className="mx-auto flex w-full max-w-md flex-col gap-4 px-4 pt-4 pb-40">
+        <StatusWindow />
+        <Nav />
+        <h1 className="sr-only">{title}</h1>
+        {children}
+      </main>
+      <MessageWindow />
+    </GameProvider>
   );
 }

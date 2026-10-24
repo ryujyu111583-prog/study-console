@@ -1,47 +1,32 @@
 @import "tailwindcss";
 
+/*
+ * ドット絵RPGの画面に寄せた暗色1本の配色（2026-10-24〜）。
+ * 以前のライト／ダークの2テーマはやめ、黒地に白枠のウィンドウで統一する。
+ * トークン名は以前のまま残しているので、bg-surface などの既存クラスはそのまま使える。
+ */
 :root {
-  --bg: #eef1f4;
-  --surface: #ffffff;
-  --surface-2: #f5f8fa;
-  --ink: #101a21;
-  --muted: #556675;
-  --faint: #8496a3;
-  --line: #d7e0e7;
-  --line-strong: #bcc9d3;
-  --stat: #6a4bb0;
-  --stat-soft: #e8e2f5;
-  --inv: #a8326e;
-  --inv-soft: #f5dfea;
-  --ml: #b8541c;
-  --ml-soft: #f6e4d8;
-  --en: #1b5fae;
-  --en-soft: #dce7f6;
-  --ok: #2c7357;
-  --danger: #a83232;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0c1217;
-    --surface: #141c23;
-    --surface-2: #1a242c;
-    --ink: #e4ebf0;
-    --muted: #94a4b1;
-    --faint: #6d7d8a;
-    --line: #24303a;
-    --line-strong: #33434f;
-    --stat: #a98ef0;
-    --stat-soft: #211a33;
-    --inv: #e57aad;
-    --inv-soft: #2e1623;
-    --ml: #ee8a48;
-    --ml-soft: #2e2015;
-    --en: #6ba6ee;
-    --en-soft: #14202e;
-    --ok: #5dbe92;
-    --danger: #e87676;
-  }
+  --bg: #05060f;
+  --surface: #0a0c1e;
+  --surface-2: #14173a;
+  --ink: #f4f4f4;
+  --muted: #c3c7e0;
+  --faint: #8a90b4;
+  --line: #3a3f66;
+  --line-strong: #f4f4f4;
+  --stat: #b598ff;
+  --stat-soft: #2a2050;
+  --inv: #ff8fc4;
+  --inv-soft: #4a1d36;
+  --ml: #ffa25c;
+  --ml-soft: #4a2a14;
+  --en: #7cc4ff;
+  --en-soft: #14304e;
+  --ok: #5be37a;
+  --danger: #ff6b5b;
+  --gold: #ffd84a;
+  --ex: #5fb8ff;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -63,9 +48,11 @@
   --color-ensoft: var(--en-soft);
   --color-ok: var(--ok);
   --color-danger: var(--danger);
+  --color-gold: var(--gold);
+  --color-ex: var(--ex);
 
-  --font-sans: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-sans: "DotGothic16", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
+  --font-mono: "DotGothic16", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 }
 
 html {
@@ -83,11 +70,110 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* ウィンドウ：白い太枠の角丸。外側に細い紺の線を足して二重枠に見せる */
+.win {
+  position: relative;
+  min-width: 0;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--line);
+  padding: 10px 12px;
+}
+.win-label {
+  position: absolute;
+  top: -12px;
+  left: 12px;
+  background: var(--surface);
+  padding: 0 6px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 選択中を示す ▶ の点滅 */
+.cursor-blink {
+  animation: cursor-blink 1s steps(1) infinite;
+}
+@keyframes cursor-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.hit-flash {
+  animation: hit-flash 0.08s steps(1) 6;
+}
+@keyframes hit-flash {
+  50% {
+    opacity: 0;
+  }
+}
+
+.defeat {
+  animation: defeat 0.6s steps(6) forwards;
+}
+@keyframes defeat {
+  to {
+    opacity: 0;
+    transform: scaleY(0.1);
+  }
+}
+
+.damage-pop {
+  animation: damage-pop 0.9s steps(9) forwards;
+}
+@keyframes damage-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+}
+
+.bounce {
+  animation: bounce 1.6s steps(4) infinite;
+}
+@keyframes bounce {
+  50% {
+    transform: translateY(-3px) scaleX(1.06) scaleY(0.94);
+  }
+}
+
+.level-up {
+  animation: level-up 1.8s steps(12) forwards;
+}
+@keyframes level-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  20%,
+  75% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.pixelated {
+  image-rendering: pixelated;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

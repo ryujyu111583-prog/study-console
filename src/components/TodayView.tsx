@@ -1,146 +1,137 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
 import Timer from "@/components/Timer";
+import DailyPanel from "@/components/game/DailyPanel";
+import { useGame } from "@/components/game/GameProvider";
 import { dayKey, recentDayKeys, shortDate } from "@/lib/date";
-import {
-  nextState,
-  setTrackState,
-  stateLabel,
-  streakFrom,
-  subscribeLog,
-  type LogMap,
-} from "@/lib/log";
-import { bucketOf, pickDrill, subscribeMistakes, type Mistake } from "@/lib/mistakes";
-import {
-  TRACK_CODE,
-  TRACK_COLOR,
-  TRACK_LABEL,
-  TRACKS,
-  trackState,
-  type Track,
-} from "@/lib/tracks";
+import { MEMBER_JOB, MEMBER_STEP, REWARD, levelProgress } from "@/lib/game/levels";
+import { play } from "@/lib/game/sfx";
+import { nextState, setTrackState, stateLabel } from "@/lib/log";
+import { TRACK_COLOR, TRACK_LABEL, TRACKS, trackState, type Track } from "@/lib/tracks";
+
+const STATE_TEXT = { "": "● 未", full: "● フル", min: "● 最低ライン" } as const;
+const MEMBER_COLOR: Record<Track, string> = {
+  stat: "var(--stat)",
+  inv: "var(--inv)",
+  ml: "var(--ml)",
+  en: "var(--en)",
+};
 
 export default function TodayView() {
-  const [logs, setLogs] = useState<LogMap>({});
-  const [mistakes, setMistakes] = useState<Mistake[]>([]);
+  const { logs, stats, say } = useGame();
   const today = dayKey();
-
-  useEffect(() => subscribeLog(60, setLogs), []);
-  useEffect(() => subscribeMistakes(setMistakes), []);
-
-  const streak = streakFrom(logs);
-  const drill = pickDrill(mistakes);
   const days = recentDayKeys(14);
 
   const cycle = (track: Track) => {
-    void setTrackState(today, track, nextState(trackState(logs[today], track)));
+    const current = trackState(logs[today], track);
+    const next = nextState(current);
+    void setTrackState(today, track, next);
+    play(next === "" ? "select" : "coin");
+    const who = `${TRACK_LABEL[track]}の${MEMBER_JOB[track]}`;
+    if (next === "full") say([`${who}は しっかり修行した！`, `${REWARD.fullXp} の経験値と ${REWARD.fullGold}G を獲得！`]);
+    else if (next === "min") say([`${who}は 最低ラインを守った。`, `経験値は ${REWARD.minXp} に（連続日数は守られる）`]);
+    else say(`${who}の記録を取り消した。`);
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* 今日の記録 */}
-      <section className="flex flex-col gap-2">
-        <div className="grid grid-cols-2 gap-2">
-          {TRACKS.map((track) => {
-            const state = trackState(logs[today], track);
-            return (
-              <button
-                key={track}
-                onClick={() => cycle(track)}
-                className={`flex flex-col gap-2 rounded-xl border p-3 text-left ${
-                  state === "full" ? "border-linestrong bg-surface2" : "border-line bg-surface"
-                }`}
+    <div className="flex flex-col gap-4">
+      <DailyPanel />
+
+      <section className="grid grid-cols-2 gap-3" aria-label="仲間（今日の記録）">
+        {TRACKS.map((track) => {
+          const state = trackState(logs[today], track);
+          const lv = levelProgress(stats.xp[track], MEMBER_STEP);
+          return (
+            <button
+              key={track}
+              type="button"
+              onClick={() => cycle(track)}
+              className="win flex flex-col gap-0.5 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+            >
+              <span className="flex items-baseline justify-between">
+                <span className="text-lg" style={{ color: MEMBER_COLOR[track] }}>
+                  {TRACK_LABEL[track]}
+                </span>
+                <span className="text-sm text-gold">Lv {lv.level}</span>
+              </span>
+              <span className="text-xs text-faint">
+                {MEMBER_JOB[track]}
+                {stats.sp[track] > 0 && <span className="ml-1 text-gold">SP {stats.sp[track]}</span>}
+              </span>
+              <span
+                className={`mt-1 text-sm ${state === "full" ? "text-ok" : state === "min" ? "text-gold" : "text-faint"}`}
               >
+                {STATE_TEXT[state]}
+              </span>
+              <span className="mt-1 block h-1.5 border border-faint bg-surface2">
                 <span
-                  className={`self-start rounded px-1.5 py-0.5 font-mono text-[11px] font-semibold tracking-wider ${TRACK_COLOR[track].badge}`}
-                >
-                  {TRACK_CODE[track]}
-                </span>
-                <span className="text-sm font-medium">{TRACK_LABEL[track]}</span>
-                <span
-                  className={`font-mono text-xs ${state ? "text-ok" : "text-faint"}`}
-                >
-                  ● {stateLabel(state)}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                  className="block h-full"
+                  style={{ width: `${lv.ratio * 100}%`, background: MEMBER_COLOR[track] }}
+                />
+              </span>
+            </button>
+          );
+        })}
+      </section>
+      <p className="-mt-2 text-center text-xs text-faint">仲間をタップ：未 → フル → 最低ライン</p>
 
-        <div className="rounded-xl border border-line bg-surface">
-          <p className="border-b border-line px-4 py-2.5 text-xs text-muted">
-            連続 <b className="font-mono text-lg tabular-nums text-ink">{streak}</b> 日
-            <span className="ml-2 text-faint">タップで 未 → フル → 最低ライン</span>
-          </p>
-          <div className="flex flex-col gap-1.5 p-3">
-            {TRACKS.map((track) => (
-              <div key={track} className="grid grid-cols-[32px_1fr] items-center gap-2">
-                <span className="font-mono text-[10px] font-semibold tracking-wider text-faint">
-                  {TRACK_CODE[track]}
-                </span>
-                <div className="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-[3px]">
-                  {days.map((key) => {
-                    const value = trackState(logs[key], track);
-                    const filled =
-                      value === "full"
-                        ? TRACK_COLOR[track].full
-                        : value === "min"
-                          ? TRACK_COLOR[track].min
-                          : "bg-surface2 border-line";
-                    return (
-                      <span
-                        key={key}
-                        title={`${key} ${TRACK_LABEL[track]} ${stateLabel(value)}`}
-                        className={`aspect-square rounded-sm border ${filled} ${
-                          key === today ? "shadow-[0_0_0_1.5px_var(--ink)]" : ""
-                        }`}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-            <p className="flex justify-between font-mono text-[10px] tracking-wide text-faint">
-              <span>{shortDate(days[0])}</span>
-              <span>今日</span>
-            </p>
+      <div id="timer" className="scroll-mt-4">
+        <Timer />
+      </div>
+
+      <section className="win flex flex-col gap-1.5 pt-4" aria-label="冒険の記録（直近14日）">
+        <span className="win-label">冒険の記録（14日）</span>
+        {TRACKS.map((track) => (
+          <div key={track} className="grid grid-cols-[36px_1fr] items-center gap-2">
+            <span className="text-xs" style={{ color: MEMBER_COLOR[track] }}>
+              {TRACK_LABEL[track]}
+            </span>
+            <div className="grid grid-cols-[repeat(14,minmax(0,1fr))] gap-[3px]">
+              {days.map((key) => {
+                const value = trackState(logs[key], track);
+                const filled =
+                  value === "full"
+                    ? TRACK_COLOR[track].full
+                    : value === "min"
+                      ? TRACK_COLOR[track].min
+                      : "bg-surface2 border-line";
+                return (
+                  <span
+                    key={key}
+                    title={`${key} ${TRACK_LABEL[track]} ${stateLabel(value)}`}
+                    className={`aspect-square border ${filled} ${key === today ? "outline outline-1 outline-ink" : ""}`}
+                  />
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
-
-      <Timer />
-
-      {/* 今日のセルフチェック */}
-      <section className="rounded-xl border border-line bg-surface p-4">
-        <p className="font-mono text-[11px] font-semibold tracking-widest text-faint uppercase">
-          Self check
+        ))}
+        <p className="flex justify-between text-[10px] text-faint">
+          <span>{shortDate(days[0])}</span>
+          <span>今日</span>
         </p>
-        <h2 className="mt-0.5 text-sm font-bold">今日の口頭セルフチェック</h2>
-        {drill.length === 0 ? (
-          <p className="mt-2 text-xs leading-relaxed text-muted">
-            台帳がまだ空です。間違えたものを
-            <Link href="/mistakes" className="mx-1 underline">
-              誤答台帳
-            </Link>
-            に入れると、翌日からここに出ます。
-          </p>
-        ) : (
-          <ul className="mt-2 flex flex-col gap-2">
-            {drill.map((m) => (
-              <li key={m.id} className="border-t border-line pt-2 first:border-0 first:pt-0">
-                <p className="text-sm font-medium">{m.concept}</p>
-                <p className="font-mono text-[11px] text-faint">
-                  {m.type} ・ 誤答{m.wrongCount}回
-                  {bucketOf(m) === "recurring" && <span className="ml-1 text-ml">再発</span>}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
       </section>
 
+      <section className="win pt-4 text-sm" aria-label="経験値の決まり">
+        <span className="win-label">経験値とゴールドの決まり</span>
+        <dl className="grid grid-cols-[1fr_auto_auto] gap-x-4 gap-y-0.5">
+          {[
+            ["記録 フル", `+${REWARD.fullXp}`, `+${REWARD.fullGold}G`],
+            ["記録 最低ライン", `+${REWARD.minXp}`, `+${REWARD.minGold}G`],
+            ["修行（タイマー）1分", `+${REWARD.minuteXp}`, `+${REWARD.minuteGold}G`],
+            ["モンスターに「言えた」", `+${REWARD.hitXp}`, ""],
+            ["モンスター撃破（3連続正答）", `+${REWARD.defeatXp}`, `+${REWARD.defeatGold}G`],
+            ["特技を唱えて言えた（1日1回）", `+${REWARD.skillXp}`, ""],
+          ].map(([what, xp, gold]) => (
+            <div key={what} className="contents">
+              <dt>{what}</dt>
+              <dd className="text-right text-gold tabular-nums">{xp}</dd>
+              <dd className="text-right text-gold tabular-nums">{gold}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="mt-2 text-xs text-faint">記録は過去の分もさかのぼって経験値になる。ボスは地図から。</p>
+      </section>
     </div>
   );
 }

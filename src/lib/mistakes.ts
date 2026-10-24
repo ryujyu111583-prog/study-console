@@ -40,6 +40,8 @@ export type Mistake = {
   type: MistakeType | string;
   correct: string;
   week: string;
+  /** 世界地図のどの地方のモンスターか（world.ts の id）。古いものは空。 */
+  area: string;
   wrongCount: number;
   correctStreak: number;
   createdAt?: Timestamp;
@@ -76,6 +78,7 @@ export function subscribeMistakes(onChange: (items: Mistake[]) => void) {
           type: data.type ?? "",
           correct: data.correct ?? "",
           week: data.week ?? "",
+          area: data.area ?? "",
           wrongCount: data.wrongCount ?? 1,
           correctStreak: data.correctStreak ?? 0,
           createdAt: data.createdAt,
@@ -91,6 +94,7 @@ export async function addMistake(input: {
   type: string;
   correct: string;
   week: string;
+  area: string;
 }) {
   await addDoc(collection(db, "mistakes"), {
     ...input,

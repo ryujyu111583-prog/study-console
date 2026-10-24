@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useGame } from "@/components/game/GameProvider";
+import NoteLink from "@/components/game/NoteLink";
+import Sprite from "@/components/game/Sprite";
+import { monsterFor } from "@/lib/game/sprites";
+import { AREAS, areaById } from "@/lib/game/world";
 import {
   addMistake,
   BUCKET_LABEL,
@@ -10,22 +15,19 @@ import {
   MISTAKE_TYPES,
   removeMistake,
   RESOLVE_STREAK,
-  subscribeMistakes,
-  type Mistake,
   type MistakeBucket,
 } from "@/lib/mistakes";
 
 const ORDER: MistakeBucket[] = ["recurring", "watch", "resolved"];
 
 export default function MistakesView() {
-  const [items, setItems] = useState<Mistake[]>([]);
+  const { mistakes: items, say } = useGame();
   const [open, setOpen] = useState(false);
+  const [area, setArea] = useState("");
   const [concept, setConcept] = useState("");
   const [type, setType] = useState<string>(MISTAKE_TYPES[0]);
   const [correct, setCorrect] = useState("");
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => subscribeMistakes(setItems), []);
 
   const submit = async () => {
     if (!concept.trim()) return;
@@ -36,7 +38,9 @@ export default function MistakesView() {
         type,
         correct: correct.trim(),
         week: "",
+        area,
       });
+      say([`${monsterFor(type).name}を 図鑑に登録した。`, "明日から戦闘に現れる。"]);
       setConcept("");
       setCorrect("");
       setOpen(false);
@@ -69,6 +73,19 @@ export default function MistakesView() {
             {MISTAKE_TYPES.map((t) => (
               <option key={t} value={t}>
                 {t}
+              </option>
+            ))}
+          </select>
+          <select
+            id="mistake-area"
+            value={area}
+            onChange={(e) => setArea(e.target.value)}
+            className="rounded-lg border border-line bg-surface2 px-2.5 py-2 text-sm"
+          >
+            <option value="">出現地（未設定）</option>
+            {AREAS.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.name}（{a.topic}）
               </option>
             ))}
           </select>
@@ -107,6 +124,10 @@ export default function MistakesView() {
         </button>
       )}
 
+      <p className="-mt-2 text-right">
+        <NoteLink id="ledger" label="vault の誤答台帳を開く" />
+      </p>
+
       {items.length === 0 && (
         <p className="text-xs leading-relaxed text-muted">
           まだ空です。セッションで間違えたものをその場で入れてください。再発項目は「今日」の画面に自動で出ます。
@@ -122,11 +143,16 @@ export default function MistakesView() {
             <div className="overflow-hidden rounded-xl border border-line bg-surface">
               {rows.map((m, i) => (
                 <article key={m.id} className={`p-3 ${i > 0 ? "border-t border-line" : ""}`}>
-                  <p className="text-sm font-medium">{m.concept}</p>
+                  <p className="flex items-center gap-2 text-sm font-medium">
+                    <Sprite look={monsterFor(m.type).look} size={28} label={monsterFor(m.type).name} />
+                    {m.concept}
+                  </p>
                   <p className="font-mono text-[11px] text-faint">
                     {m.type} ・ 誤答{m.wrongCount}回 ・ 連続正答{m.correctStreak}/{RESOLVE_STREAK}
                     {m.week && ` ・ ${m.week}`}
+                    {areaById(m.area) && ` ・ ${areaById(m.area)?.name}`}
                   </p>
+                  <NoteLink id={m.area} />
                   {m.correct && (
                     <p className="mt-1 text-xs leading-relaxed text-muted">{m.correct}</p>
                   )}
