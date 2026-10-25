@@ -60,11 +60,17 @@ export const AREAS: Area[] = [
   { id: "maou", name: "魔王城", topic: "G検定 本番（2027-01-16）", track: "ml", x: 92, y: 59, site: "castle", boss: "魔王ディープ", look: { base: "#5a1a6e", kind: "dragon", crown: true }, questions: 100, pass: 70, howTo: "模試を通しで解き、正答率（%）を入れる。70%以上で撃破", xp: 2000, gold: 1500 },
 
   { id: "s1", name: "記述統計の村", topic: "平均・分散・相関", track: "stat", x: 63, y: 106, site: "village", boss: "外れ値オーガ", look: { base: "#b598ff", kind: "golem", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },
-  { id: "s2", name: "推測統計の塔", topic: "推定・検定・回帰", track: "stat", x: 60, y: 86, site: "tower", boss: "p値の魔女", look: { base: "#b598ff", kind: "mushroom", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
+  { id: "s2", name: "推測統計の塔", topic: "標本分布・区間推定・最尤推定", track: "stat", x: 60, y: 86, site: "tower", boss: "p値の魔女", look: { base: "#b598ff", kind: "mushroom", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
+  { id: "s3", name: "検定の裁判所", topic: "仮説検定・検出力・χ²検定", track: "stat", x: 67, y: 95, site: "temple", boss: "第二種の亡霊", look: { base: "#9d7bea", kind: "ghost", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
+  { id: "s4", name: "回帰の工房", topic: "回帰・分散分析・ベイズ", track: "stat", x: 55, y: 74, site: "mine", boss: "多重共線ゴーレム", look: { base: "#7d6bc9", kind: "golem", crown: true }, questions: 10, pass: 7, howTo: "統計検定2級の山場（回帰と分散分析）。10問で7問以上", xp: 500, gold: 400 },
   { id: "e1", name: "単語の港", topic: "語彙・文法", track: "en", x: 121, y: 98, site: "port", boss: "不規則動詞の群れ", look: { base: "#7cc4ff", kind: "chain", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },
   { id: "e2", name: "長文の灯台", topic: "リスニング・長文", track: "en", x: 130, y: 84, site: "lighthouse", boss: "早口のセイレーン", look: { base: "#7cc4ff", kind: "bat", crown: true }, questions: 10, pass: 7, howTo: "6 Minute English 1本を聞いて内容確認10問。7問以上", xp: 400, gold: 300 },
   { id: "i1", name: "複利の市場", topic: "複利・分散・インデックス", track: "inv", x: 118, y: 124, site: "market", boss: "手数料ゴブリン", look: { base: "#ff8fc4", kind: "hammer", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },
   { id: "i2", name: "資産配分の砦", topic: "リスクとリターン・税制", track: "inv", x: 130, y: 117, site: "fort", boss: "暴落の竜巻", look: { base: "#d0507a", kind: "dragon", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
+  { id: "i3", name: "理論の神殿", topic: "分散・効率的市場・CAPM・ファクター", track: "inv", x: 125, y: 110, site: "temple", boss: "フリーランチの番人", look: { base: "#ff8fc4", kind: "knight", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
+  { id: "i4", name: "決算の都", topic: "財務三表・PER/PBR/ROE・DCF", track: "inv", x: 138, y: 124, site: "city", boss: "バリュートラップ", look: { base: "#e07fb0", kind: "mushroom", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
+  { id: "i5", name: "金利の港", topic: "金利と債券・為替・中央銀行", track: "inv", x: 127, y: 131, site: "port", boss: "デュレーション・クラーケン", look: { base: "#c76aa0", kind: "chain", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
+  { id: "i6", name: "暴落の遺跡", topic: "行動ファイナンス・暴落の歴史・資産配分", track: "inv", x: 113, y: 130, site: "ruins", boss: "パニック売りの亡霊", look: { base: "#b04070", kind: "ghost", crown: true }, questions: 10, pass: 7, howTo: "暴落の最中の自分に勝つ。10問で7問以上", xp: 500, gold: 400 },
 ];
 
 /** G検定大陸の街道（地図に描く道の順） */

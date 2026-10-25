@@ -13,8 +13,14 @@ import g8 from "@/data/quiz/g8.json";
 import g9 from "@/data/quiz/g9.json";
 import i1 from "@/data/quiz/i1.json";
 import i2 from "@/data/quiz/i2.json";
+import i3 from "@/data/quiz/i3.json";
+import i4 from "@/data/quiz/i4.json";
+import i5 from "@/data/quiz/i5.json";
+import i6 from "@/data/quiz/i6.json";
 import s1 from "@/data/quiz/s1.json";
 import s2 from "@/data/quiz/s2.json";
+import s3 from "@/data/quiz/s3.json";
+import s4 from "@/data/quiz/s4.json";
 import type { Track } from "../tracks";
 
 export type Question = {
@@ -29,7 +35,7 @@ export type Question = {
 
 export type Card = { id: string; front: string; back: string; note: string };
 
-export const BANK: Record<string, Question[]> = { g1, g2, g3, g4, g5, g6, g7, g8, g9, s1, s2, i1, i2 };
+export const BANK: Record<string, Question[]> = { g1, g2, g3, g4, g5, g6, g7, g8, g9, s1, s2, s3, s4, i1, i2, i3, i4, i5, i6 };
 
 export const CARDS: Card[] = cardsJson;
 

@@ -27,8 +27,11 @@ def note_hash(path: str) -> str:
 def used_notes() -> dict[str, list[str]]:
     """ノート → それを根拠にしている地方（カードは 'cards'）"""
     users: dict[str, list[str]] = {}
-    for area, (note, _) in QUIZ.items():
-        users.setdefault(note, []).append(area)
+    for area, (note, items) in QUIZ.items():
+        for n in {note, *(it[4] for it in items if len(it) > 4)}:
+            users.setdefault(n, [])
+            if area not in users[n]:
+                users[n].append(area)
     for _, _, note in CARDS:
         users.setdefault(note, [])
         if "cards" not in users[note]:
@@ -58,7 +61,7 @@ def build() -> None:
     total = 0
     for area, (note, items) in QUIZ.items():
         out = []
-        for i, (q, correct, wrong, explain) in enumerate(items, 1):
+        for i, (q, correct, wrong, explain, *own) in enumerate(items, 1):
             qid = f"{area}-{i:02d}"
             assert len(wrong) == 3, qid
             # 正解の位置は地方ごとにずらしながら順に回し、どの位置にも同じくらい来るようにする
@@ -72,7 +75,7 @@ def build() -> None:
                 "choices": choices,
                 "answer": choices.index(correct),
                 "explain": explain,
-                "note": note,
+                "note": own[0] if own else note,
             })
         (OUT / "quiz" / f"{area}.json").write_text(
             json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n"

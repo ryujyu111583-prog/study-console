@@ -43,6 +43,12 @@ export const SKILLS: SkillNode[] = [
   { id: "st-reg", track: "stat", topic: "回帰分析", skill: "リグレッション", prompt: "最小二乗法が何を最小にしているか、決定係数が何を表すかを言える？", cost: 2, requires: ["st-corr", "st-est"], col: 0, row: 3 },
   { id: "st-anova", track: "stat", topic: "分散分析と実験計画", skill: "アノーヴァ", prompt: "分散分析で「群間」と「群内」のばらつきを比べる理由は？", cost: 3, requires: ["st-test"], col: 1, row: 4 },
   { id: "st-bayes", track: "stat", topic: "ベイズ推定", skill: "ベイズの瞳", prompt: "事前分布・尤度・事後分布の関係を一文で言える？", cost: 3, requires: ["st-test", "st-reg"], col: 0, row: 5 },
+  { id: "st-samp", track: "stat", topic: "データの集め方", skill: "ランダマイズ", prompt: "観察研究と実験研究の違いと、交絡の例を1つ言える？層化抽出と集落抽出の違いは？", cost: 1, requires: ["st-corr"], col: 0, row: 2 },
+  { id: "st-clt", track: "stat", topic: "標本分布と中心極限定理", skill: "セントラル・リミット", prompt: "標準偏差と標準誤差の違いを言える？p=1% を ±0.1% で出す MC は約何回？", cost: 2, requires: ["st-dist"], col: 1, row: 2 },
+  { id: "st-mle", track: "stat", topic: "最尤推定", skill: "ライクリフッド", prompt: "10本中3本破断の最尤推定値と、小標本の推定値を点で信じてはいけない理由を言える？", cost: 2, requires: ["st-est"], col: 2, row: 3 },
+  { id: "st-power", track: "stat", topic: "検出力とサンプルサイズ", skill: "三の法則", prompt: "0本破断で破断確率1%以下を言うには何本要る？効果量が半分なら本数は何倍？", cost: 2, requires: ["st-test"], col: 2, row: 4 },
+  { id: "st-chi", track: "stat", topic: "χ²検定と分割表", skill: "カイ・スクエア", prompt: "期待度数の求め方と、2×3 の分割表の自由度を言える？", cost: 2, requires: ["st-test"], col: 2, row: 5 },
+  { id: "st-uq", track: "stat", topic: "不確かさの伝播", skill: "ダブルループ", prompt: "偶然的不確かさと認識論的不確かさの違いと、二重ループMCの外側・内側に何を入れるかを言える？", cost: 3, requires: ["st-bayes", "st-mle"], col: 1, row: 6 },
 
   // 英語
   { id: "en-vocab", track: "en", topic: "語彙", skill: "ボキャブラ", prompt: "今週覚えた単語を5つ、例文つきで言える？", cost: 1, requires: [], col: 1, row: 0 },
@@ -61,6 +67,11 @@ export const SKILLS: SkillNode[] = [
   { id: "iv-alloc", track: "inv", topic: "資産配分", skill: "アロケーション", prompt: "株と債券の比率をどう決めるか、自分の場合で言える？", cost: 2, requires: ["iv-rr", "iv-index"], col: 1, row: 3 },
   { id: "iv-tax", track: "inv", topic: "税制（NISA・iDeCo）", skill: "タックス・シールド", prompt: "NISA と iDeCo の違いを、引き出せる時期と節税の仕組みで言える？", cost: 2, requires: ["iv-index"], col: 2, row: 3 },
   { id: "iv-crash", track: "inv", topic: "暴落への備え", skill: "ホールド", prompt: "暴落時にやってはいけないことと、その理由を言える？", cost: 3, requires: ["iv-alloc"], col: 1, row: 4 },
+  { id: "iv-emh", track: "inv", topic: "効率的市場仮説と CAPM", skill: "マーケット・アイ", prompt: "アクティブ全体がコスト後に必ず指数に負ける理由と、CAPM で報われるリスクを言える？", cost: 2, requires: ["iv-index"], col: 1, row: 2 },
+  { id: "iv-fin", track: "inv", topic: "財務三表と株価指標", skill: "バランスシート", prompt: "営業利益と営業CFの違い、PBR = PER × ROE を使って「なぜ安いか」を言える？", cost: 2, requires: ["iv-index"], col: 2, row: 2 },
+  { id: "iv-dcf", track: "inv", topic: "DCF と現在価値", skill: "ディスカウント", prompt: "P = D/(r−g) で、金利が上がると成長株ほど下がる理由を言える？", cost: 3, requires: ["iv-fin", "iv-rate"], col: 2, row: 4 },
+  { id: "iv-rate", track: "inv", topic: "金利・為替・中央銀行", skill: "デュレーション", prompt: "金利が上がると債券が下がる理由と、デュレーション9の債券の下落幅を言える？", cost: 2, requires: ["iv-rr"], col: 0, row: 3 },
+  { id: "iv-behav", track: "inv", topic: "行動ファイナンス", skill: "ストイック", prompt: "損失回避と処分効果を説明し、自分が仕組みで防いでいることを1つ言える？", cost: 2, requires: ["iv-alloc"], col: 0, row: 4 },
 ];
 
 export const skillById = (id: string) => SKILLS.find((s) => s.id === id);

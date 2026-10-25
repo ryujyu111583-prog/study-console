@@ -33,7 +33,9 @@ const GROUPS: { label: string; color: string; quests: Quest[] }[] = [
     label: "統計",
     color: "var(--stat)",
     quests: [
-      { title: "カリキュラムを1回分進める", where: "vault", note: "Learning/Statistics/統計学×CAE カリキュラム", what: "S01〜S14 の「問い」に答え、答え合わせを開く", report: "回の番号と、自分の答えが合ったか" },
+      { title: "カリキュラムを1回分進める", where: "vault", note: "Learning/Statistics/統計学×CAE カリキュラム", what: "S01〜S16 の「問い」に答え、答え合わせを開く", report: "回の番号と、自分の答えが合ったか" },
+      { title: "動画で1単元（2級向け）", where: "YouTube「とけたろうチャンネル」", url: "https://www.youtube.com/results?search_query=%E3%81%A8%E3%81%91%E3%81%9F%E3%82%8D%E3%81%86+%E7%B5%B1%E8%A8%88%E6%A4%9C%E5%AE%9A2%E7%B4%9A", what: "その日の回（S05〜S16）の単元を1本だけ。見たら同じ回の「問い」を解く。動画だけで終えない", report: "見た単元と、解いた問いの正誤" },
+      { title: "直感をつかむ（英語・字幕あり）", where: "YouTube「StatQuest」「3Blue1Brown」", url: "https://www.youtube.com/@statquest", what: "p値・検出力・中心極限定理など、つまずいた概念だけ。各回のノートの「YouTubeで見る」に検索語がある", report: "見た動画と、一言で言えるようになったこと" },
       { title: "統計検定の公式情報", where: "統計検定", url: "https://www.toukei-kentei.jp/", what: "2級の出題範囲と試験日を確かめる", report: "不要" },
     ],
   },
@@ -48,7 +50,10 @@ const GROUPS: { label: string; color: string; quests: Quest[] }[] = [
     label: "投資",
     color: "var(--inv)",
     quests: [
-      { title: "投資基礎を1回分読む", where: "vault", note: "Learning/Investing/Investing Learning MOC", what: "各回の「Chromeで確認する」まで終える", report: "回の番号" },
+      { title: "投資基礎を1回分読む", where: "vault", note: "Learning/Investing/Investing Learning MOC", what: "各回の「Chromeで確認する」まで終える（07〜21 は 2026-10-25 に追加）", report: "回の番号" },
+      { title: "金融政策の会見を見る", where: "日本銀行", url: "https://www.boj.or.jp/mopo/mpmdeci/index.htm", what: "決定会合の後に1回。何を気にしているかを1行メモ（投資基礎17）", report: "会合の日付と1行メモ" },
+      { title: "SPIVA で負け率を確かめる", where: "S&P Dow Jones Indices", url: "https://www.spglobal.com/spdji/en/spiva/article/spiva-japan/", what: "自分の投信に近いカテゴリーの15年の負け率を書き写す（投資基礎08）", report: "カテゴリーと負け率" },
+      { title: "iDeCo の上限を確かめる", where: "iDeCo 公式", url: "https://www.ideco-koushiki.jp/", what: "2026-12 改正後の自分の上限（投資基礎06・21）", report: "自分の上限額" },
       { title: "NISA の最新情報", where: "金融庁", url: "https://www.fsa.go.jp/policy/nisa2/index.html", what: "制度の変更がないか確かめる", report: "不要" },
     ],
   },

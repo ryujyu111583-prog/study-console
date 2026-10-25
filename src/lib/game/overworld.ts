@@ -89,10 +89,15 @@ const KNOWN: Blob[] = [
   // 統計の島
   { x: 62, y: 100, rx: 7, ry: 12 },
   { x: 59, y: 85, rx: 6, ry: 6 },
+  { x: 56, y: 74, rx: 6, ry: 5 },
   // 英語の島
   { x: 125, y: 91, rx: 8, ry: 10 },
   // 投資の島
   { x: 124, y: 121, rx: 10, ry: 7 },
+  { x: 125, y: 110, rx: 7, ry: 5 },
+  { x: 138, y: 124, rx: 6, ry: 6 },
+  { x: 126, y: 132, rx: 8, ry: 4 },
+  { x: 114, y: 131, rx: 6, ry: 4 },
 ];
 function knownScore(x: number, y: number) {
   let best = -9;
