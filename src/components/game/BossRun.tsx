@@ -5,6 +5,7 @@ import { useGame } from "@/components/game/GameProvider";
 import MissRegister from "@/components/game/MissRegister";
 import QuizCard from "@/components/game/QuizCard";
 import { fmt } from "@/lib/game/levels";
+import { eventMultiplier } from "@/lib/game/magic";
 import { pickQuestions, type Question } from "@/lib/game/quiz";
 import { play } from "@/lib/game/sfx";
 import { answerQuiz, recordBoss } from "@/lib/game/state";
@@ -22,7 +23,12 @@ export default function BossRun({ area, onExit }: { area: Area; onExit: () => vo
   const [finished, setFinished] = useState(false);
   const q = questions[index];
   // 放置ボーナスは挑んだ時点の値で固定する（1問目で「触れた日」が今日になっても、その日のうちは続く）
-  const [mult] = useState(() => (area.track === "ml" ? neglectOf(lastBeforeToday(game.areaTouch[area.id])).multiplier : 1));
+  // 週のイベントも掛ける
+  const [mult] = useState(
+    () =>
+      (area.track === "ml" ? neglectOf(lastBeforeToday(game.areaTouch[area.id])).multiplier : 1) *
+      eventMultiplier(area.track),
+  );
 
   const onAnswer = (correct: boolean) => {
     setAnswered(true);

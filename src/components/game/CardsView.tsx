@@ -5,6 +5,7 @@ import { useGame } from "@/components/game/GameProvider";
 import NoteLink from "@/components/game/NoteLink";
 import { dayKey } from "@/lib/date";
 import { REWARD } from "@/lib/game/levels";
+import { eventMultiplier } from "@/lib/game/magic";
 import { BOX_DAYS, CARDS, NEW_CARDS_PER_DAY, trackOfNote, type CardState } from "@/lib/game/quiz";
 import { play } from "@/lib/game/sfx";
 import { reviewCard, subscribeSrs } from "@/lib/game/state";
@@ -37,12 +38,13 @@ export default function CardsView() {
   const answer = async (remembered: boolean) => {
     if (!card) return;
     play(remembered ? "coin" : "miss");
-    const box = await reviewCard(game, card.id, trackOfNote(card.note), srs?.[card.id], remembered);
+    const track = trackOfNote(card.note);
+    const box = await reviewCard(game, card.id, track, srs?.[card.id], remembered, eventMultiplier(track));
     setDone((d) => [...d, card.id]);
     setFlipped(false);
     say(
       remembered
-        ? [`覚えていた！ 箱${box}へ（次は ${box >= 5 ? "2週間" : `${BOX_DAYS[box]}日`}後）`, reviewedToday < REWARD.cardDailyCap ? `${REWARD.cardXp} の経験値を獲得。` : "今日の経験値は上限。"]
+        ? [`覚えていた！ 箱${box}へ（次は ${box >= 5 ? "2週間" : `${BOX_DAYS[box]}日`}後）`, reviewedToday < REWARD.cardDailyCap ? `${Math.round(REWARD.cardXp * eventMultiplier(track))} の経験値を獲得。${eventMultiplier(track) > 1 ? "（週のイベント）" : ""}` : "今日の経験値は上限。"]
         : ["忘れていた… 箱1に戻した。", "明日もう一度出る。"],
     );
   };

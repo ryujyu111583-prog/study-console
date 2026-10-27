@@ -8,9 +8,12 @@ import type { Question } from "@/lib/game/quiz";
 export default function QuizCard({
   question,
   onAnswer,
+  hidden = [],
   children,
 }: {
   question: Question;
+  /** 特技「ヒント」で消した選択肢 */
+  hidden?: number[];
   onAnswer: (correct: boolean) => void;
   /** 答えた後に出す追加の操作（次へ・台帳に登録など） */
   children?: React.ReactNode;
@@ -30,7 +33,10 @@ export default function QuizCard({
       <ol className="flex flex-col gap-1.5">
         {question.choices.map((c, i) => {
           const isAnswer = i === question.answer;
-          const style = !done
+          const gone = !done && hidden.includes(i);
+          const style = gone
+            ? "border-line text-faint line-through opacity-40"
+            : !done
             ? "border-line hover:border-ink"
             : isAnswer
               ? "border-ok text-ok"
@@ -41,7 +47,7 @@ export default function QuizCard({
             <li key={i}>
               <button
                 type="button"
-                disabled={done}
+                disabled={done || gone}
                 onClick={() => pick(i)}
                 className={`flex w-full items-start gap-2 rounded-md border-2 px-2.5 py-1.5 text-left text-sm leading-snug ${style}`}
               >

@@ -14,6 +14,7 @@ import type { LogMap } from "../log";
 import { TRACKS, trackState, type Track } from "../tracks";
 import { itemById, type Item, type Slot } from "./items";
 import { HERO_STEP, MEMBER_STEP, REWARD, levelFor } from "./levels";
+import { EFFECTS, mpOf, type Effect } from "./magic";
 import { BOX_DAYS, type CardState } from "./quiz";
 import { bossOutcome, type ReportItem } from "./rewards";
 import { skillById } from "./skills";
@@ -42,6 +43,8 @@ export type GameDoc = {
   inn: Inn;
   /** 地方に最後に触れた日（放置ボーナス用） */
   areaTouch: AreaTouch;
+  /** 日付ごとに使った MP（magic.ts。MP は毎日満タンに戻る） */
+  mpLog: Record<string, number>;
 };
 
 const zero = (): Record<Track, number> => ({ stat: 0, inv: 0, ml: 0, en: 0 });
@@ -62,6 +65,7 @@ export const EMPTY_GAME: GameDoc = {
   gkLog: {},
   inn: { since: null, stays: [] },
   areaTouch: {},
+  mpLog: {},
 };
 
 const gameRef = () => doc(db, "settings", "game");
@@ -85,6 +89,7 @@ export function subscribeGame(onChange: (g: GameDoc) => void) {
       gkLog: d.gkLog ?? {},
       inn: { since: d.inn?.since ?? null, stays: d.inn?.stays ?? [] },
       areaTouch: d.areaTouch ?? {},
+      mpLog: d.mpLog ?? {},
     });
   });
 }
@@ -141,6 +146,7 @@ export function computeStats(logs: LogMap, game: GameDoc) {
       0,
     );
   const vit = vitality(logs, game.gkLog, game.inn);
+  const today = dayKey();
 
   return {
     xp,
@@ -151,6 +157,7 @@ export function computeStats(logs: LogMap, game: GameDoc) {
     // 気絶で落とした分を引く。0 より下にはしない
     gold: Math.max(0, base.gold + game.bonusGold - game.spentGold - vit.faints * FAINT_GOLD),
     vit,
+    mp: mpOf(logs[today], game.mpLog[today] ?? 0),
     atk: 5 + equipped.reduce((s, i) => s + (i.atk ?? 0), 0),
     def: 3 + equipped.reduce((s, i) => s + (i.def ?? 0), 0),
     monthMinutes,
@@ -202,8 +209,15 @@ export function subscribeSrs(onChange: (s: Record<string, CardState>) => void) {
   return onSnapshot(srsRef(), (snap) => onChange((snap.data() ?? {}) as Record<string, CardState>));
 }
 
-/** カードを1枚見た。覚えていたら箱を上げ、忘れていたら箱1へ。経験値は1日の上限まで。 */
-export async function reviewCard(game: GameDoc, cardId: string, track: Track, prev: CardState | undefined, remembered: boolean) {
+/** カードを1枚見た。覚えていたら箱を上げ、忘れていたら箱1へ。経験値は1日の上限まで（multiplier は週のイベント）。 */
+export async function reviewCard(
+  game: GameDoc,
+  cardId: string,
+  track: Track,
+  prev: CardState | undefined,
+  remembered: boolean,
+  multiplier = 1,
+) {
   const box = remembered ? Math.min(5, (prev?.box ?? 0) + 1) : 1;
   const due = new Date();
   due.setDate(due.getDate() + BOX_DAYS[box]);
@@ -215,11 +229,16 @@ export async function reviewCard(game: GameDoc, cardId: string, track: Track, pr
     {
       cardLog: { [today]: increment(1) },
       ...(track === "ml" ? { gkLog: { [today]: increment(1) } } : {}),
-      ...(underCap ? { bonusXp: { [track]: increment(REWARD.cardXp) } } : {}),
+      ...(underCap ? { bonusXp: { [track]: increment(Math.round(REWARD.cardXp * multiplier)) } } : {}),
     },
     { merge: true },
   );
   return box;
+}
+
+/** 特技の効果を使う。MP を消費する（足りるかは画面側で確かめる） */
+export async function spendMp(effect: Effect) {
+  await setDoc(gameRef(), { mpLog: { [dayKey()]: increment(EFFECTS[effect].mp) } }, { merge: true });
 }
 
 export async function openChest(gold: number) {

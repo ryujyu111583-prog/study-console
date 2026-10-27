@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { REWARD } from "@/lib/game/levels";
+import { ASSIST_RATE, EFFECTS, EFFECT_ORDER, EVENT_MULTIPLIER, EVENT_NAME, MP_BASE, MP_PER_RECORD, WEEK_EVENT } from "@/lib/game/magic";
 import { BOX_DAYS, NEW_CARDS_PER_DAY } from "@/lib/game/quiz";
 import { DAILY_BONUS_GOLD, QUIZ_GOAL, CARD_GOAL } from "@/lib/game/daily";
 import { DONE_HEAL, FAINT_GOLD, HP_MAX, MISS_DAMAGE } from "@/lib/game/vitality";
@@ -128,6 +129,31 @@ export default function RulesView() {
         </p>
       </Section>
 
+      <Section title="MP と特技の効果">
+        <p>
+          覚えた特技は、<A href="/battle">たたかう</A>の野生で MP を払って使える。1問に1つまで。使えるのは、その地方と同じ分野で覚えた特技だけ（G検定の地方なら ML の特技）。
+        </p>
+        <Rows
+          rows={EFFECT_ORDER.map((e, i) => [
+            `${EFFECTS[e].name}（MP${EFFECTS[e].mp}）`,
+            `${EFFECTS[e].desc}。必要SP ${i + 1}${i === 2 ? "以上" : ""}の特技`,
+          ])}
+        />
+        <p>
+          MP は毎日満タンに戻る。最大は {MP_BASE} ＋ 今日記録した項目 × {MP_PER_RECORD}（4項目で {MP_BASE + MP_PER_RECORD * 4}）。先に記録すると、戦闘が楽になる。
+        </p>
+        <p className="text-faint">
+          見破る・ヒントで正解した問題は、報酬が {ASSIST_RATE * 100}%。思い出す練習が本体なので、助けを借りた分は減らしている。ボス戦では使えない。
+        </p>
+      </Section>
+
+      <Section title="週のイベント">
+        <Rows
+          rows={WEEK_EVENT.map((t, d) => ["日月火水木金土"[d], `${EVENT_NAME[t]} ×${EVENT_MULTIPLIER}`])}
+        />
+        <p>その分野のクイズ（野生・ボス）とカードの経験値に掛かる。台帳と記録には掛からない。G検定を優先して週3日。</p>
+      </Section>
+
       <Section title="経験値とゴールド">
         <Rows
           rows={[
@@ -141,7 +167,7 @@ export default function RulesView() {
             ["特技を言えた", `${REWARD.skillXp}EX（1日1回）`],
           ]}
         />
-        <p className="text-faint">放置ボーナスはクイズと台帳に掛かる。ゴールドは装備の店で使う。</p>
+        <p className="text-faint">放置ボーナスはクイズと台帳に、週のイベントはクイズとカードに掛かる。倍率は重なる。ゴールドは装備の店で使う。</p>
       </Section>
 
       <Section title="外でやった勉強（ギルドと Claude）">
@@ -161,7 +187,7 @@ export default function RulesView() {
             ["ギルド", "外部の学習への入口"],
             ["スキル", "SP で特技を覚える"],
             ["装備", "ゴールドで買う（見た目と演出）"],
-            ["図鑑", "誤答台帳の一覧と編集"],
+            ["図鑑", "モンスター図鑑（型×地方）と誤答台帳の一覧・編集"],
             ["冒険の書", "実績・称号・Claude からの報告"],
           ]}
         />

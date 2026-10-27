@@ -5,6 +5,7 @@ import { useGame } from "@/components/game/GameProvider";
 import NoteLink from "@/components/game/NoteLink";
 import SkillCast from "@/components/game/SkillCast";
 import { MEMBER_JOB } from "@/lib/game/levels";
+import { EFFECTS, effectOf } from "@/lib/game/magic";
 import { canUnlock, skillById, skillsOf, type SkillNode } from "@/lib/game/skills";
 import { play } from "@/lib/game/sfx";
 import { unlockSkill } from "@/lib/game/state";
@@ -128,6 +129,11 @@ export default function SkillsView() {
               {node.requires.every(has) ? (sp >= node.cost ? "SPを使って覚える" : "SPが足りない") : "前のスキルが先"}
             </button>
           </>
+        )}
+        {track !== "en" && (
+          <p className="text-xs text-gold">
+            たたかうでの効果：{EFFECTS[effectOf(node)].name}（MP{EFFECTS[effectOf(node)].mp}）— {EFFECTS[effectOf(node)].desc}
+          </p>
         )}
         <p className="text-xs text-faint">SPは仲間のLvが1上がるごとに1。論点を学んでから開くと、特技が復習カードになる。</p>
       </section>

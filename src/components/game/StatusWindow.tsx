@@ -40,6 +40,7 @@ export default function StatusWindow() {
           </span>
           <span className="tabular-nums" style={{ color: hpColor }}>
             HP{hp}
+            <span className="ml-1 text-ex">MP{stats.mp.now}</span>
           </span>
           <span className="tabular-nums">連続{streak}日</span>
           <span className="text-gold tabular-nums">{fmt(stats.gold)}G</span>
@@ -73,6 +74,11 @@ export default function StatusWindow() {
             <Bar ratio={hp / HP_MAX} color={hpColor} />
             <span className="min-w-[72px] text-right tabular-nums" style={{ color: hpColor }}>
               {hp}/{HP_MAX}
+            </span>
+            <span>MP</span>
+            <Bar ratio={stats.mp.max ? stats.mp.now / stats.mp.max : 0} color="var(--ex)" />
+            <span className="min-w-[72px] text-right tabular-nums text-ex">
+              {stats.mp.now}/{stats.mp.max}
             </span>
             <span>EX</span>
             <Bar ratio={ex.ratio} color="var(--ex)" />

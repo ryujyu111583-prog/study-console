@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useGame } from "@/components/game/GameProvider";
 import { dayKey } from "@/lib/date";
 import { DAILY_BONUS_GOLD, chestReward, dailyQuests } from "@/lib/game/daily";
+import { eventOf } from "@/lib/game/magic";
 import { play } from "@/lib/game/sfx";
 import { claimDailyBonus, openChest } from "@/lib/game/state";
 import { streakFrom } from "@/lib/log";
@@ -21,6 +22,7 @@ export default function DailyPanel() {
   const claimed = game.daily.bonus === today;
   const chestOpened = game.daily.chest === today;
   const next = quests.find((q) => !q.done);
+  const event = eventOf();
 
   const chest = async () => {
     setBusy(true);
@@ -83,6 +85,9 @@ export default function DailyPanel() {
           {claimed ? "ボーナス受取済み" : allDone ? `ボーナス ${DAILY_BONUS_GOLD}G` : "3つ達成でボーナス"}
         </button>
       </div>
+      <p className="text-xs text-gold">
+        今日のイベント：{event.name} クイズとカードの経験値×{event.multiplier}
+      </p>
       {next && (
         <p className="text-xs text-faint">
           つぎ：<Link href={next.href} className="text-ink underline">{next.label}</Link>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Bestiary from "@/components/game/Bestiary";
 import { useGame } from "@/components/game/GameProvider";
 import NoteLink from "@/components/game/NoteLink";
 import Sprite from "@/components/game/Sprite";
@@ -57,6 +58,7 @@ export default function MistakesView() {
 
   return (
     <div className="flex flex-col gap-5">
+      <Bestiary mistakes={items} />
       {open ? (
         <section className="flex flex-col gap-2 rounded-xl border border-line bg-surface p-4">
           <input

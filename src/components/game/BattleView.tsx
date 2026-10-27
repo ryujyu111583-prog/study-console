@@ -10,11 +10,22 @@ import SkillCast from "@/components/game/SkillCast";
 import Sprite from "@/components/game/Sprite";
 import { dayKey } from "@/lib/date";
 import { REWARD } from "@/lib/game/levels";
+import {
+  ASSIST_RATE,
+  EFFECTS,
+  EFFECT_ORDER,
+  effectOf,
+  eventMultiplier,
+  eventOf,
+  firstSentence,
+  hintHidden,
+  type Effect as Magic,
+} from "@/lib/game/magic";
 import { BANK, hasQuiz, pickQuestions, questionById, type Question } from "@/lib/game/quiz";
 import { play } from "@/lib/game/sfx";
 import { skillById } from "@/lib/game/skills";
 import { monsterFor, rollWild, type Species } from "@/lib/game/sprites";
-import { addBonus, answerQuiz } from "@/lib/game/state";
+import { addBonus, answerQuiz, spendMp } from "@/lib/game/state";
 import { NEGLECT_COLOR, lastBeforeToday, neglectOf, type Neglect } from "@/lib/game/vitality";
 import { AREAS, areaById } from "@/lib/game/world";
 import { RESOLVE_STREAK, bucketOf, markCorrect, markWrong, type Mistake } from "@/lib/mistakes";
@@ -79,7 +90,7 @@ function Stage({
 
 /** 野生：地方を選んで4択クイズと戦う */
 function WildBattle() {
-  const { game, say } = useGame();
+  const { game, stats, say } = useGame();
   // いちばん放っておいた G検定の地方から始める
   const [areaId, setAreaId] = useState(() =>
     QUIZ_AREAS.filter((a) => a.track === "ml").reduce((best, a) =>
@@ -93,11 +104,39 @@ function WildBattle() {
   const [popup, setPopup] = useState<{ text: string; key: number } | null>(null);
   // 問題ごとに種族を引き直す。メタルプルンはまれで、正解すると経験値が多い
   const [foe, setFoe] = useState<Species>(() => rollWild());
+  // この問題に使った特技（1問に1つ）と、ヒントで消した選択肢
+  const [cast, setCast] = useState<Magic | null>(null);
+  const [hidden, setHidden] = useState<number[]>([]);
   const area = areaById(areaId)!;
   const question = queue[index % queue.length];
   const isMetal = foe.look.kind === "metal";
   const neglect = areaNeglect(game.areaTouch[areaId], area.track);
   const todayCount = game.quizLog[dayKey()] ?? 0;
+  const event = eventMultiplier(area.track);
+  // この地方の分野で覚えた特技の効果だけ使える
+  const magics = EFFECT_ORDER.filter((e) =>
+    game.skills.some((id) => {
+      const s = skillById(id);
+      return s?.track === area.track && effectOf(s) === e;
+    }),
+  );
+
+  const resetMagic = () => {
+    setCast(null);
+    setHidden([]);
+  };
+
+  const castMagic = (e: Magic) => {
+    if (answered !== null || cast || stats.mp.now < EFFECTS[e].mp) return;
+    setCast(e);
+    if (e === "hint") setHidden(hintHidden(question.choices.length, question.answer));
+    void spendMp(e);
+    play("select");
+    say([
+      `勇者は ${EFFECTS[e].name}を となえた！（MP −${EFFECTS[e].mp}）`,
+      e === "double" ? "この1問は経験値2倍。" : `正解しても報酬は ${ASSIST_RATE * 100}%。`,
+    ]);
+  };
 
   const changeArea = (id: string) => {
     setAreaId(id);
@@ -106,12 +145,19 @@ function WildBattle() {
     setAnswered(null);
     setEffect("");
     setFoe(rollWild());
+    resetMagic();
     play("select");
   };
 
   const onAnswer = (correct: boolean) => {
     setAnswered(correct);
-    const mult = (isMetal ? REWARD.metalMultiplier : 1) * neglect.multiplier;
+    const assisted = cast === "reveal" || cast === "hint";
+    const mult =
+      (isMetal ? REWARD.metalMultiplier : 1) *
+      neglect.multiplier *
+      event *
+      (cast === "double" ? 2 : 1) *
+      (assisted ? ASSIST_RATE : 1);
     void answerQuiz(game, areaId, area.track, correct, mult);
     if (correct) {
       setEffect("defeat");
@@ -119,7 +165,7 @@ function WildBattle() {
       setPopup({ text: isMetal ? "会心の一撃！" : "HIT!", key: Date.now() });
       say([
         `${foe.name}を たおした！`,
-        `${Math.round(REWARD.quizXp * mult)} の経験値と ${Math.round(REWARD.quizGold * mult)}G を獲得。${isMetal ? "（メタル5倍！）" : ""}${neglect.level ? `（放置×${neglect.multiplier}）` : ""}`,
+        `${Math.round(REWARD.quizXp * mult)} の経験値と ${Math.round(REWARD.quizGold * mult)}G を獲得。${isMetal ? "（メタル5倍！）" : ""}${neglect.level ? `（放置×${neglect.multiplier}）` : ""}${event > 1 ? `（イベント×${event}）` : ""}${cast === "double" ? "（特技×2）" : ""}${assisted ? `（助けあり×${ASSIST_RATE}）` : ""}`,
       ]);
     } else if (isMetal) {
       setEffect("defeat");
@@ -138,6 +184,7 @@ function WildBattle() {
     setAnswered(null);
     setEffect("");
     setPopup(null);
+    resetMagic();
     const nextFoe = rollWild();
     setFoe(nextFoe);
     if (nextFoe.look.kind === "metal") {
@@ -182,9 +229,41 @@ function WildBattle() {
             {neglectNote(neglect)}（今日いっぱい続く）
           </p>
         )}
+        {event > 1 && <p className="text-xs text-gold">{eventOf().name} 経験値×{event}</p>}
       </Stage>
+      {answered === null && (
+        <section className="win flex flex-col gap-1.5 py-2" aria-label="特技">
+          <p className="flex justify-between text-xs text-faint">
+            <span>特技（1問に1つ）</span>
+            <span className="tabular-nums text-ex">
+              MP {stats.mp.now}/{stats.mp.max}
+            </span>
+          </p>
+          {magics.length === 0 ? (
+            <p className="text-xs text-faint">
+              この分野の特技をまだ覚えていない。<Link href="/skills" className="underline">スキル</Link>で覚えると使える。
+            </p>
+          ) : (
+            <div className="grid grid-cols-3 gap-1.5">
+              {magics.map((e) => (
+                <button
+                  key={e}
+                  type="button"
+                  title={EFFECTS[e].desc}
+                  disabled={!!cast || stats.mp.now < EFFECTS[e].mp}
+                  onClick={() => castMagic(e)}
+                  className={`rounded-md border-2 py-1 text-xs disabled:border-line disabled:text-faint ${cast === e ? "border-gold text-gold" : "border-ink"}`}
+                >
+                  {EFFECTS[e].name} <span className="tabular-nums">MP{EFFECTS[e].mp}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          {cast === "reveal" && <p className="text-sm leading-relaxed text-gold">見破った：{firstSentence(question.explain)}</p>}
+        </section>
+      )}
       <section className="win" aria-label="問題">
-        <QuizCard key={`${areaId}-${question.id}-${index}`} question={question} onAnswer={onAnswer}>
+        <QuizCard key={`${areaId}-${question.id}-${index}`} question={question} onAnswer={onAnswer} hidden={hidden}>
           {answered === false && <MissRegister question={question} area={areaId} />}
           <button type="button" onClick={next} className="font-dot self-end rounded-md border-2 border-ink px-4 py-1">
             つぎの敵 ▶
