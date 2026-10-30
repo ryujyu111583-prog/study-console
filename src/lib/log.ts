@@ -20,6 +20,7 @@ export type DayLog = DayRecord & {
   invMinutes?: number;
   mlMinutes?: number;
   enMinutes?: number;
+  dsnMinutes?: number;
   /** 旧「G検定」のタイマー分数。書き込みはしない。 */
   gkMinutes?: number;
 };

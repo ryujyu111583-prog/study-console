@@ -15,6 +15,7 @@ const MEMBER_COLOR: Record<Track, string> = {
   inv: "var(--inv)",
   ml: "var(--ml)",
   en: "var(--en)",
+  dsn: "var(--dsn)",
 };
 
 export default function TodayView() {
@@ -38,7 +39,7 @@ export default function TodayView() {
       <InnPanel />
       <DailyPanel />
 
-      <section className="grid grid-cols-4 gap-2" aria-label="仲間（今日の記録）">
+      <section className="grid grid-cols-5 gap-1.5" aria-label="仲間（今日の記録）">
         {TRACKS.map((track) => {
           const state = trackState(logs[today], track);
           const lv = levelProgress(stats.xp[track], MEMBER_STEP);

@@ -120,7 +120,7 @@ export default function Timer() {
         {mmss(remaining)}
       </p>
 
-      <div className="mt-3 grid grid-cols-4 gap-1.5">
+      <div className="mt-3 grid grid-cols-5 gap-1.5">
         {TRACKS.map((t) => (
           <button key={t} onClick={() => select(t, minutes)} className={chip(t === track)}>
             {TRACK_LABEL[t]}

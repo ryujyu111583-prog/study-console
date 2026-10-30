@@ -60,6 +60,15 @@ export const SKILLS: SkillNode[] = [
   { id: "en-speak", track: "en", topic: "スピーキング", skill: "スピーチ", prompt: "自分の仕事（CAE）を英語で1分説明できる？", cost: 3, requires: ["en-shadow", "en-read"], col: 1, row: 4 },
 
   // 投資
+  // 設計 — 手計算の物差し → ねじ → 品質
+  { id: "ds-sec", track: "dsn", topic: "断面と比例則", skill: "モノサシ", prompt: "□50×1.2 の A・Z・Mp を言い、h を2倍にしたら I・Z・A がどうなるか言える？", cost: 1, requires: [], col: 1, row: 0 },
+  { id: "ds-unit", track: "dsn", topic: "単位系と換算", skill: "ケタヨミ", prompt: "mm-ms-kg 系の力・応力・密度と、1 mm/ms² が何 G かを言える？", cost: 1, requires: ["ds-sec"], col: 0, row: 1 },
+  { id: "ds-log", track: "dsn", topic: "ロガーとひずみ", skill: "サンプリング", prompt: "20 kHz の時間刻み、CFC600 の −3dB、鋼 1000 με の応力を言える？", cost: 2, requires: ["ds-unit"], col: 0, row: 2 },
+  { id: "ds-bolt", track: "dsn", topic: "ねじの寸法", skill: "ニメンハバ", prompt: "M6・M8・M10・M12 の二面幅とピッチ、有効断面積の暗算を言える？", cost: 1, requires: ["ds-sec"], col: 1, row: 1 },
+  { id: "ds-torque", track: "dsn", topic: "強度区分と締付トルク", skill: "トルクアップ", prompt: "10.9 の意味と T = K·d·F、潤滑すると軸力がどうなるかを言える？", cost: 2, requires: ["ds-bolt"], col: 1, row: 2 },
+  { id: "ds-thk", track: "dsn", topic: "板厚の物差し", skill: "メキキ", prompt: "カード・CD・硬貨の厚さと、1.0t → 1.2t の剛性比を言える？", cost: 1, requires: ["ds-sec"], col: 2, row: 1 },
+  { id: "ds-cp", track: "dsn", topic: "工程能力", skill: "シグマ・アイ", prompt: "Cp と Cpk の違い、1.33 と 1.67 の ppm、Cp が高く Cpk が低いときの打ち手を言える？", cost: 2, requires: ["ds-thk"], col: 2, row: 2 },
+  { id: "ds-qc", track: "dsn", topic: "QC七つ道具", skill: "サカナノホネ", prompt: "7つを「見たいこと」で言い分け、管理限界と規格限界の違いを説明できる？", cost: 3, requires: ["ds-cp"], col: 2, row: 3 },
   { id: "iv-comp", track: "inv", topic: "複利", skill: "コンパウンド", prompt: "72の法則で、年利6%なら何年で2倍になるか言える？", cost: 1, requires: [], col: 1, row: 0 },
   { id: "iv-div", track: "inv", topic: "分散投資", skill: "ディバーシファイ", prompt: "分散で減らせるリスクと減らせないリスクの違いは？", cost: 1, requires: ["iv-comp"], col: 0, row: 1 },
   { id: "iv-index", track: "inv", topic: "インデックス投資", skill: "インデックス", prompt: "信託報酬の差が30年後にどれくらい効くか説明できる？", cost: 1, requires: ["iv-comp"], col: 2, row: 1 },

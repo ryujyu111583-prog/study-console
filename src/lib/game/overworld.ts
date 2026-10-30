@@ -98,6 +98,10 @@ const KNOWN: Blob[] = [
   { x: 138, y: 124, rx: 6, ry: 6 },
   { x: 126, y: 132, rx: 8, ry: 4 },
   { x: 114, y: 131, rx: 6, ry: 4 },
+  // 鍛冶の島（設計）
+  { x: 118, y: 62, rx: 10, ry: 7 },
+  { x: 122, y: 70, rx: 12, ry: 5 },
+  { x: 129, y: 67, rx: 6, ry: 6 },
 ];
 function knownScore(x: number, y: number) {
   let best = -9;

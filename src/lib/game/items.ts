@@ -25,6 +25,7 @@ export const ITEMS: Item[] = [
   { id: "w-pencil", slot: "weapon", name: "ひのきの鉛筆", price: 50, atk: 2, note: "冒険の始まりはいつもこれ" },
   { id: "w-sharp", slot: "weapon", name: "鋼のシャーペン", price: 300, atk: 8, note: "芯が折れない" },
   { id: "w-calc", slot: "weapon", name: "関数電卓ブレード", price: 800, atk: 15, note: "統計の魔法使いが好む" },
+  { id: "w-torque", slot: "weapon", name: "トルクレンチの大槌", price: 1100, atk: 20, note: "設計の鍛冶屋が好む。カチッと鳴るまで" },
   { id: "w-grad", slot: "weapon", name: "勾配の剣", price: 1500, atk: 25, note: "最急降下で斬りつける" },
   { id: "w-attn", slot: "weapon", name: "アテンションの槍", price: 3000, atk: 40, note: "大事なところだけを貫く" },
   { id: "w-gpu", slot: "weapon", name: "GPUの大剣", price: 6000, atk: 60, note: "並列に100回斬る" },
@@ -32,6 +33,7 @@ export const ITEMS: Item[] = [
   { id: "a-note", slot: "armor", name: "布のノート", price: 50, def: 2, note: "書けば守ってくれる" },
   { id: "a-binder", slot: "armor", name: "革のバインダー", price: 250, def: 6, note: "プリントが散らからない" },
   { id: "a-cheat", slot: "armor", name: "チートシートの鎧", price: 700, def: 12, note: "回すほど硬くなる" },
+  { id: "a-plate", slot: "armor", name: "1.2t の板金鎧", price: 1000, def: 16, note: "CD 1枚ぶんの厚み。t³ で効く" },
   { id: "a-moc", slot: "armor", name: "MOCの盾", price: 1400, def: 20, note: "すべての道はここに通じる" },
   { id: "a-vault", slot: "armor", name: "vaultの全身鎧", price: 4000, def: 35, note: "記録した者が最後に勝つ" },
 

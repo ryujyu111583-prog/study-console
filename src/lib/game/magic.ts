@@ -48,13 +48,14 @@ export function hintHidden(choices: number, answer: number): number[] {
 // ---- 週のイベント ----
 
 /** 曜日（日=0）ごとに経験値が増える分野。G検定を優先して週3日 */
-export const WEEK_EVENT: Track[] = ["ml", "ml", "stat", "inv", "ml", "stat", "inv"];
+export const WEEK_EVENT: Track[] = ["ml", "ml", "stat", "inv", "ml", "stat", "dsn"];
 export const EVENT_MULTIPLIER = 1.5;
 
 export const EVENT_NAME: Partial<Record<Track, string>> = {
   ml: "戦士の日（G検定）",
   stat: "魔法使いの日（統計）",
   inv: "商人の日（投資）",
+  dsn: "鍛冶屋の日（設計）",
 };
 
 export const eventOf = (date = new Date()) => {

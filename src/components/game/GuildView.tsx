@@ -57,6 +57,15 @@ const GROUPS: { label: string; color: string; quests: Quest[] }[] = [
       { title: "NISA の最新情報", where: "金融庁", url: "https://www.fsa.go.jp/policy/nisa2/index.html", what: "制度の変更がないか確かめる", report: "不要" },
     ],
   },
+  {
+    label: "設計",
+    color: "var(--dsn)",
+    quests: [
+      { title: "10秒ドリルを5問", where: "設計肌感トレーナー", url: "https://claude.ai/artifact/SUhjE2fFNjvmrrTLhJVbTf", what: "数字を入れる見積もりドリル。1問10秒以内。断面ラボと板厚の校正もここ", report: "正答数と問題数" },
+      { title: "FE の前に手計算で予想する", where: "vault", note: "knowledge/設計肌感トレーニング", what: "実務で1断面だけ M/Z を先に出し、SECFORC と比べて誤差を残す", report: "断面と誤差の%" },
+      { title: "ボルトを実物で確かめる", where: "手元の工具", what: "六角の二面幅をスパナかノギスで確かめ、呼びとピッチを当てる", report: "当てた本数" },
+    ],
+  },
 ];
 
 export default function GuildView() {

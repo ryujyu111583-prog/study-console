@@ -22,6 +22,8 @@
   --ml-soft: #4a2a14;
   --en: #7cc4ff;
   --en-soft: #14304e;
+  --dsn: #5fe0c4;
+  --dsn-soft: #113d36;
   --ok: #5be37a;
   --danger: #ff6b5b;
   --gold: #ffd84a;
@@ -46,6 +48,8 @@
   --color-mlsoft: var(--ml-soft);
   --color-en: var(--en);
   --color-ensoft: var(--en-soft);
+  --color-dsn: var(--dsn);
+  --color-dsnsoft: var(--dsn-soft);
   --color-ok: var(--ok);
   --color-danger: var(--danger);
   --color-gold: var(--gold);

@@ -14,6 +14,7 @@ export const noteUrl = (path: string) =>
 const ML = "Learning/ML/";
 const ST = "Learning/Statistics/";
 const IV = "Learning/Investing/";
+const DS = "knowledge/設計肌感トレーニング";
 
 /** スキル・地方 → ノート。対応するノートがまだ無いもの（英語）は載せない。 */
 export const NOTES: Record<string, string> = {
@@ -66,6 +67,7 @@ export const NOTES: Record<string, string> = {
   g8: `${ML}ML基礎20_AIの社会実装と法律_倫理`,
   g9: `${ML}ML基礎C1_直前チートシート`,
   maou: `${ML}G検定 MOC`,
+  ...Object.fromEntries(["d1", "d2", "d3", "d4", "d5", "d6", "ds-sec", "ds-unit", "ds-log", "ds-thk", "ds-bolt", "ds-torque", "ds-cp", "ds-qc"].map((id) => [id, DS])),
   s1: `${ST}統計学×CAE カリキュラム`,
   s2: `${ST}統計S06_区間推定_n3の強度をどこまで信じるか`,
   s3: `${ST}統計S08_仮説検定_メッシュを変えたら最大荷重は変わったか`,

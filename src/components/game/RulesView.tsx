@@ -5,6 +5,7 @@ import { BOX_DAYS, NEW_CARDS_PER_DAY } from "@/lib/game/quiz";
 import { DAILY_BONUS_GOLD, QUIZ_GOAL, CARD_GOAL } from "@/lib/game/daily";
 import { DONE_HEAL, FAINT_GOLD, HP_MAX, MISS_DAMAGE } from "@/lib/game/vitality";
 import { RESOLVE_STREAK } from "@/lib/mistakes";
+import { TRACKS } from "@/lib/tracks";
 import { MISTAKE_TYPES } from "@/lib/mistakeTypes";
 
 /** 数字は各モジュールの定数から読むので、決まりを変えてもこのページは古くならない。 */
@@ -72,7 +73,7 @@ export default function RulesView() {
         />
         <p>
           「触れた」＝ ML の記録（フルか最低ライン）、G検定の地方のクイズ1問、G検定のカード1枚、Claude 経由の G検定の報告のどれか。
-          統計・投資・英語を休んでも HP は減らない。
+          統計・投資・英語・設計を休んでも HP は減らない。
         </p>
         <p className="text-faint">今日の分は明日の朝に決まる。ホームの「G検定の守り」に、このままだとどうなるかが出る。</p>
       </Section>
@@ -140,7 +141,7 @@ export default function RulesView() {
           ])}
         />
         <p>
-          MP は毎日満タンに戻る。最大は {MP_BASE} ＋ 今日記録した項目 × {MP_PER_RECORD}（4項目で {MP_BASE + MP_PER_RECORD * 4}）。先に記録すると、戦闘が楽になる。
+          MP は毎日満タンに戻る。最大は {MP_BASE} ＋ 今日記録した項目 × {MP_PER_RECORD}（全{TRACKS.length}項目で {MP_BASE + MP_PER_RECORD * TRACKS.length}）。先に記録すると、戦闘が楽になる。
         </p>
         <p className="text-faint">
           見破る・ヒントで正解した問題は、報酬が {ASSIST_RATE * 100}%。思い出す練習が本体なので、助けを借りた分は減らしている。ボス戦では使えない。

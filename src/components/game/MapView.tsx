@@ -23,6 +23,7 @@ const TRACK_COLOR: Record<Track, string> = {
   inv: "var(--inv)",
   ml: "var(--ml)",
   en: "var(--en)",
+  dsn: "var(--dsn)",
 };
 
 export default function MapView() {

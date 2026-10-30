@@ -49,14 +49,14 @@ export type Report = {
   note?: string;
 };
 
-const TRACKS: Track[] = ["stat", "inv", "ml", "en"];
+const TRACKS: Track[] = ["stat", "inv", "ml", "en", "dsn"];
 
 /** 受け取った JSON を確かめる。おかしければ理由を返す。 */
 export function validateReport(body: unknown): { ok: true; report: Report } | { ok: false; error: string } {
   if (!body || typeof body !== "object") return { ok: false, error: "JSON のオブジェクトを送ってください" };
   const r = body as Record<string, unknown>;
   if (typeof r.source !== "string" || !r.source) return { ok: false, error: "source（どこでやったか）が必要です" };
-  if (!TRACKS.includes(r.track as Track)) return { ok: false, error: "track は stat / inv / ml / en のどれか" };
+  if (!TRACKS.includes(r.track as Track)) return { ok: false, error: "track は stat / inv / ml / en / dsn のどれか" };
   if (r.area !== undefined && !areaById(r.area as string)) return { ok: false, error: `area "${String(r.area)}" は地図にありません` };
   const num = (k: string) => r[k] === undefined || (typeof r[k] === "number" && (r[k] as number) >= 0);
   if (!num("score") || !num("total") || !num("minutes")) return { ok: false, error: "score / total / minutes は0以上の数" };

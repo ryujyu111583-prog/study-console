@@ -1,0 +1,184 @@
+[
+ {
+  "id": "d2-01",
+  "q": "1 kN·m は何 N·mm？",
+  "choices": [
+   "10³ N·mm",
+   "10⁶ N·mm",
+   "10⁻³ N·mm",
+   "10⁹ N·mm"
+  ],
+  "answer": 1,
+  "explain": "kN で +3、m→mm で +3。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-02",
+  "q": "kN/mm² と同じ単位は？",
+  "choices": [
+   "kPa",
+   "Pa",
+   "GPa",
+   "MPa"
+  ],
+  "answer": 2,
+  "explain": "kN（+3）と /mm²（+6）で 10⁹。N/mm² なら MPa。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-03",
+  "q": "LS-DYNA の mm-ms-kg 系で、力と応力の単位は？",
+  "choices": [
+   "N と GPa",
+   "N と MPa",
+   "kN と MPa",
+   "kN と GPa"
+  ],
+  "answer": 3,
+  "explain": "mm-s-t と mm-ms-g は N と MPa。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-04",
+  "q": "mm-s-t 系での鋼の密度は？",
+  "choices": [
+   "7.85e-9",
+   "7.85e-6",
+   "7.85",
+   "7.85e-3"
+  ],
+  "answer": 0,
+  "explain": "mm-ms-kg は 7.85e-6、mm-ms-g は 7.85e-3。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-05",
+  "q": "mm-ms-kg 系で鋼のヤング率に入れる値は？",
+  "choices": [
+   "2.1e-3",
+   "210",
+   "21000",
+   "210000"
+  ],
+  "answer": 1,
+  "explain": "応力の単位が GPa なので 210。210000 は MPa の系。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-06",
+  "q": "50 km/h は mm/ms で？",
+  "choices": [
+   "1.389",
+   "50",
+   "13.89",
+   "180"
+  ],
+  "answer": 2,
+  "explain": "mm/ms = m/s なので 3.6 で割る。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-07",
+  "q": "加速度 1 mm/ms² は何 G？",
+  "choices": [
+   "約 1 G",
+   "約 1000 G",
+   "約 9.81 G",
+   "約 102 G"
+  ],
+  "answer": 3,
+  "explain": "1 mm/ms² = 1000 m/s²。9.81 で割って約 102。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-08",
+  "q": "1500 kg の車が 50 km/h で持つ運動エネルギーはおよそ？",
+  "choices": [
+   "145 kJ",
+   "14.5 kJ",
+   "36 kJ",
+   "1450 kJ"
+  ],
+  "answer": 0,
+  "explain": "½ × 1500 × 13.89²。速度が半分ならエネルギーは 1/4 で、約 36 kJ。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-09",
+  "q": "mm-ms-kg 系のエネルギー kN·mm は何に等しい？",
+  "choices": [
+   "MJ",
+   "J",
+   "mJ",
+   "kJ"
+  ],
+  "answer": 1,
+  "explain": "kN（+3）× mm（−3）で N·m = J。mm-s-t の N·mm は mJ。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-10",
+  "q": "mm-s-t 系のエネルギー N·mm は何に等しい？",
+  "choices": [
+   "J",
+   "kJ",
+   "mJ",
+   "μJ"
+  ],
+  "answer": 2,
+  "explain": "N × 10⁻³ m。mm-ms-kg の kN·mm（= J）と 1000 倍違う。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-11",
+  "q": "kg と kgf の説明として正しいものは？",
+  "choices": [
+   "どちらも力の単位",
+   "kg は力、kgf は質量",
+   "1 kgf ≈ 1 N",
+   "kg は質量、kgf は力で 1 kgf ≈ 9.81 N"
+  ],
+  "answer": 3,
+  "explain": "ざっくり 1 kgf ≈ 10 N、1 kN ≈ 100 kgf。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-12",
+  "q": "1 t の車が 30 G で減速するときの慣性力はおよそ？",
+  "choices": [
+   "294 kN",
+   "30 kN",
+   "2940 kN",
+   "2.94 kN"
+  ],
+  "answer": 0,
+  "explain": "質量[t] × G = tf。30 tf × 9.81。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-13",
+  "q": "60 kgf/mm² はおよそ何 MPa？",
+  "choices": [
+   "270 MPa",
+   "590 MPa",
+   "980 MPa",
+   "60 MPa"
+  ],
+  "answer": 1,
+  "explain": "1 kgf/mm² = 9.81 MPa。590 材の呼び方の由来。980 は 100 kgf/mm²。",
+  "note": "knowledge/設計肌感トレーニング"
+ },
+ {
+  "id": "d2-14",
+  "q": "1 ksi は何 MPa？",
+  "choices": [
+   "1 MPa",
+   "9.81 MPa",
+   "6.895 MPa",
+   "68.95 MPa"
+  ],
+  "answer": 2,
+  "explain": "海外の材料データで出る。",
+  "note": "knowledge/設計肌感トレーニング"
+ }
+]

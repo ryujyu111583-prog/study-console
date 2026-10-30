@@ -6,7 +6,7 @@ import type { Track } from "../tracks";
 export const MAX_LEVEL = 99;
 /** 勇者：Lv L に必要な累計経験値は 60 × (L-1)²。毎日フル2項目（約200）で、30日後に Lv8、90日後に Lv14 くらい。 */
 export const HERO_STEP = 60;
-/** 仲間（4項目それぞれ）：15 × (L-1)²。 */
+/** 仲間（項目それぞれ）：15 × (L-1)²。 */
 export const MEMBER_STEP = 15;
 
 export const xpForLevel = (level: number, step: number) => step * (level - 1) ** 2;
@@ -36,12 +36,13 @@ export const heroTitle = (level: number) =>
             ? "駆け出し冒険者"
             : "見習い";
 
-/** 4項目を仲間の職業に見立てる。 */
+/** 各項目を仲間の職業に見立てる。 */
 export const MEMBER_JOB: Record<Track, string> = {
   stat: "魔法使い",
   inv: "商人",
   ml: "戦士",
   en: "吟遊詩人",
+  dsn: "鍛冶屋",
 };
 
 /** 経験値とゴールドの決まり。画面の説明にもこの値を出す。 */

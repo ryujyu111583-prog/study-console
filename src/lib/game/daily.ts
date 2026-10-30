@@ -21,7 +21,7 @@ export function dailyQuests(logs: LogMap, game: GameDoc, today = dayKey()): Ques
   const quiz = game.quizLog[today] ?? 0;
   const cards = game.cardLog[today] ?? 0;
   return [
-    { id: "record", label: "仲間の記録をつける", hint: "4項目のどれか1つ", href: "/", done: hasAnyRecord(logs[today]) },
+    { id: "record", label: "仲間の記録をつける", hint: "仲間のどれか1人", href: "/", done: hasAnyRecord(logs[today]) },
     { id: "quiz", label: `クイズに${QUIZ_GOAL}問答える`, hint: `たたかう・ボス戦 ${Math.min(quiz, QUIZ_GOAL)}/${QUIZ_GOAL}`, href: "/battle", done: quiz >= QUIZ_GOAL },
     { id: "cards", label: `カードを${CARD_GOAL}枚めくる`, hint: `暗記カード ${Math.min(cards, CARD_GOAL)}/${CARD_GOAL}`, href: "/cards", done: cards >= CARD_GOAL },
   ];
@@ -52,7 +52,7 @@ export function achievements(logs: LogMap, mistakes: Mistake[], game: GameDoc, s
   const bosses = AREAS.filter((a) => game.bosses[a.id]?.clearedAt).length;
   const hours = Math.floor(
     Object.values(logs).reduce(
-      (s, e) => s + (e.statMinutes ?? 0) + (e.invMinutes ?? 0) + (e.mlMinutes ?? 0) + (e.enMinutes ?? 0) + (e.gkMinutes ?? 0),
+      (s, e) => s + (e.statMinutes ?? 0) + (e.invMinutes ?? 0) + (e.mlMinutes ?? 0) + (e.enMinutes ?? 0) + (e.dsnMinutes ?? 0) + (e.gkMinutes ?? 0),
       0,
     ) / 60,
   );

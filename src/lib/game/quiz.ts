@@ -2,6 +2,12 @@
  * 内蔵クイズと暗記カード。中身は scripts/build_quiz.py が vault のノートから作った JSON。
  */
 import cardsJson from "@/data/cards.json";
+import d1 from "@/data/quiz/d1.json";
+import d2 from "@/data/quiz/d2.json";
+import d3 from "@/data/quiz/d3.json";
+import d4 from "@/data/quiz/d4.json";
+import d5 from "@/data/quiz/d5.json";
+import d6 from "@/data/quiz/d6.json";
 import g1 from "@/data/quiz/g1.json";
 import g2 from "@/data/quiz/g2.json";
 import g3 from "@/data/quiz/g3.json";
@@ -35,7 +41,7 @@ export type Question = {
 
 export type Card = { id: string; front: string; back: string; note: string };
 
-export const BANK: Record<string, Question[]> = { g1, g2, g3, g4, g5, g6, g7, g8, g9, s1, s2, s3, s4, i1, i2, i3, i4, i5, i6 };
+export const BANK: Record<string, Question[]> = { g1, g2, g3, g4, g5, g6, g7, g8, g9, s1, s2, s3, s4, i1, i2, i3, i4, i5, i6, d1, d2, d3, d4, d5, d6 };
 
 export const CARDS: Card[] = cardsJson;
 
@@ -59,7 +65,13 @@ export function pickQuestions(areaId: string, n: number): Question[] {
 
 /** ノートのフォルダから、どの仲間の経験値にするかを決める */
 export const trackOfNote = (note: string): Track =>
-  note.startsWith("Learning/Statistics/") ? "stat" : note.startsWith("Learning/Investing/") ? "inv" : "ml";
+  note.startsWith("Learning/Statistics/")
+    ? "stat"
+    : note.startsWith("Learning/Investing/")
+      ? "inv"
+      : note.startsWith("knowledge/設計肌感")
+        ? "dsn"
+        : "ml";
 
 // ---- 暗記カード（Leitner 5箱） ----
 

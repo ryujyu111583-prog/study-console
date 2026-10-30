@@ -47,7 +47,7 @@ export type GameDoc = {
   mpLog: Record<string, number>;
 };
 
-const zero = (): Record<Track, number> => ({ stat: 0, inv: 0, ml: 0, en: 0 });
+const zero = (): Record<Track, number> => ({ stat: 0, inv: 0, ml: 0, en: 0, dsn: 0 });
 
 export const EMPTY_GAME: GameDoc = {
   bonusXp: zero(),

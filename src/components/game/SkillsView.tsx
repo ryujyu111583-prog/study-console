@@ -16,6 +16,7 @@ const COLOR: Record<Track, string> = {
   inv: "var(--inv)",
   ml: "var(--ml)",
   en: "var(--en)",
+  dsn: "var(--dsn)",
 };
 
 // ツリーの1マス。3列、段の高さ 64。
@@ -42,7 +43,7 @@ export default function SkillsView() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-4 gap-2" role="tablist" aria-label="仲間">
+      <div className="grid grid-cols-5 gap-1.5" role="tablist" aria-label="仲間">
         {TRACKS.map((t) => (
           <button
             key={t}

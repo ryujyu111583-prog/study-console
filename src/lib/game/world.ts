@@ -1,6 +1,6 @@
 /**
  * 世界地図。G検定のシラバス9分野（外部400問のカテゴリ）を大陸の街に、
- * 統計・英語・投資を離れ島に置く。各地のボスは「その分野の演習を何問取れたか」で倒す。
+ * 統計・英語・投資・設計を離れ島に置く。各地のボスは「その分野の演習を何問取れたか」で倒す。
  * ここまでが「人間界」。そのまわりを、まだ誰も踏破していない暗黒大陸（FRONTIER）が囲む。
  */
 import type { Track } from "../tracks";
@@ -71,6 +71,12 @@ export const AREAS: Area[] = [
   { id: "i4", name: "決算の都", topic: "財務三表・PER/PBR/ROE・DCF", track: "inv", x: 138, y: 124, site: "city", boss: "バリュートラップ", look: { base: "#e07fb0", kind: "mushroom", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
   { id: "i5", name: "金利の港", topic: "金利と債券・為替・中央銀行", track: "inv", x: 127, y: 131, site: "port", boss: "デュレーション・クラーケン", look: { base: "#c76aa0", kind: "chain", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
   { id: "i6", name: "暴落の遺跡", topic: "行動ファイナンス・暴落の歴史・資産配分", track: "inv", x: 113, y: 130, site: "ruins", boss: "パニック売りの亡霊", look: { base: "#b04070", kind: "ghost", crown: true }, questions: 10, pass: 7, howTo: "暴落の最中の自分に勝つ。10問で7問以上", xp: 500, gold: 400 },
+  { id: "d1", name: "断面の工房", topic: "断面と応力・I と Z・たわみ", track: "dsn", x: 112, y: 61, site: "mine", boss: "座屈の巨人", look: { base: "#5fe0c4", kind: "golem", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
+  { id: "d2", name: "単位の砦", topic: "LS-DYNA の単位系・力と応力の換算", track: "dsn", x: 120, y: 58, site: "fort", boss: "桁違いの門番", look: { base: "#49c2a8", kind: "knight", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },
+  { id: "d3", name: "計測の灯台", topic: "ロガーと Hz・CFC・ひずみ", track: "dsn", x: 129, y: 65, site: "lighthouse", boss: "エイリアシングの亡霊", look: { base: "#7ce9d3", kind: "ghost", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },
+  { id: "d4", name: "板金の村", topic: "板厚の見た目と物差し", track: "dsn", x: 113, y: 69, site: "village", boss: "ペラペラ外板", look: { base: "#3fae96", kind: "plain", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },
+  { id: "d5", name: "ねじの塔", topic: "M4〜M14 の寸法・強度区分・トルク", track: "dsn", x: 121, y: 70, site: "tower", boss: "かじりボルト", look: { base: "#5fe0c4", kind: "hammer", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
+  { id: "d6", name: "品質の市場", topic: "工程能力・QC七つ道具", track: "dsn", x: 130, y: 72, site: "market", boss: "3σの番人", look: { base: "#49c2a8", kind: "mushroom", crown: true }, questions: 10, pass: 7, howTo: "パレート・魚の骨・Cpk の使い分けを問う。10問で7問以上", xp: 400, gold: 300 },
 ];
 
 /** G検定大陸の街道（地図に描く道の順） */
@@ -81,6 +87,7 @@ export const SEA_LANES: [string, string][] = [
   ["g7", "e1"],
   ["g2", "i1"],
   ["g3", "s1"],
+  ["e2", "d3"],
 ];
 
 /**
