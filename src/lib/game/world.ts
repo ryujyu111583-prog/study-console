@@ -77,6 +77,12 @@ export const AREAS: Area[] = [
   { id: "d4", name: "板金の村", topic: "板厚の見た目と物差し", track: "dsn", x: 113, y: 69, site: "village", boss: "ペラペラ外板", look: { base: "#3fae96", kind: "plain", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },
   { id: "d5", name: "ねじの塔", topic: "M4〜M14 の寸法・強度区分・トルク", track: "dsn", x: 121, y: 70, site: "tower", boss: "かじりボルト", look: { base: "#5fe0c4", kind: "hammer", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
   { id: "d6", name: "品質の市場", topic: "工程能力・QC七つ道具", track: "dsn", x: 130, y: 72, site: "market", boss: "3σの番人", look: { base: "#49c2a8", kind: "mushroom", crown: true }, questions: 10, pass: 7, howTo: "パレート・魚の骨・Cpk の使い分けを問う。10問で7問以上", xp: 400, gold: 300 },
+  { id: "d7", name: "材料の鉱山", topic: "板金の材料と材料欄の書き方", track: "dsn", x: 138, y: 58, site: "mine", boss: "相当品ミミック", look: { base: "#3fae96", kind: "golem", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },
+  { id: "d8", name: "公差の神殿", topic: "ワーストと RSS・普通公差・はめあい・位置度", track: "dsn", x: 145, y: 64, site: "temple", boss: "積み上げの塔守", look: { base: "#5fe0c4", kind: "knight", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 400, gold: 300 },
+  { id: "d9", name: "締結の砦", topic: "座面面圧・掛かり・内力係数・ボルトの疲労", track: "dsn", x: 137, y: 66, site: "fort", boss: "陥没ナット", look: { base: "#49c2a8", kind: "hammer", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 500, gold: 400 },
+  { id: "d10", name: "共振の洞窟", topic: "緩み・へたり・熱膨張・振動・低サイクル疲労", track: "dsn", x: 144, y: 71, site: "cave", boss: "ゆるみの亡霊", look: { base: "#7ce9d3", kind: "ghost", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 500, gold: 400 },
+  { id: "d11", name: "錆の遺跡", topic: "腐食速度・めっき寿命・すき間・異種金属", track: "dsn", x: 137, y: 76, site: "ruins", boss: "赤錆ドラゴン", look: { base: "#c0563a", kind: "dragon", crown: true }, questions: 10, pass: 7, howTo: "板が無くなる心配を数字で片付ける。10問で7問以上", xp: 400, gold: 300 },
+  { id: "d12", name: "段取りの港", topic: "判断の順番・安全率・リードタイム", track: "dsn", x: 146, y: 77, site: "port", boss: "納期の大渦", look: { base: "#49c2a8", kind: "chain", crown: true }, questions: 10, pass: 7, howTo: "手を離す順番と、何をいつ頼むか。10問で7問以上", xp: 400, gold: 300 },
 ];
 
 /** G検定大陸の街道（地図に描く道の順） */
@@ -88,6 +94,7 @@ export const SEA_LANES: [string, string][] = [
   ["g2", "i1"],
   ["g3", "s1"],
   ["e2", "d3"],
+  ["d6", "d11"],
 ];
 
 /**

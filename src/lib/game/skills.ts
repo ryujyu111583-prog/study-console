@@ -69,6 +69,13 @@ export const SKILLS: SkillNode[] = [
   { id: "ds-thk", track: "dsn", topic: "板厚の物差し", skill: "メキキ", prompt: "カード・CD・硬貨の厚さと、1.0t → 1.2t の剛性比を言える？", cost: 1, requires: ["ds-sec"], col: 2, row: 1 },
   { id: "ds-cp", track: "dsn", topic: "工程能力", skill: "シグマ・アイ", prompt: "Cp と Cpk の違い、1.33 と 1.67 の ppm、Cp が高く Cpk が低いときの打ち手を言える？", cost: 2, requires: ["ds-thk"], col: 2, row: 2 },
   { id: "ds-qc", track: "dsn", topic: "QC七つ道具", skill: "サカナノホネ", prompt: "7つを「見たいこと」で言い分け、管理限界と規格限界の違いを説明できる？", cost: 3, requires: ["ds-cp"], col: 2, row: 3 },
+  // 設計 — 判断（材料・公差・締結・緩み・錆・段取り）
+  { id: "ds-mat", track: "dsn", topic: "材料と材料欄", skill: "ザイシツラン", prompt: "SPCC・SECC・SGCC・A5052-H34 の違いと、材料欄と表面処理欄に何を書くかを言える？", cost: 1, requires: ["ds-thk"], col: 0, row: 3 },
+  { id: "ds-rust", track: "dsn", topic: "錆と腐食", skill: "サビヨミ", prompt: "C3 の亜鉛の腐食速度から Z12 の寿命の桁を出し、どこから錆びるかを3つ言える？", cost: 2, requires: ["ds-mat"], col: 0, row: 4 },
+  { id: "ds-joint", track: "dsn", topic: "締結の詳しい計算", skill: "ザメンアツ", prompt: "M8 の座面面圧を座金あり・なしで出し、内力係数とボルトの疲労限度を説明できる？", cost: 2, requires: ["ds-torque"], col: 1, row: 3 },
+  { id: "ds-loose", track: "dsn", topic: "緩み・熱・振動・疲労", skill: "ユルミドメ", prompt: "回転緩みと非回転緩みの対策、鋼の熱応力 1 K あたり、たわみ 1 mm の固有振動数を言える？", cost: 2, requires: ["ds-joint"], col: 1, row: 4 },
+  { id: "ds-tol", track: "dsn", topic: "公差の積み上げ", skill: "ツミアゲ", prompt: "ワーストと RSS を出し分け、RSS が甘くなる条件と、穴径から位置度を出す式を言える？", cost: 2, requires: ["ds-qc"], col: 2, row: 4 },
+  { id: "ds-lead", track: "dsn", topic: "判断とリードタイム", skill: "テバナシ", prompt: "判断の5つの順番と、板金試作・金型・特注ボルトのリードタイムの桁を言える？", cost: 3, requires: ["ds-rust", "ds-loose", "ds-tol"], col: 1, row: 5 },
   { id: "iv-comp", track: "inv", topic: "複利", skill: "コンパウンド", prompt: "72の法則で、年利6%なら何年で2倍になるか言える？", cost: 1, requires: [], col: 1, row: 0 },
   { id: "iv-div", track: "inv", topic: "分散投資", skill: "ディバーシファイ", prompt: "分散で減らせるリスクと減らせないリスクの違いは？", cost: 1, requires: ["iv-comp"], col: 0, row: 1 },
   { id: "iv-index", track: "inv", topic: "インデックス投資", skill: "インデックス", prompt: "信託報酬の差が30年後にどれくらい効くか説明できる？", cost: 1, requires: ["iv-comp"], col: 2, row: 1 },

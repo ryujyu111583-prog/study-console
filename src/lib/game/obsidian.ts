@@ -15,6 +15,7 @@ const ML = "Learning/ML/";
 const ST = "Learning/Statistics/";
 const IV = "Learning/Investing/";
 const DS = "knowledge/設計肌感トレーニング";
+const DJ = "knowledge/設計判断ハンドブック";
 
 /** スキル・地方 → ノート。対応するノートがまだ無いもの（英語）は載せない。 */
 export const NOTES: Record<string, string> = {
@@ -68,6 +69,7 @@ export const NOTES: Record<string, string> = {
   g9: `${ML}ML基礎C1_直前チートシート`,
   maou: `${ML}G検定 MOC`,
   ...Object.fromEntries(["d1", "d2", "d3", "d4", "d5", "d6", "ds-sec", "ds-unit", "ds-log", "ds-thk", "ds-bolt", "ds-torque", "ds-cp", "ds-qc"].map((id) => [id, DS])),
+  ...Object.fromEntries(["d7", "d8", "d9", "d10", "d11", "d12", "ds-mat", "ds-tol", "ds-joint", "ds-loose", "ds-rust", "ds-lead"].map((id) => [id, DJ])),
   s1: `${ST}統計学×CAE カリキュラム`,
   s2: `${ST}統計S06_区間推定_n3の強度をどこまで信じるか`,
   s3: `${ST}統計S08_仮説検定_メッシュを変えたら最大荷重は変わったか`,

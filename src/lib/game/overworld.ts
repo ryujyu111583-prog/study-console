@@ -102,6 +102,10 @@ const KNOWN: Blob[] = [
   { x: 118, y: 62, rx: 10, ry: 7 },
   { x: 122, y: 70, rx: 12, ry: 5 },
   { x: 129, y: 67, rx: 6, ry: 6 },
+  // 鍛冶の島の東（設計判断）
+  { x: 141, y: 61, rx: 8, ry: 6 },
+  { x: 141, y: 71, rx: 8, ry: 6 },
+  { x: 142, y: 77, rx: 7, ry: 3 },
 ];
 function knownScore(x: number, y: number) {
   let best = -9;

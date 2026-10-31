@@ -64,6 +64,8 @@ const GROUPS: { label: string; color: string; quests: Quest[] }[] = [
       { title: "10秒ドリルを5問", where: "設計肌感トレーナー", url: "https://claude.ai/artifact/SUhjE2fFNjvmrrTLhJVbTf", what: "数字を入れる見積もりドリル。1問10秒以内。断面ラボと板厚の校正もここ", report: "正答数と問題数" },
       { title: "FE の前に手計算で予想する", where: "vault", note: "knowledge/設計肌感トレーニング", what: "実務で1断面だけ M/Z を先に出し、SECFORC と比べて誤差を残す", report: "断面と誤差の%" },
       { title: "ボルトを実物で確かめる", where: "手元の工具", what: "六角の二面幅をスパナかノギスで確かめ、呼びとピッチを当てる", report: "当てた本数" },
+      { title: "仕事の1件を判断の順番で片付ける", where: "vault", note: "knowledge/設計判断ハンドブック", what: "困ること1行 → 桁 → 余裕 → 一番小さい所だけ確認 → 前提を書いて手を離す。かかった時間も残す", report: "件名と所要時間" },
+      { title: "担当部品の錆の弱点を3つ挙げる", where: "実物か CAD", note: "knowledge/設計判断ハンドブック", what: "すき間・水たまり・端面・異種金属のどれかを探して、対策を1行ずつ書く", report: "見つけた数" },
     ],
   },
 ];

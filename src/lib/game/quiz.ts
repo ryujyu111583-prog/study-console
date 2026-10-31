@@ -8,6 +8,12 @@ import d3 from "@/data/quiz/d3.json";
 import d4 from "@/data/quiz/d4.json";
 import d5 from "@/data/quiz/d5.json";
 import d6 from "@/data/quiz/d6.json";
+import d7 from "@/data/quiz/d7.json";
+import d8 from "@/data/quiz/d8.json";
+import d9 from "@/data/quiz/d9.json";
+import d10 from "@/data/quiz/d10.json";
+import d11 from "@/data/quiz/d11.json";
+import d12 from "@/data/quiz/d12.json";
 import g1 from "@/data/quiz/g1.json";
 import g2 from "@/data/quiz/g2.json";
 import g3 from "@/data/quiz/g3.json";
@@ -41,7 +47,7 @@ export type Question = {
 
 export type Card = { id: string; front: string; back: string; note: string };
 
-export const BANK: Record<string, Question[]> = { g1, g2, g3, g4, g5, g6, g7, g8, g9, s1, s2, s3, s4, i1, i2, i3, i4, i5, i6, d1, d2, d3, d4, d5, d6 };
+export const BANK: Record<string, Question[]> = { g1, g2, g3, g4, g5, g6, g7, g8, g9, s1, s2, s3, s4, i1, i2, i3, i4, i5, i6, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12 };
 
 export const CARDS: Card[] = cardsJson;
 
@@ -69,7 +75,7 @@ export const trackOfNote = (note: string): Track =>
     ? "stat"
     : note.startsWith("Learning/Investing/")
       ? "inv"
-      : note.startsWith("knowledge/設計肌感")
+      : note.startsWith("knowledge/設計")
         ? "dsn"
         : "ml";
 
