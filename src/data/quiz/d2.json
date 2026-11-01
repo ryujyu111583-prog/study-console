@@ -10,7 +10,13 @@
   ],
   "answer": 1,
   "explain": "kN で +3、m→mm で +3。",
-  "note": "knowledge/設計肌感トレーニング"
+  "note": "knowledge/設計肌感トレーニング",
+  "formula": {
+   "expr": "1 kN·m = 10³ N × 10³ mm",
+   "terms": "接頭語の指数を足す。",
+   "steps": "kN → N：+3\nm → mm：+3\n合計 10⁶ 倍",
+   "insight": "M/Z の計算で毎回使う換算。ここを落とすと答えが6桁ずれる。"
+  }
  },
  {
   "id": "d2-02",
@@ -23,7 +29,13 @@
   ],
   "answer": 2,
   "explain": "kN（+3）と /mm²（+6）で 10⁹。N/mm² なら MPa。",
-  "note": "knowledge/設計肌感トレーニング"
+  "note": "knowledge/設計肌感トレーニング",
+  "formula": {
+   "expr": "1 kN/mm² = 10³ N / 10⁻⁶ m²",
+   "terms": "分母の 10⁻⁶ は割ると +6 になる。",
+   "steps": "kN：+3\n/mm²：+6\n合計 10⁹ Pa = 1 GPa",
+   "insight": "mm-ms-kg 系で鋼の E が 210 になる理由。"
+  }
  },
  {
   "id": "d2-03",
@@ -75,7 +87,13 @@
   ],
   "answer": 2,
   "explain": "mm/ms = m/s なので 3.6 で割る。",
-  "note": "knowledge/設計肌感トレーニング"
+  "note": "knowledge/設計肌感トレーニング",
+  "formula": {
+   "expr": "v[m/s] = v[km/h] ÷ 3.6、mm/ms = m/s",
+   "terms": "1 km/h = 1000 m ÷ 3600 s。mm/ms は上下とも 10⁻³ で打ち消す。",
+   "steps": "50 ÷ 3.6 = 13.89 m/s = 13.89 mm/ms",
+   "insight": "初速の入力で頻出。mm/ms はそのまま m/s と読めるのが mm-ms-kg 系の良いところ。"
+  }
  },
  {
   "id": "d2-07",
@@ -88,7 +106,13 @@
   ],
   "answer": 3,
   "explain": "1 mm/ms² = 1000 m/s²。9.81 で割って約 102。",
-  "note": "knowledge/設計肌感トレーニング"
+  "note": "knowledge/設計肌感トレーニング",
+  "formula": {
+   "expr": "1 G = 9.81 m/s²",
+   "terms": "mm/ms² は分子 10⁻³、分母 10⁻⁶ なので 10³ m/s²。",
+   "steps": "1 mm/ms² = 1000 m/s²\n1000 ÷ 9.81 ≈ 102 G",
+   "insight": "逆向きは 1 G ≈ 9.81e-3 mm/ms²。重力の入力で使う。"
+  }
  },
  {
   "id": "d2-08",
@@ -101,7 +125,13 @@
   ],
   "answer": 0,
   "explain": "½ × 1500 × 13.89²。速度が半分ならエネルギーは 1/4 で、約 36 kJ。",
-  "note": "knowledge/設計肌感トレーニング"
+  "note": "knowledge/設計肌感トレーニング",
+  "formula": {
+   "expr": "E = ½·m·v²",
+   "terms": "m[kg]、v[m/s] で計算すると J。",
+   "steps": "v = 50 ÷ 3.6 = 13.89 m/s\nE = 0.5 × 1500 × 13.89² ≈ 144,700 J ≈ 145 kJ",
+   "insight": "速度が2乗で効く。50 → 100 km/h でエネルギーは4倍で、車体の吸収量の見積もりはここから。"
+  }
  },
  {
   "id": "d2-09",
@@ -114,7 +144,13 @@
   ],
   "answer": 1,
   "explain": "kN（+3）× mm（−3）で N·m = J。mm-s-t の N·mm は mJ。",
-  "note": "knowledge/設計肌感トレーニング"
+  "note": "knowledge/設計肌感トレーニング",
+  "formula": {
+   "expr": "kN·mm = 10³ N × 10⁻³ m",
+   "terms": "指数を足すと 0。",
+   "steps": "+3 − 3 = 0 → N·m = J",
+   "insight": "単位系が整合しているので係数なしで読める。GLSTAT のエネルギーをそのまま J で読める。"
+  }
  },
  {
   "id": "d2-10",
@@ -127,7 +163,13 @@
   ],
   "answer": 2,
   "explain": "N × 10⁻³ m。mm-ms-kg の kN·mm（= J）と 1000 倍違う。",
-  "note": "knowledge/設計肌感トレーニング"
+  "note": "knowledge/設計肌感トレーニング",
+  "formula": {
+   "expr": "N·mm = N × 10⁻³ m",
+   "terms": "kN がなくなった分、1000 倍小さい。",
+   "steps": "10⁻³ N·m = 10⁻³ J = 1 mJ\n145 kJ は 1.45 × 10⁸ N·mm",
+   "insight": "mm-s-t 系のエネルギーは桁が大きく見える。別の系と比べるときは 1000 倍を確認する。"
+  }
  },
  {
   "id": "d2-11",
@@ -153,7 +195,13 @@
   ],
   "answer": 0,
   "explain": "質量[t] × G = tf。30 tf × 9.81。",
-  "note": "knowledge/設計肌感トレーニング"
+  "note": "knowledge/設計肌感トレーニング",
+  "formula": {
+   "expr": "F = m·a、質量[t] × G = tf",
+   "terms": "1 tf ≈ 9.81 kN。",
+   "steps": "1 t × 30 G = 30 tf\n30 × 9.81 ≈ 294 kN\n確認：1000 kg × 30 × 9.81 m/s² = 294,300 N",
+   "insight": "衝突の暗算で最も使える式。平均 G で出すので、波形のピークはこれより高くなる。"
+  }
  },
  {
   "id": "d2-13",
@@ -166,7 +214,13 @@
   ],
   "answer": 1,
   "explain": "1 kgf/mm² = 9.81 MPa。590 材の呼び方の由来。980 は 100 kgf/mm²。",
-  "note": "knowledge/設計肌感トレーニング"
+  "note": "knowledge/設計肌感トレーニング",
+  "formula": {
+   "expr": "σ[MPa] = σ[kgf/mm²] × 9.81",
+   "terms": "1 kgf ≈ 9.81 N なので、N/mm² に直すだけ。",
+   "steps": "60 × 9.81 = 588.6 ≈ 590 MPa\n100 × 9.81 = 981 ≈ 980 MPa",
+   "insight": "590材、980材の呼び名の由来。古い図面や規格を読むときに使う。"
+  }
  },
  {
   "id": "d2-14",

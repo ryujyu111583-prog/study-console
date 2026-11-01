@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import FormulaDetail from "@/components/game/FormulaDetail";
 import NoteLink from "@/components/game/NoteLink";
 import SectionFigure from "@/components/game/SectionFigure";
 import type { Question } from "@/lib/game/quiz";
@@ -66,6 +67,7 @@ export default function QuizCard({
             {picked === question.answer ? "せいかい！" : `ざんねん… 正解は ${"ABCD"[question.answer]}`}
           </p>
           <p className="text-sm leading-relaxed text-muted">{question.explain}</p>
+          {question.formula && <FormulaDetail formula={question.formula} open={picked !== question.answer} />}
           <NoteLink path={question.note} label={`ノートで確かめる：${question.note.split("/").pop()}`} />
           {children}
         </div>

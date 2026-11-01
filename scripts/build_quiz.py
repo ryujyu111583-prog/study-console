@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+from quiz_formula import FORMULA  # noqa: E402
 from quiz_source import CARDS, QUIZ  # noqa: E402
 
 VAULT = Path(r"C:\Users\ユーザー\Dropbox\vault-share\ryuju")
@@ -59,6 +60,8 @@ def check() -> int:
 def build() -> None:
     (OUT / "quiz").mkdir(parents=True, exist_ok=True)
     total = 0
+    known = {f"{a}-{i:02d}" for a, (_, items) in QUIZ.items() for i in range(1, len(items) + 1)}
+    assert not (unknown := set(FORMULA) - known), f"無い問題ID: {unknown}"
     for area, (note, items) in QUIZ.items():
         out = []
         for i, (q, correct, wrong, explain, *own) in enumerate(items, 1):
@@ -69,14 +72,18 @@ def build() -> None:
             random.Random(qid).shuffle(others)
             pos = (i + len(area) + sum(map(ord, area))) % 4
             choices = others[:pos] + [correct] + others[pos:]
-            out.append({
+            item = {
                 "id": qid,
                 "q": q,
                 "choices": choices,
                 "answer": choices.index(correct),
                 "explain": explain,
                 "note": own[0] if own else note,
-            })
+            }
+            if qid in FORMULA:
+                expr, terms, steps, insight = FORMULA[qid]
+                item["formula"] = {"expr": expr, "terms": terms, "steps": steps, "insight": insight}
+            out.append(item)
         (OUT / "quiz" / f"{area}.json").write_text(
             json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n"
         )

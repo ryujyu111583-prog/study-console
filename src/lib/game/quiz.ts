@@ -29,12 +29,21 @@ import s3 from "@/data/quiz/s3.json";
 import s4 from "@/data/quiz/s4.json";
 import type { Track } from "../tracks";
 
+/** 式と計算のくわしい解説。答えた後に出す。steps の改行はそのまま画面の改行になる。 */
+export type Formula = {
+  expr: string;
+  terms: string;
+  steps: string;
+  insight: string;
+};
+
 export type Question = {
   id: string;
   q: string;
   choices: string[];
   answer: number;
   explain: string;
+  formula?: Formula;
   /** vault のノート（.md なし） */
   note: string;
 };
