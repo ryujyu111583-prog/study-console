@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import NoteLink from "@/components/game/NoteLink";
+import SectionFigure from "@/components/game/SectionFigure";
 import type { Question } from "@/lib/game/quiz";
 
 /** 4択1問。選んだら正誤と解説、根拠のノートを出す。 */
@@ -30,6 +31,7 @@ export default function QuizCard({
   return (
     <div className="flex flex-col gap-2">
       <p className="text-[15px] leading-relaxed">{question.q}</p>
+      <SectionFigure id={question.id} />
       <ol className="flex flex-col gap-1.5">
         {question.choices.map((c, i) => {
           const isAnswer = i === question.answer;

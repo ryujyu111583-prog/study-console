@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useGame } from "@/components/game/GameProvider";
 import MissRegister from "@/components/game/MissRegister";
 import QuizCard from "@/components/game/QuizCard";
+import SectionFigure from "@/components/game/SectionFigure";
 import { fmt } from "@/lib/game/levels";
 import { eventMultiplier } from "@/lib/game/magic";
 import { pickQuestions, type Question } from "@/lib/game/quiz";
@@ -77,6 +78,7 @@ export default function BossRun({ area, onExit }: { area: Area; onExit: () => vo
             {misses.map((m) => (
               <div key={m.id} className="flex flex-col gap-1 border-t border-line pt-2">
                 <p className="text-sm">{m.q}</p>
+                <SectionFigure id={m.id} />
                 <p className="text-xs text-ok">正解：{m.choices[m.answer]}</p>
                 <MissRegister question={m} area={area.id} />
               </div>
