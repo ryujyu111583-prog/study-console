@@ -5,6 +5,7 @@ import FormulaDetail from "@/components/game/FormulaDetail";
 import NoteLink from "@/components/game/NoteLink";
 import SectionFigure from "@/components/game/SectionFigure";
 import type { Question } from "@/lib/game/quiz";
+import { visualFor } from "@/lib/game/visuals";
 
 /** 4択1問。選んだら正誤と解説、根拠のノートを出す。 */
 export default function QuizCard({
@@ -79,6 +80,16 @@ export default function QuizCard({
           <p className="text-sm leading-relaxed text-muted">{question.explain}</p>
           {question.formula && <FormulaDetail formula={question.formula} open={picked !== question.answer} />}
           <NoteLink path={question.note} label={`ノートで確かめる：${question.note.split("/").pop()}`} />
+          {visualFor(question.id) && (
+            <a
+              href={visualFor(question.id)!.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs text-ex underline underline-offset-2"
+            >
+              📐 図解で見る：{visualFor(question.id)!.label}
+            </a>
+          )}
           {children}
         </div>
       )}

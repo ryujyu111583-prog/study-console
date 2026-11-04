@@ -15,6 +15,8 @@
 
 - 式と計算が絡む問いのくわしい解説は `scripts/quiz_formula.py` に問題IDをキーにして書く（式・意味・計算・見立ての4段）。`explain` は短いまま残す。特技「見破る」と誤答台帳が `explain` を使うため。設計以外の問いでも、式と数字はノートに合わせるが、見立ての段には一般知識が混ざる
 
+- 図解ページ（claude.ai の Artifact）へのリンクは `src/lib/game/visuals.ts` に問題IDをキーにして書く。Artifact は Share で「リンクを知っている人」にしておく
+
 ## Obsidian のノートを更新したとき
 
 1. `python scripts/build_quiz.py --check` を実行する。問題を作ったあとに変わったノートと、それを使っている地方が出る
