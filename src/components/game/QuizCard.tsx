@@ -31,7 +31,17 @@ export default function QuizCard({
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-[15px] leading-relaxed">{question.q}</p>
+      <p className="text-[15px] leading-relaxed">
+        {question.q.split(/(〔[^〕]+〕)/).map((p, i) =>
+          p.startsWith("〔") ? (
+            <mark key={i} className="mx-0.5 bg-gold px-0.5 font-bold text-bg">
+              {p.slice(1, -1)}
+            </mark>
+          ) : (
+            p
+          ),
+        )}
+      </p>
       <SectionFigure id={question.id} />
       <ol className="flex flex-col gap-1.5">
         {question.choices.map((c, i) => {

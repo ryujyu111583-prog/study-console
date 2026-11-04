@@ -27,6 +27,7 @@ import s1 from "@/data/quiz/s1.json";
 import s2 from "@/data/quiz/s2.json";
 import s3 from "@/data/quiz/s3.json";
 import s4 from "@/data/quiz/s4.json";
+import trialJson from "@/data/trial.json";
 import type { Track } from "../tracks";
 
 /** 式と計算のくわしい解説。答えた後に出す。steps の改行はそのまま画面の改行になる。 */
@@ -54,7 +55,19 @@ export const BANK: Record<string, Question[]> = { g1, g2, g3, g4, g5, g6, g7, g8
 
 export const CARDS: Card[] = cardsJson;
 
-const ALL = Object.values(BANK).flat();
+/** 限定語の試練場の問題。〔〕で囲んだ語が限定語。cat は出題の分類（TRIAL_CAT） */
+export type TrialQuestion = Question & { cat: TrialCat; axis?: string };
+export type TrialCat = "led" | "pair" | "gen" | "law";
+export const TRIAL_CAT: Record<TrialCat, string> = {
+  led: "誤答台帳の再発",
+  pair: "紛らわしいペア",
+  gen: "生成AI",
+  law: "法律・社会実装",
+};
+// 試練場の問題は BANK に入れない（野生戦に出ると限定語の印付けが効かないため）。台帳の再戦では引けるよう ALL には入れる
+export const TRIAL = trialJson as TrialQuestion[];
+
+const ALL: Question[] = [...Object.values(BANK).flat(), ...TRIAL];
 
 export const questionById = (id: string | undefined) => (id ? ALL.find((q) => q.id === id) : undefined);
 

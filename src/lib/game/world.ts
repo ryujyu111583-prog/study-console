@@ -57,6 +57,7 @@ export const AREAS: Area[] = [
   { id: "g7", name: "社会実装の港町", topic: "AIの社会実装", track: "ml", x: 106, y: 85, site: "port", boss: "PoC地獄の番人", look: { base: "#c98b4f", kind: "hammer", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },
   { id: "g8", name: "法と倫理の神殿", topic: "AIの法律と倫理", track: "ml", x: 94, y: 79, site: "temple", boss: "著作権の門番", look: { base: "#d9b44a", kind: "golem", crown: true }, questions: 10, pass: 7, howTo: "技術に押されて捨てがちな分野。10問で7問以上", xp: 300, gold: 200 },
   { id: "g9", name: "数理の泉", topic: "数理・統計", track: "ml", x: 81, y: 82, site: "spring", boss: "微分の精", look: { base: "#7cc4ff", kind: "ghost", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },
+  { id: "t1", name: "限定語の試練場", topic: "問いの限定語を読む（誤答台帳・ペア・生成AI・法律）", track: "ml", x: 88, y: 75, site: "tower", boss: "読み飛ばしの影", look: { base: "#e9cf3c", kind: "ghost", crown: true }, questions: 20, pass: 14, howTo: "〔限定語〕に印を付けてから解く。ランダム20問で14問以上", xp: 400, gold: 300 },
   { id: "maou", name: "魔王城", topic: "G検定 本番（2027-01-16）", track: "ml", x: 92, y: 59, site: "castle", boss: "魔王ディープ", look: { base: "#5a1a6e", kind: "dragon", crown: true }, questions: 100, pass: 70, howTo: "模試を通しで解き、正答率（%）を入れる。70%以上で撃破", xp: 2000, gold: 1500 },
 
   { id: "s1", name: "記述統計の村", topic: "平均・分散・相関", track: "stat", x: 63, y: 106, site: "village", boss: "外れ値オーガ", look: { base: "#b598ff", kind: "golem", crown: true }, questions: 10, pass: 7, howTo: drill10, xp: 300, gold: 200 },

@@ -45,7 +45,14 @@ export type GameDoc = {
   areaTouch: AreaTouch;
   /** 日付ごとに使った MP（magic.ts。MP は毎日満タンに戻る） */
   mpLog: Record<string, number>;
+  /** 限定語の試練場の1問ごとの戦績（TrialView） */
+  trial: Record<string, TrialStat>;
+  /** 試練場の前回の結果 */
+  trialLast: TrialRun | null;
 };
+
+export type TrialStat = { n: number; ok: number; last: boolean; date: string };
+export type TrialRun = { date: string; mode: string; n: number; ok: number; avg: number };
 
 const zero = (): Record<Track, number> => ({ stat: 0, inv: 0, ml: 0, en: 0, dsn: 0 });
 
@@ -66,6 +73,8 @@ export const EMPTY_GAME: GameDoc = {
   inn: { since: null, stays: [] },
   areaTouch: {},
   mpLog: {},
+  trial: {},
+  trialLast: null,
 };
 
 const gameRef = () => doc(db, "settings", "game");
@@ -90,6 +99,8 @@ export function subscribeGame(onChange: (g: GameDoc) => void) {
       inn: { since: d.inn?.since ?? null, stays: d.inn?.stays ?? [] },
       areaTouch: d.areaTouch ?? {},
       mpLog: d.mpLog ?? {},
+      trial: d.trial ?? {},
+      trialLast: d.trialLast ?? null,
     });
   });
 }
@@ -199,6 +210,21 @@ export async function answerQuiz(game: GameDoc, areaId: string, track: Track, co
     },
     { merge: true },
   );
+}
+
+/** 試練場で1問答えた。報酬と HP はクイズと同じ扱い（answerQuiz）にして、1問ごとの戦績を足す */
+export async function answerTrial(game: GameDoc, qid: string, correct: boolean, multiplier = 1) {
+  const prev = game.trial[qid];
+  await answerQuiz(game, "t1", "ml", correct, multiplier);
+  await setDoc(
+    gameRef(),
+    { trial: { [qid]: { n: (prev?.n ?? 0) + 1, ok: (prev?.ok ?? 0) + (correct ? 1 : 0), last: correct, date: dayKey() } } },
+    { merge: true },
+  );
+}
+
+export async function recordTrialRun(run: TrialRun) {
+  await setDoc(gameRef(), { trialLast: run }, { merge: true });
 }
 
 // ---- 暗記カード（settings/srs に {cardId: {box, due}}） ----

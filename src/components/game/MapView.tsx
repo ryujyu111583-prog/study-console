@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import BossRun from "@/components/game/BossRun";
 import { useGame } from "@/components/game/GameProvider";
@@ -9,7 +10,7 @@ import WorldMap from "@/components/game/WorldMap";
 import { fmt } from "@/lib/game/levels";
 import { noteFor } from "@/lib/game/obsidian";
 import { buildWorld } from "@/lib/game/overworld";
-import { hasQuiz } from "@/lib/game/quiz";
+import { TRIAL, hasQuiz } from "@/lib/game/quiz";
 import { play } from "@/lib/game/sfx";
 import { recordBoss } from "@/lib/game/state";
 import { NEGLECT_COLOR, lastBeforeToday, neglectOf } from "@/lib/game/vitality";
@@ -138,7 +139,11 @@ export default function MapView() {
           {hasQuiz(area.id) ? `この地方の問題を${area.questions}問。${area.pass}問以上で撃破。` : area.howTo}
         </p>
         <NoteLink id={area.id} label={`予習：${noteLabel(area.id)}`} />
-        {running ? (
+        {area.id === "t1" ? (
+          <Link href="/trial" onClick={() => play("select")} className="font-dot rounded-md border-2 border-ink py-2 text-center text-base">
+            試練場に入る（{TRIAL.length}問）
+          </Link>
+        ) : running ? (
           <BossRun area={area} onExit={() => setRunning(false)} />
         ) : hasQuiz(area.id) ? (
           <button
