@@ -189,7 +189,15 @@ export async function addBonus(track: Track, xp: number, gold = 0) {
  * クイズに1問答えた。正解なら経験値とゴールド（multiplier はメタルと放置ボーナスの倍率）。
  * どの地方に触れたかを残し、G検定なら HP 用の記録にも数える。
  */
-export async function answerQuiz(game: GameDoc, areaId: string, track: Track, correct: boolean, multiplier = 1) {
+export async function answerQuiz(
+  game: GameDoc,
+  areaId: string,
+  track: Track,
+  correct: boolean,
+  multiplier = 1,
+  /** 同じ書き込みに足す項目（試練場の1問ごとの戦績）。別の setDoc にすると片方だけ失敗しうる */
+  extra: Record<string, unknown> = {},
+) {
   const today = dayKey();
   const touch = game.areaTouch[areaId];
   await setDoc(
@@ -207,20 +215,20 @@ export async function answerQuiz(game: GameDoc, areaId: string, track: Track, co
             bonusGold: increment(Math.round(REWARD.quizGold * multiplier)),
           }
         : {}),
+      ...extra,
     },
     { merge: true },
   );
 }
 
-/** 試練場で1問答えた。報酬と HP はクイズと同じ扱い（answerQuiz）にして、1問ごとの戦績を足す */
+/**
+ * 試練場で1問答えた。報酬と HP はクイズと同じ扱い（answerQuiz）にして、1問ごとの戦績を同じ書き込みで足す。
+ * n と ok は increment なので、スマホと PC など複数の画面から答えても上書きされない。
+ */
 export async function answerTrial(game: GameDoc, qid: string, correct: boolean, multiplier = 1) {
-  const prev = game.trial[qid];
-  await answerQuiz(game, "t1", "ml", correct, multiplier);
-  await setDoc(
-    gameRef(),
-    { trial: { [qid]: { n: (prev?.n ?? 0) + 1, ok: (prev?.ok ?? 0) + (correct ? 1 : 0), last: correct, date: dayKey() } } },
-    { merge: true },
-  );
+  await answerQuiz(game, "t1", "ml", correct, multiplier, {
+    trial: { [qid]: { n: increment(1), ok: increment(correct ? 1 : 0), last: correct, date: dayKey() } },
+  });
 }
 
 export async function recordTrialRun(run: TrialRun) {

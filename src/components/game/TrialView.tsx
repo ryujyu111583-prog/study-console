@@ -8,6 +8,7 @@ import { dayKey } from "@/lib/date";
 import { fmt } from "@/lib/game/levels";
 import { eventMultiplier } from "@/lib/game/magic";
 import { TRIAL, TRIAL_CAT, type TrialCat, type TrialQuestion } from "@/lib/game/quiz";
+import { bossOutcome } from "@/lib/game/rewards";
 import { play } from "@/lib/game/sfx";
 import { answerTrial, recordBoss, recordTrialRun, type GameDoc } from "@/lib/game/state";
 import { areaById } from "@/lib/game/world";
@@ -18,7 +19,7 @@ import { areaById } from "@/lib/game/world";
  * 元は claude.ai の Artifact「G検定 限定語ドリル」（2026-11-03）。
  */
 
-/** 本番は 160問 / 120分 ≒ 1問41秒 */
+/** 本番（オンライン）は 約145問 / 100分 ≒ 1問41秒（vault: G検定最新情報_20261101。120分・160問は古い記述） */
 const LIMIT = 41;
 /** ボス戦になるモード。合格ラインは world.ts の t1 */
 const BOSS_MODE = "mix20";
@@ -35,13 +36,15 @@ function shuffle<T>(a: T[]): T[] {
   return b;
 }
 
+// ランダム出題とボス戦は〔限定語〕のある問題だけ。印がないと選択肢の隠しが効かず、限定語の練習にならない
+const MARKED = TRIAL.filter((q) => q.q.includes("〔"));
 const byCat = (c: TrialCat) => TRIAL.filter((q) => q.cat === c);
 const wrongLast = (g: GameDoc) => TRIAL.filter((q) => g.trial[q.id]?.last === false);
 const unseen = (g: GameDoc) => TRIAL.filter((q) => !g.trial[q.id]);
 
 const MODES: Mode[] = [
-  { key: "mix10", name: "ランダム10問", desc: "全分類から。7分弱", pick: () => shuffle(TRIAL).slice(0, 10) },
-  { key: BOSS_MODE, name: "ランダム20問", desc: "本番の時間感覚で14分。ボス戦", pick: () => shuffle(TRIAL).slice(0, 20) },
+  { key: "mix10", name: "ランダム10問", desc: "全分類から。7分弱", pick: () => shuffle(MARKED).slice(0, 10) },
+  { key: BOSS_MODE, name: "ランダム20問", desc: "本番の時間感覚で14分。ボス戦", pick: () => shuffle(MARKED).slice(0, 20) },
   ...(Object.keys(TRIAL_CAT) as TrialCat[]).map((c) => ({
     key: c,
     name: TRIAL_CAT[c],
@@ -89,11 +92,14 @@ export default function TrialView() {
     setDone(r);
     const ok = r.res.filter((x) => x.ok).length;
     const avg = Math.round((r.res.reduce((a, x) => a + x.sec, 0) / r.res.length) * 10) / 10;
-    await recordTrialRun({ date: dayKey(), mode: r.mode.name, n: r.res.length, ok, avg });
+    // 戦績の書き込みでボスの記録を止めない。Firestore の setDoc はサーバーの応答まで解決しないので、圏外だと待ち続ける
+    void recordTrialRun({ date: dayKey(), mode: r.mode.name, n: r.res.length, ok, avg }).catch(() => {});
     const area = areaById("t1")!;
     // ボス戦は20問を最後まで解いたときだけ数える
     if (r.mode.key === BOSS_MODE && r.res.length === r.qs.length) {
-      const out = await recordBoss(game, area, ok);
+      // 結果は手元で先に出す（画面のメッセージは書き込みの完了を待たない）。書き込みは端末の保留キューに入る
+      const out = bossOutcome(game.bosses[area.id], area, ok, dayKey());
+      void recordBoss(game, area, ok).catch(() => {});
       if (out.firstClear) {
         play("levelUp");
         say([`${area.boss}を たおした！（${ok}/${r.res.length}）`, `${fmt(area.xp)} の経験値と ${fmt(area.gold)}G を獲得！`]);
@@ -264,10 +270,13 @@ function TrialQuestionView({
 
   useEffect(() => {
     t0.current = performance.now();
-    if (!settings.timer) return;
+  }, []);
+  // 答えたら止める。止めないと、答えたあとも秒数と「超過」の表示が増え続ける
+  useEffect(() => {
+    if (!settings.timer || answered) return;
     const id = setInterval(() => setSec((performance.now() - t0.current) / 1000), 100);
     return () => clearInterval(id);
-  }, [settings.timer]);
+  }, [settings.timer, answered]);
 
   const pick = (oi: number) => {
     if (answered) return;
