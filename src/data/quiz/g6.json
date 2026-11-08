@@ -1,51 +1,51 @@
 [
  {
   "id": "g6-01",
-  "q": "ILSVRC 2012 で2位に大差をつけ、深層学習ブームの引き金になったのは？",
+  "q": "2012年のILSVRCで2位に大差をつけ、深層学習ブームの引き金になったモデルと特徴は？",
   "choices": [
-   "AlexNet",
-   "ResNet",
-   "LeNet",
-   "VGG"
+   "AlexNet：ReLU・ドロップアウト・GPU",
+   "ResNet：スキップ結合で152層",
+   "GoogLeNet：インセプションモジュール",
+   "VGG：3×3の小さいフィルタの積み重ね"
   ],
   "answer": 0,
-  "explain": "ReLU・ドロップアウト・GPU。",
+  "explain": "VGG・GoogLeNetは2014年、ResNetは2015年。",
   "note": "Learning/ML/ML基礎C2_応用例チートシート"
  },
  {
   "id": "g6-02",
-  "q": "「YOLO は RPN を用いて候補領域を生成する」は正しいか？",
+  "q": "物体検出について、誤っているものは？",
   "choices": [
-   "SSDだけがRPNを使う",
-   "誤り。1段階検出器は候補領域を作らないのでRPNは存在しない",
-   "正しい",
-   "YOLOv3以降は使う"
+   "SSDは、複数解像度の特徴マップから直接検出する",
+   "YOLOは、RPNで候補領域を作ってから分類する",
+   "YOLOは、格子の各セルが直接クラスと矩形を回帰する",
+   "Fast R-CNNは、RoIプーリングで領域を切り出す"
   ],
   "answer": 1,
-  "explain": "RPNと聞いたら反射でFaster R-CNN。",
+  "explain": "1段階検出器は候補領域を作らないのでRPNは存在しない。RPNと聞いたら反射でFaster R-CNN。",
   "note": "Learning/ML/ML基礎C2_応用例チートシート"
  },
  {
   "id": "g6-03",
-  "q": "候補領域の生成（RPN）をCNN内に取り込んだ2段階検出の完成形は？",
+  "q": "R-CNN系の発展として正しいものは？",
   "choices": [
-   "YOLO",
-   "SSD",
-   "Faster R-CNN",
-   "R-CNN"
+   "Fast R-CNNはSelective Searchを廃し、RPNを導入した",
+   "Faster R-CNNは、候補領域を作らない1段階検出器だ",
+   "Faster R-CNNは、候補領域の生成（RPN）もCNNに取り込んだ",
+   "R-CNNはRPNを使い、画像全体を1回だけCNNに通した"
   ],
   "answer": 2,
-  "explain": "R-CNNはSelective Searchで遅い。Fast R-CNNはRoIプーリング。",
+  "explain": "R-CNN＝Selective Searchで遅い／Fast＝RoIプーリング／Faster＝RPNで2段階の完成形。",
   "note": "Learning/ML/ML基礎C2_応用例チートシート"
  },
  {
   "id": "g6-04",
-  "q": "車が3台写った画像で、3台を区別して塗り分け、背景も扱うセグメンテーションは？",
+  "q": "セグメンテーションについて、誤っているものは？",
   "choices": [
-   "Semantic",
-   "Selective",
-   "Instance",
-   "Panoptic"
+   "Semanticは、同じクラスの個体を区別しない",
+   "Instanceは個体を区別するが、背景は扱わない",
+   "Panopticは個体を区別し、背景も扱う",
+   "Semanticは個体を区別するが、背景は扱わない"
   ],
   "answer": 3,
   "explain": "Semantic＝個体を区別しない／Instance＝区別するが背景を扱わない／Panoptic＝両方。",
@@ -53,51 +53,51 @@
  },
  {
   "id": "g6-05",
-  "q": "U-Net の特徴は？",
+  "q": "U-Netの特徴として正しいものは？",
   "choices": [
-   "スキップ結合でエンコーダの特徴をデコーダへ直接渡す",
-   "候補領域を作らない",
-   "全結合層だけでできている",
-   "パッチを単語として扱う"
+   "スキップ結合で、エンコーダの特徴をデコーダへ渡す",
+   "Dilated畳み込みで、解像度を落とさず受容野を広げる",
+   "ピラミッドプーリングで、大域的な文脈を取り込む",
+   "プーリングした位置を記憶し、復元に使う"
   ],
   "answer": 0,
-  "explain": "医用画像で定番。",
+  "explain": "医用画像で定番。Dilated＝DeepLab、位置の記憶＝SegNet、ピラミッド＝PSPNet。",
   "note": "Learning/ML/ML基礎C2_応用例チートシート"
  },
  {
   "id": "g6-06",
-  "q": "Instance セグメンテーションの代表で、Faster R-CNN にマスクの枝を足したのは？",
+  "q": "セグメンテーションの手法について、誤っているものは？",
   "choices": [
-   "FCN",
-   "Mask R-CNN",
-   "SegNet",
-   "DeepLab"
+   "FCNは、全結合層を畳み込みに置き換えた",
+   "Mask R-CNNは、FCNにマスクの枝を足した手法だ",
+   "U-Netは、医用画像で定番のエンコーダ・デコーダだ",
+   "DeepLabは、Dilated畳み込みで受容野を広げる"
   ],
   "answer": 1,
-  "explain": "FCNはSemanticの起点。",
+  "explain": "Mask R-CNN＝Faster R-CNNにマスクの枝を足したもの（Instanceの代表）。FCNはSemanticの起点。",
   "note": "Learning/ML/ML基礎C2_応用例チートシート"
  },
  {
   "id": "g6-07",
-  "q": "ViT について正しいものは？",
+  "q": "ViTについて、誤っているものは？",
   "choices": [
-   "少量データでもCNNより高精度",
-   "画素単位で自己注意を計算する",
-   "画像をパッチに切って単語として扱うが、大量データがないとCNNに勝ちにくい",
-   "畳み込み層が中心"
+   "パッチに位置埋め込みを足して、エンコーダへ入れる",
+   "画像を固定サイズのパッチに切り、単語として扱う",
+   "局所性を持つので、少量データでもCNNより高精度",
+   "CNNの帰納バイアスを持たないので、大量データが要る"
   ],
   "answer": 2,
-  "explain": "CNNの帰納バイアス（局所性・平行移動不変性）を持たないため。",
+  "explain": "ViTは局所性・平行移動不変性（CNNの帰納バイアス）を持たない。だから大量データがないと勝ちにくい。",
   "note": "Learning/ML/ML基礎C2_応用例チートシート"
  },
  {
   "id": "g6-08",
-  "q": "人間の棋譜を使わず自己対戦だけで学習した囲碁AIは？",
+  "q": "AlphaGo三兄弟について正しいものは？",
   "choices": [
-   "AlphaGo",
-   "OpenAI Five",
-   "AlphaStar",
-   "AlphaGo Zero"
+   "AlphaGo：人間の棋譜を使わず自己対戦のみ",
+   "AlphaGo Zero：棋譜で初期化し、MCTSを廃止",
+   "AlphaZero：MCTSを廃止し、自己対戦のみ",
+   "AlphaGo Zero：人間の棋譜を使わず自己対戦のみ"
   ],
   "answer": 3,
   "explain": "Zero＝人間データがゼロ。三兄弟ともMCTSは使う。",
@@ -105,28 +105,28 @@
  },
  {
   "id": "g6-09",
-  "q": "画像とテキストを同じ空間に対応付け、zero-shot分類を可能にしたのは？",
+  "q": "CLIPの説明として正しいものは？",
   "choices": [
-   "CLIP",
-   "WaveNet",
-   "DALL-E",
-   "VQA"
+   "画像とテキストを同じ空間に対応付け、zero-shot分類を可能にした",
+   "画像への質問に答え、数例だけのfew-shot学習を可能にした",
+   "テキストから画像を生成し、ペアのない画像変換を可能にした",
+   "画像を16×16のパッチに切り、Transformerで分類を可能にした"
   ],
   "answer": 0,
-  "explain": "対照学習。",
+  "explain": "対照学習。テキスト→画像はDALL-E、画像への質問応答はVQA、パッチはViT。",
   "note": "Learning/ML/ML基礎C2_応用例チートシート"
  },
  {
   "id": "g6-10",
-  "q": "音声認識で、入力と出力の長さが違う系列を対応付けて学習を可能にしたのは？",
+  "q": "音声認識で使われる技術の説明として正しいものは？",
   "choices": [
-   "WaveNet",
-   "CTC",
-   "MFCC",
-   "FFT"
+   "HMMは、深層学習の登場後に音声認識の主役になった",
+   "CTCは、入力と出力の長さが違う系列を対応付けて学習させる",
+   "MFCCは、波形を直接生成する音声合成のモデルである",
+   "WaveNetは、人間の聴覚特性に合わせた特徴量である"
   ],
   "answer": 1,
-  "explain": "MFCCは人間の聴覚特性に合わせた特徴量。",
+  "explain": "MFCC＝聴覚特性に合わせた特徴量、WaveNet＝波形を直接生成する音声合成、HMM＝深層学習以前の主役。",
   "note": "Learning/ML/ML基礎C2_応用例チートシート"
  }
 ]

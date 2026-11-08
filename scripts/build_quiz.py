@@ -57,7 +57,33 @@ def check() -> int:
     return 1
 
 
+NEGATIVE = "誤っているもの"
+# 本番の難しさに合わせた地方（2026-11-08〜）。他の科目は数字を表示するだけ
+STRICT = {f"g{i}" for i in range(1, 10)}
+
+
+def lint() -> None:
+    """正解だけが長い・「誤りを選べ」が無い、という当て推量で解ける偏りを地方ごとに数える。"""
+    bad = []
+    for area, (_, items) in QUIZ.items():
+        longest = negative = 0
+        for q, correct, wrong, *_ in items:
+            if len(correct) > max(map(len, wrong)):
+                longest += 1
+            if NEGATIVE in q:
+                negative += 1
+        n = len(items)
+        line = f"  {area}: 正解が最長 {longest}/{n}、誤りを選ぶ形 {negative}/{n}"
+        if area in STRICT and (longest > n * 0.3 or negative < n * 0.3):
+            bad.append(line)
+        elif area in STRICT:
+            print(line)
+    if bad:
+        raise SystemExit("当て推量で解ける偏りがある（正解が最長は3割以下、誤りを選ぶ形は3割以上にする）：\n" + "\n".join(bad))
+
+
 def build() -> None:
+    lint()
     (OUT / "quiz").mkdir(parents=True, exist_ok=True)
     total = 0
     known = {f"{a}-{i:02d}" for a, (_, items) in QUIZ.items() for i in range(1, len(items) + 1)}
