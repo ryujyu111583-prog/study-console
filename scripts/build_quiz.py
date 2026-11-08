@@ -78,6 +78,17 @@ def lint() -> None:
             bad.append(line)
         elif area in STRICT:
             print(line)
+    # 限定語の試練場（src/data/trial.json は手で書く。正解の位置もそのまま）
+    trial = json.loads((OUT / "trial.json").read_text(encoding="utf-8"))
+    for cat in sorted({q["cat"] for q in trial}):
+        qs = [q for q in trial if q["cat"] == cat]
+        longest = 0
+        for q in qs:
+            lens = [len(c) for c in q["choices"]]
+            if lens[q["answer"]] == max(lens) and lens.count(max(lens)) == 1:
+                longest += 1
+        line = f"  試練場 {cat}: 正解が最長 {longest}/{len(qs)}"
+        (bad.append(line) if longest > len(qs) * 0.3 else print(line))
     if bad:
         raise SystemExit("当て推量で解ける偏りがある（正解が最長は3割以下、誤りを選ぶ形は3割以上にする）：\n" + "\n".join(bad))
 
