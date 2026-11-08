@@ -41,7 +41,10 @@ const fmt = (x: number) => {
 };
 const ratio = (x: number, base: number) => {
   const r = x / base;
-  return r >= 10 ? `×${Math.round(r)}` : `×${r.toFixed(r >= 1 ? 2 : 3).replace(/0+$/, "").replace(/\.$/, "")}`;
+  if (!Number.isFinite(r) || r <= 0) return "—";
+  // 1割未満は「何分の1」で出す（×0.000 と丸めて「×0」に見えるのを防ぐ）
+  if (r < 0.1) return `×1/${Math.round(1 / r).toLocaleString()}`;
+  return r >= 10 ? `×${Math.round(r).toLocaleString()}` : `×${r.toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}`;
 };
 const pct = (p: number) => `${p >= 0 ? "+" : "−"}${Math.abs(p) < 0.5 ? "0" : Math.abs(p).toFixed(0)}%`;
 
@@ -120,23 +123,26 @@ function Section({ s }: { s: LabState }) {
     );
   }
   const c = r.c * PX;
-  const sx = 200, sw = 45;
+  const sx = 200, sw = 34;
   // 片持ち（先端を下に押す）は根元で上が引張。両端支持（中央を押す）は中央で上が圧縮
   const topTension = s.support === "cant";
+  // 小さい断面でも上下の文字が重ならないよう、中立軸から最低 16 離す
+  const topY = Math.max(14, Math.min(cy - c - 6, cy - 16));
+  const botY = Math.min(H - 22, Math.max(cy + c + 16, cy + 26));
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="断面と曲げ応力の分布">
-      <line x1={8} x2={160} y1={cy} y2={cy} stroke={AXIS} strokeWidth={1} strokeDasharray="8 3 2 3" />
-      <text x={8} y={cy - 4} fill={AXIS} fontSize={10}>中立軸</text>
+      <line x1={8} x2={165} y1={cy} y2={cy} stroke={AXIS} strokeWidth={1} strokeDasharray="8 3 2 3" />
+      <text x={8} y={cy - 5} fill={AXIS} fontSize={12}>中立軸</text>
       {body}
       <line x1={sx} x2={sx} y1={cy - c} y2={cy + c} stroke={AXIS} />
       <path d={`M${sx} ${cy}L${sx + sw} ${cy - c}L${sx} ${cy - c}z M${sx} ${cy}L${sx - sw} ${cy + c}L${sx} ${cy + c}z`} fill={STRESS} opacity={0.75} />
-      <text x={sx} y={Math.max(11, cy - c - 4)} textAnchor="middle" fill={STRESS} fontSize={10}>
-        {topTension ? "引張" : "圧縮"} {fmt(r.sigma)} MPa
+      <text x={W - 3} y={topY} textAnchor="end" fill={STRESS} fontSize={12}>
+        {topTension ? "引張" : "圧縮"} {fmt(r.sigma)}
       </text>
-      <text x={sx} y={Math.min(H - 3, cy + c + 12)} textAnchor="middle" fill={STRESS} fontSize={10}>
-        {topTension ? "圧縮" : "引張"}
+      <text x={W - 3} y={botY} textAnchor="end" fill={STRESS} fontSize={12}>
+        {topTension ? "圧縮" : "引張"} {fmt(r.sigma)}
       </text>
-      <text x={W - 4} y={H - 4} textAnchor="end" fill={AXIS} fontSize={9}>縮尺：1 mm ＝ 1 目盛 ／ 応力は縁で最大・中立軸で0</text>
+      <text x={W - 3} y={H - 6} textAnchor="end" fill={AXIS} fontSize={10}>応力 MPa：縁で最大・中立軸で0</text>
     </svg>
   );
 }
@@ -144,34 +150,36 @@ function Section({ s }: { s: LabState }) {
 /** 梁と曲げモーメント図。たわみは見えるように拡大して描く */
 function Beam({ s }: { s: LabState }) {
   const r = solve(s);
-  const W = 260, x0 = 20, x1 = 240, y = 40;
+  // 上から順に：荷重 → はり（点線がたわみ）→ たわみの数値 → モーメント図 → モーメントの数値。文字は行を分けて重ねない
+  const W = 260, x0 = 22, x1 = 238, y = 48;
   const cant = s.support === "cant";
   const loadX = cant ? x1 : (x0 + x1) / 2;
-  const sag = Math.min(28, 6 + Math.log10(1 + r.delta) * 14);
+  const sag = Math.min(22, 5 + Math.log10(1 + r.delta) * 10);
   const curve = cant ? `M${x0} ${y}Q${(x0 + x1) / 2} ${y} ${x1} ${y + sag}` : `M${x0} ${y}Q${(x0 + x1) / 2} ${y + sag * 2} ${x1} ${y}`;
-  const mY = 110;
-  const mPath = cant ? `M${x0} ${mY}L${x0} ${mY - 40}L${x1} ${mY}z` : `M${x0} ${mY}L${(x0 + x1) / 2} ${mY - 40}L${x1} ${mY}z`;
+  const deltaY = y + 2 * 22 + 14;
+  const mTop = deltaY + 16, mBase = mTop + 44;
+  const mPath = cant ? `M${x0} ${mBase}L${x0} ${mTop}L${x1} ${mBase}z` : `M${x0} ${mBase}L${(x0 + x1) / 2} ${mTop}L${x1} ${mBase}z`;
   return (
-    <svg viewBox={`0 0 ${W} 135`} className="w-full" role="img" aria-label="梁と曲げモーメント図">
+    <svg viewBox={`0 0 ${W} ${mBase + 42}`} className="w-full" role="img" aria-label="梁と曲げモーメント図">
       {cant ? (
-        <rect x={x0 - 8} y={y - 18} width={8} height={36} fill={AXIS} />
+        <rect x={x0 - 9} y={y - 20} width={9} height={40} fill={AXIS} />
       ) : (
         <>
-          <path d={`M${x0} ${y + 3}l-7 11h14z`} fill={AXIS} />
-          <path d={`M${x1} ${y + 3}l-7 11h14z`} fill={AXIS} />
+          <path d={`M${x0} ${y + 3}l-8 12h16z`} fill={AXIS} />
+          <path d={`M${x1} ${y + 3}l-8 12h16z`} fill={AXIS} />
         </>
       )}
       <line x1={x0} x2={x1} y1={y} y2={y} stroke={SEC} strokeWidth={5} />
-      <path d={curve} fill="none" stroke={SEC} strokeWidth={1.2} strokeDasharray="4 3" opacity={0.8} />
-      <line x1={loadX} x2={loadX} y1={y - 30} y2={y - 6} stroke={LOAD} strokeWidth={2} />
-      <path d={`M${loadX - 5} ${y - 11}L${loadX} ${y - 4}L${loadX + 5} ${y - 11}z`} fill={LOAD} />
-      <text x={loadX + (cant ? -4 : 6)} y={y - 22} textAnchor={cant ? "end" : "start"} fill={LOAD} fontSize={10}>F = {s.F} kN</text>
-      <text x={(x0 + x1) / 2} y={y + 28 + (cant ? 0 : sag)} textAnchor="middle" fill={SEC} fontSize={10}>たわみ δ ≈ {fmt(r.delta)} mm（点線は誇張）</text>
+      <path d={curve} fill="none" stroke={SEC} strokeWidth={1.5} strokeDasharray="5 3" opacity={0.85} />
+      <line x1={loadX} x2={loadX} y1={y - 34} y2={y - 6} stroke={LOAD} strokeWidth={2} />
+      <path d={`M${loadX - 6} ${y - 12}L${loadX} ${y - 4}L${loadX + 6} ${y - 12}z`} fill={LOAD} />
+      <text x={loadX + (cant ? -6 : 8)} y={y - 24} textAnchor={cant ? "end" : "start"} fill={LOAD} fontSize={13}>F = {s.F} kN</text>
+      <text x={x0} y={deltaY} fill={SEC} fontSize={13}>たわみ δ ≈ {fmt(r.delta)} mm</text>
       <path d={mPath} fill={STRESS} opacity={0.3} stroke={STRESS} />
-      <text x={cant ? x0 + 4 : (x0 + x1) / 2} y={mY - 44} textAnchor={cant ? "start" : "middle"} fill={STRESS} fontSize={10}>
+      <text x={x0} y={mBase + 18} fill={STRESS} fontSize={13}>
         M最大 {fmt(r.M / 1e6)} kN·m（{cant ? "根元" : "中央"}）
       </text>
-      <text x={x1} y={mY + 14} textAnchor="end" fill={AXIS} fontSize={9}>曲げモーメント図　L = {s.L} mm</text>
+      <text x={x0} y={mBase + 36} fill={AXIS} fontSize={10}>点線＝たわみ（誇張）　塗り＝M図　L {s.L} mm</text>
     </svg>
   );
 }
@@ -264,6 +272,16 @@ export default function SectionLab() {
             })}
           </tbody>
         </table>
+        {r.sigma > MATS[s.mat].yield && (
+          <p className="text-xs leading-relaxed text-danger">
+            ⚠ σ が降伏応力の目安（{MATS[s.mat].name} {MATS[s.mat].yield} MPa）を超えています。実物はこの前に塑性変形するので、σ とたわみの数字は弾性で計算した仮の値です。
+          </p>
+        )}
+        {r.delta > s.L / 10 && (
+          <p className="text-xs leading-relaxed text-danger">
+            ⚠ たわみが長さの1割（{fmt(s.L / 10)} mm）を超えています。たわみの式は小さく曲がる前提なので、この数字は目安になりません。
+          </p>
+        )}
         <div className="flex flex-wrap items-center gap-2 text-xs text-faint">
           <span>
             基準：{SHAPES[base.shape]} {base.shape === "pipe" || base.shape === "bar" ? `φ${base.d}` : `${base.b}×${base.h}`}
@@ -281,19 +299,19 @@ export default function SectionLab() {
       <section className="win flex flex-col gap-1 pt-4">
         <span className="win-label text-dsn">説明するときの式</span>
         {r.steps.map((line, i) => (
-          <p key={i} className="font-mono text-xs leading-relaxed text-muted">{line}</p>
+          <p key={i} className="font-mono text-xs leading-relaxed text-muted break-all">{line}</p>
         ))}
-        <p className="font-mono text-xs leading-relaxed text-muted">
+        <p className="font-mono text-xs leading-relaxed text-muted break-all">
           M = {s.support === "cant" ? "F·L" : "F·L/4"} = {s.F}×10³ × {s.L}{s.support === "cant" ? "" : " / 4"} ≈ {fmt(r.M / 1e6)} kN·m
         </p>
-        <p className="font-mono text-xs leading-relaxed text-muted">
+        <p className="font-mono text-xs leading-relaxed text-muted break-all">
           σ = M/Z = {fmt(r.M)} / {fmt(r.Z)} ≈ {fmt(r.sigma)} MPa
         </p>
-        <p className="font-mono text-xs leading-relaxed text-muted">
+        <p className="font-mono text-xs leading-relaxed text-muted break-all">
           δ = F·L³/({s.support === "cant" ? 3 : 48}·E·I) = {s.F}×10³ × {s.L}³ / ({s.support === "cant" ? 3 : 48} × {MATS[s.mat].E.toLocaleString()} × {fmt(r.I)}) ≈ {fmt(r.delta)} mm
         </p>
         <p className="mt-1 text-xs leading-relaxed text-faint">
-          覚え方：高さは I に3乗・Z に2乗で効き、幅と板厚はほぼ1乗。長さはたわみに3乗、応力に1乗。材料を変えても I・Z・σ は同じで、たわみだけが E に反比例する。
+          覚え方：中実矩形では、高さは I に3乗・Z に2乗で効き、幅は1乗。薄肉の管では高さの効き方は2〜3乗の間になる（各スライダーの下の%で確かめる）。長さはたわみに3乗、応力に1乗。材料を変えても I・Z・σ は同じで、たわみだけが E に反比例する。
         </p>
         <NoteLink path="knowledge/設計肌感トレーニング" label="ノートで確かめる：設計肌感トレーニング" />
       </section>

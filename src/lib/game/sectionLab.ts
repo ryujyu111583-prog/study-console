@@ -29,9 +29,10 @@ export type LabState = {
 
 export const SHAPES: Record<Shape, string> = { box: "角管", rect: "中実矩形", pipe: "円管", bar: "丸棒", H: "H形" };
 export const SUPPORTS: Record<Support, string> = { cant: "片持ち（先端に荷重）", simple: "両端支持（中央に荷重）" };
-export const MATS: Record<Mat, { name: string; E: number; rho: number }> = {
-  steel: { name: "鋼", E: 210000, rho: 7.85 },
-  alu: { name: "アルミ", E: 70000, rho: 2.7 },
+/** yield は警告用の目安：鋼は基準断面の 590 MPa 材、アルミは 6000系の上側（ノート §4） */
+export const MATS: Record<Mat, { name: string; E: number; rho: number; yield: number }> = {
+  steel: { name: "鋼", E: 210000, rho: 7.85, yield: 590 },
+  alu: { name: "アルミ", E: 70000, rho: 2.7, yield: 250 },
 };
 
 /** 基準断面：□50×50×t1.2 鋼角管、片持ち L500 先端 1 kN（ノート §2 の基準） */

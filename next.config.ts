@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // 画面に埋め込む版。/api/version と比べて、古い画面のままなら「更新する」を出す（PwaRegister）
+  env: { BUILD_SHA: process.env.VERCEL_GIT_COMMIT_SHA ?? "dev" },
   async headers() {
     return [
       {
