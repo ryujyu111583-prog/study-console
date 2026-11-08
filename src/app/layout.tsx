@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black",
   },
   icons: {
-    apple: "/icons/icon-192.png",
+    apple: "/apple-icon.png",
   },
 };
 
