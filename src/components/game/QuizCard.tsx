@@ -6,6 +6,8 @@ import NoteLink from "@/components/game/NoteLink";
 import SectionFigure from "@/components/game/SectionFigure";
 import type { Question } from "@/lib/game/quiz";
 import { visualFor } from "@/lib/game/visuals";
+import { labFor } from "@/lib/game/sectionLab";
+import Link from "next/link";
 
 /** 4択1問。選んだら正誤と解説、根拠のノートを出す。 */
 export default function QuizCard({
@@ -89,6 +91,11 @@ export default function QuizCard({
             >
               📐 図解で見る：{visualFor(question.id)!.label}
             </a>
+          )}
+          {labFor(question.id) && (
+            <Link href={labFor(question.id)!} className="inline-flex items-center gap-1 text-xs text-dsn underline underline-offset-2">
+              🎚 断面ラボで寸法を動かして確かめる
+            </Link>
           )}
           {children}
         </div>

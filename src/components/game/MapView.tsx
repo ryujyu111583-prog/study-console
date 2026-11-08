@@ -139,6 +139,11 @@ export default function MapView() {
           {hasQuiz(area.id) ? `この地方の問題を${area.questions}問。${area.pass}問以上で撃破。` : area.howTo}
         </p>
         <NoteLink id={area.id} label={`予習：${noteLabel(area.id)}`} />
+        {area.id === "d1" && (
+          <Link href="/lab" onClick={() => play("select")} className="font-dot rounded-md border-2 border-dsn py-2 text-center text-base text-dsn">
+            🎚 断面ラボで寸法を動かす
+          </Link>
+        )}
         {area.id === "t1" ? (
           <Link href="/trial" onClick={() => play("select")} className="font-dot rounded-md border-2 border-ink py-2 text-center text-base">
             試練場に入る（{TRIAL.length}問）
