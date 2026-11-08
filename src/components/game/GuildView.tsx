@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import NoteLink from "@/components/game/NoteLink";
 
 /**
@@ -61,6 +62,7 @@ const GROUPS: { label: string; color: string; quests: Quest[] }[] = [
     label: "設計",
     color: "var(--dsn)",
     quests: [
+      { title: "断面ラボで効き方を確かめる", where: "アプリ内", url: "/lab", what: "動かす前に「高さを2倍にしたら I・Z・たわみは何倍か」を声に出して予想し、スライダーで答え合わせする。外れた組み合わせだけメモ", report: "予想した数と、外れた組み合わせ" },
       { title: "10秒ドリルを5問", where: "設計肌感トレーナー", url: "https://claude.ai/artifact/SUhjE2fFNjvmrrTLhJVbTf", what: "数字を入れる見積もりドリル。1問10秒以内。断面ラボと板厚の校正もここ", report: "正答数と問題数" },
       { title: "FE の前に手計算で予想する", where: "vault", note: "knowledge/設計肌感トレーニング", what: "実務で1断面だけ M/Z を先に出し、SECFORC と比べて誤差を残す", report: "断面と誤差の%" },
       { title: "ボルトを実物で確かめる", where: "手元の工具", what: "六角の二面幅をスパナかノギスで確かめ、呼びとピッチを当てる", report: "当てた本数" },
@@ -95,7 +97,11 @@ export default function GuildView() {
               <p className="text-xs text-muted">{q.what}</p>
               <p className="flex items-center justify-between gap-2 text-[11px] text-faint">
                 <span>報告：{q.report}</span>
-                {q.url ? (
+                {q.url?.startsWith("/") ? (
+                  <Link href={q.url} className="text-dsn underline">
+                    ひらく →
+                  </Link>
+                ) : q.url ? (
                   <a href={q.url} target="_blank" rel="noopener noreferrer" className="text-ex underline">
                     ひらく ↗
                   </a>
