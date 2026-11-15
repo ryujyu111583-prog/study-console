@@ -15,7 +15,6 @@ import { TRACKS, trackState, type Track } from "../tracks";
 import { itemById, type Item, type Slot } from "./items";
 import { HERO_STEP, MEMBER_STEP, REWARD, levelFor } from "./levels";
 import { EFFECTS, mpOf, type Effect } from "./magic";
-import { BOX_DAYS, type CardState } from "./quiz";
 import { bossOutcome, type ReportItem } from "./rewards";
 import { skillById } from "./skills";
 import { FAINT_GOLD, vitality, type AreaTouch, type Inn } from "./vitality";
@@ -34,10 +33,9 @@ export type GameDoc = {
   daily: { chest?: string; bonus?: string };
   /** 冒険の書で選んだ称号（空なら Lv の称号） */
   title: string;
-  /** 日付ごとに答えたクイズの数・見たカードの数（デイリークエストと上限の判定用） */
+  /** 日付ごとに答えたクイズの数（デイリークエストの判定用） */
   quizLog: Record<string, number>;
-  cardLog: Record<string, number>;
-  /** 日付ごとの G検定のクイズ・カードの数（HP の判定用。ML の記録が無くても、触れた日は減らない） */
+  /** 日付ごとの G検定のクイズ・報告の数（HP の判定用。ML の記録が無くても、触れた日は減らない） */
   gkLog: Record<string, number>;
   /** 宿屋の滞在（vitality.ts） */
   inn: Inn;
@@ -68,7 +66,6 @@ export const EMPTY_GAME: GameDoc = {
   daily: {},
   title: "",
   quizLog: {},
-  cardLog: {},
   gkLog: {},
   inn: { since: null, stays: [] },
   areaTouch: {},
@@ -94,7 +91,6 @@ export function subscribeGame(onChange: (g: GameDoc) => void) {
       daily: d.daily ?? {},
       title: d.title ?? "",
       quizLog: d.quizLog ?? {},
-      cardLog: d.cardLog ?? {},
       gkLog: d.gkLog ?? {},
       inn: { since: d.inn?.since ?? null, stays: d.inn?.stays ?? [] },
       areaTouch: d.areaTouch ?? {},
@@ -233,41 +229,6 @@ export async function answerTrial(game: GameDoc, qid: string, correct: boolean, 
 
 export async function recordTrialRun(run: TrialRun) {
   await setDoc(gameRef(), { trialLast: run }, { merge: true });
-}
-
-// ---- 暗記カード（settings/srs に {cardId: {box, due}}） ----
-
-const srsRef = () => doc(db, "settings", "srs");
-
-export function subscribeSrs(onChange: (s: Record<string, CardState>) => void) {
-  return onSnapshot(srsRef(), (snap) => onChange((snap.data() ?? {}) as Record<string, CardState>));
-}
-
-/** カードを1枚見た。覚えていたら箱を上げ、忘れていたら箱1へ。経験値は1日の上限まで（multiplier は週のイベント）。 */
-export async function reviewCard(
-  game: GameDoc,
-  cardId: string,
-  track: Track,
-  prev: CardState | undefined,
-  remembered: boolean,
-  multiplier = 1,
-) {
-  const box = remembered ? Math.min(5, (prev?.box ?? 0) + 1) : 1;
-  const due = new Date();
-  due.setDate(due.getDate() + BOX_DAYS[box]);
-  await setDoc(srsRef(), { [cardId]: { box, due: dayKey(due) } }, { merge: true });
-  const today = dayKey();
-  const underCap = (game.cardLog[today] ?? 0) < REWARD.cardDailyCap;
-  await setDoc(
-    gameRef(),
-    {
-      cardLog: { [today]: increment(1) },
-      ...(track === "ml" ? { gkLog: { [today]: increment(1) } } : {}),
-      ...(underCap ? { bonusXp: { [track]: increment(Math.round(REWARD.cardXp * multiplier)) } } : {}),
-    },
-    { merge: true },
-  );
-  return box;
 }
 
 /** 特技の効果を使う。MP を消費する（足りるかは画面側で確かめる） */

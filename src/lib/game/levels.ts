@@ -61,9 +61,6 @@ export const REWARD = {
   quizGold: 2,
   /** メタルプルンに正解したときの倍率 */
   metalMultiplier: 5,
-  cardXp: 5,
-  /** カードで経験値が入る1日の上限枚数 */
-  cardDailyCap: 30,
 } as const;
 
 export const fmt = (n: number) => n.toLocaleString("en-US");

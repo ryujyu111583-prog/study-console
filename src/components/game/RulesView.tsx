@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { REWARD } from "@/lib/game/levels";
 import { ASSIST_RATE, EFFECTS, EFFECT_ORDER, EVENT_MULTIPLIER, EVENT_NAME, MP_BASE, MP_PER_RECORD, WEEK_EVENT } from "@/lib/game/magic";
-import { BOX_DAYS, NEW_CARDS_PER_DAY } from "@/lib/game/quiz";
-import { DAILY_BONUS_GOLD, QUIZ_GOAL, CARD_GOAL } from "@/lib/game/daily";
+import { DAILY_BONUS_GOLD, QUIZ_GOAL } from "@/lib/game/daily";
 import { DONE_HEAL, FAINT_GOLD, HP_MAX, MISS_DAMAGE } from "@/lib/game/vitality";
 import { RESOLVE_STREAK } from "@/lib/mistakes";
 import { TRACKS } from "@/lib/tracks";
@@ -52,13 +51,10 @@ export default function RulesView() {
           <li>
             <A href="/battle">たたかう</A>：クイズを{QUIZ_GOAL}問。間違えたら「なぜ間違えた？」で型を選んで台帳へ
           </li>
-          <li>
-            <A href="/cards">カード</A>：暗記カードを{CARD_GOAL}枚
-          </li>
-          <li>ホームで宝箱を開け、3つ達成したらボーナス {DAILY_BONUS_GOLD}G を受け取る</li>
+          <li>ホームで宝箱を開け、今日のクエストをすべて達成したらボーナス {DAILY_BONUS_GOLD}G を受け取る</li>
         </ol>
         <p className="text-faint">
-          最低限は <b className="text-ink">G検定に1回触れること</b>。ML の記録か、G検定のクイズ・カード1つで HP が守られる。
+          最低限は <b className="text-ink">G検定に1回触れること</b>。ML の記録か、G検定のクイズ1問で HP が守られる。
         </p>
       </Section>
 
@@ -72,7 +68,7 @@ export default function RulesView() {
           ]}
         />
         <p>
-          「触れた」＝ ML の記録（フルか最低ライン）、G検定の地方のクイズ1問、G検定のカード1枚、Claude 経由の G検定の報告のどれか。
+          「触れた」＝ ML の記録（フルか最低ライン）、G検定の地方のクイズ1問、Claude 経由の G検定の報告のどれか。
           統計・投資・英語・設計を休んでも HP は減らない。
         </p>
         <p className="text-faint">今日の分は明日の朝に決まる。ホームの「G検定の守り」に、このままだとどうなるかが出る。</p>
@@ -121,12 +117,6 @@ export default function RulesView() {
         <p className="text-faint">魔王城を倒すと、まわりの暗黒大陸の霧が薄れて名前が読めるようになる。</p>
       </Section>
 
-      <Section title="暗記カード">
-        <p>
-          覚えていたら次の箱へ、忘れたら箱1に戻る（5箱）。箱ごとの間隔は {BOX_DAYS.slice(1).join("・")} 日。新しいカードは1日 {NEW_CARDS_PER_DAY}枚まで。
-        </p>
-      </Section>
-
       <Section title="スキルと特技">
         <p>
           仲間の Lv が1上がるごとに SP が1。<A href="/skills">スキル</A>で論点を開くと特技になる。特技は「その論点を口で説明できるか」の確認で、言えたら経験値（1日1回）。
@@ -155,7 +145,7 @@ export default function RulesView() {
         <Rows
           rows={WEEK_EVENT.map((t, d) => ["日月火水木金土"[d], `${EVENT_NAME[t]} ×${EVENT_MULTIPLIER}`])}
         />
-        <p>その分野のクイズ（野生・ボス）とカードの経験値に掛かる。台帳と記録には掛からない。G検定を優先して週3日。</p>
+        <p>その分野のクイズ（野生・ボス）の経験値に掛かる。台帳と記録には掛からない。G検定を優先して週3日。</p>
       </Section>
 
       <Section title="経験値とゴールド">
@@ -165,13 +155,12 @@ export default function RulesView() {
             ["記録 最低ライン", `${REWARD.minXp}EX ・ ${REWARD.minGold}G`],
             ["タイマー 1分", `${REWARD.minuteXp}EX ・ ${REWARD.minuteGold}G`],
             ["クイズ 1問正解", `${REWARD.quizXp}EX ・ ${REWARD.quizGold}G（メタルは×${REWARD.metalMultiplier}）`],
-            ["カード 1枚", `${REWARD.cardXp}EX（1日${REWARD.cardDailyCap}枚まで）`],
             ["台帳に正解", `${REWARD.hitXp}EX`],
             ["台帳のモンスター撃破", `${REWARD.defeatXp}EX ・ ${REWARD.defeatGold}G`],
             ["特技を言えた", `${REWARD.skillXp}EX（1日1回）`],
           ]}
         />
-        <p className="text-faint">放置ボーナスはクイズと台帳に、週のイベントはクイズとカードに掛かる。倍率は重なる。ゴールドは装備の店で使う。</p>
+        <p className="text-faint">放置ボーナスはクイズと台帳に、週のイベントはクイズに掛かる。倍率は重なる。ゴールドは装備の店で使う。</p>
       </Section>
 
       <Section title="外でやった勉強（ギルドと Claude）">
@@ -186,7 +175,6 @@ export default function RulesView() {
           rows={[
             ["仲間", "今日の記録・タイマー・G検定の守り・クエスト"],
             ["たたかう", "野生（クイズ）と台帳（再戦）"],
-            ["カード", "暗記カード"],
             ["地図", "地方とボス"],
             ["ギルド", "外部の学習への入口"],
             ["スキル", "SP で特技を覚える"],

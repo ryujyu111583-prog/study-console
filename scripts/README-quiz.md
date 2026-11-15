@@ -1,6 +1,8 @@
-# クイズと暗記カードの作り方
+# クイズの作り方
 
-アプリの問題（`src/data/quiz/*.json`）とカード（`src/data/cards.json`）は、vault のノートから Claude が作ったもの。元データは `scripts/quiz_source.py`。
+アプリの問題（`src/data/quiz/*.json`）は、vault のノートから Claude が作ったもの。元データは `scripts/quiz_source.py`。
+
+暗記カードは 2026-11-15 に外した（本人の依頼）。元データと画面は `455dad0` までの履歴に残っている。
 
 ## 作り方の約束
 

@@ -4,7 +4,7 @@ quiz_source.py から、アプリが読む JSON を作る。
   python scripts/build_quiz.py          # JSON を作り直す（作った時点のノートの指紋も記録）
   python scripts/build_quiz.py --check  # vault のノートが、問題を作った後に変わっていないか調べるだけ
 
-出力：src/data/quiz/<area>.json、src/data/cards.json、src/data/sources.json（ノート → sha256）
+出力：src/data/quiz/<area>.json、src/data/sources.json（ノート → sha256）
 正解の位置は問題IDから決まる並べ替えで散らす（作り直しても同じ並びになる）。
 """
 import hashlib
@@ -15,7 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from quiz_formula import FORMULA  # noqa: E402
-from quiz_source import CARDS, QUIZ  # noqa: E402
+from quiz_source import QUIZ  # noqa: E402
 
 VAULT = Path(r"C:\Users\ユーザー\Dropbox\vault-share\ryuju")
 OUT = Path(__file__).resolve().parent.parent / "src" / "data"
@@ -26,17 +26,13 @@ def note_hash(path: str) -> str:
 
 
 def used_notes() -> dict[str, list[str]]:
-    """ノート → それを根拠にしている地方（カードは 'cards'）"""
+    """ノート → それを根拠にしている地方"""
     users: dict[str, list[str]] = {}
     for area, (note, items) in QUIZ.items():
         for n in {note, *(it[4] for it in items if len(it) > 4)}:
             users.setdefault(n, [])
             if area not in users[n]:
                 users[n].append(area)
-    for _, _, note in CARDS:
-        users.setdefault(note, [])
-        if "cards" not in users[note]:
-            users[note].append("cards")
     return users
 
 
@@ -126,14 +122,6 @@ def build() -> None:
         )
         total += len(out)
 
-    cards = [
-        {"id": f"c{i:02d}", "front": f, "back": b, "note": n}
-        for i, (f, b, n) in enumerate(CARDS, 1)
-    ]
-    (OUT / "cards.json").write_text(
-        json.dumps(cards, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n"
-    )
-
     missing = [n for n in used_notes() if not (VAULT / f"{n}.md").exists()]
     if missing:
         raise SystemExit(f"vault に無いノート: {missing}")
@@ -143,7 +131,7 @@ def build() -> None:
     )
 
     answers = [q["answer"] for a in QUIZ for q in json.loads((OUT / "quiz" / f"{a}.json").read_text(encoding="utf-8"))]
-    print(f"問題 {total} 問（{len(QUIZ)} 地方）、カード {len(cards)} 枚、ノート {len(sources)} 件")
+    print(f"問題 {total} 問（{len(QUIZ)} 地方）、ノート {len(sources)} 件")
     print("正解の位置の分布:", {k: answers.count(k) for k in range(4)})
 
 

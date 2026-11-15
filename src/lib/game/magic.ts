@@ -63,6 +63,6 @@ export const eventOf = (date = new Date()) => {
   return { track, name: EVENT_NAME[track] ?? "", multiplier: EVENT_MULTIPLIER };
 };
 
-/** クイズとカードの報酬に掛ける倍率 */
+/** クイズの報酬に掛ける倍率 */
 export const eventMultiplier = (track: Track, date = new Date()) =>
   eventOf(date).track === track ? EVENT_MULTIPLIER : 1;

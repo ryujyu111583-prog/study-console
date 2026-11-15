@@ -32,7 +32,7 @@ export type AreaTouch = Record<string, { last: string; prev?: string }>;
 export const restChecker = (inn: Inn) => (key: string) =>
   (inn.since !== null && key >= inn.since) || inn.stays.some((s) => key >= s.from && key <= s.to);
 
-/** その日に G検定に触れたか：ML の記録があるか、G検定のクイズ・カードを1つでもやったか */
+/** その日に G検定に触れたか：ML の記録があるか、G検定のクイズ・報告を1つでもやったか */
 export const gkDone = (logs: LogMap, gkLog: Record<string, number>, key: string) =>
   trackState(logs[key], "ml") !== "" || (gkLog[key] ?? 0) > 0;
 

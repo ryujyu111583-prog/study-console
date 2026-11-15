@@ -82,11 +82,11 @@ export default function DailyPanel() {
           onClick={() => void claim()}
           className="rounded-md border-2 border-ink py-1.5 text-sm disabled:border-line disabled:text-faint"
         >
-          {claimed ? "ボーナス受取済み" : allDone ? `ボーナス ${DAILY_BONUS_GOLD}G` : "3つ達成でボーナス"}
+          {claimed ? "ボーナス受取済み" : allDone ? `ボーナス ${DAILY_BONUS_GOLD}G` : `${quests.length}つ達成でボーナス`}
         </button>
       </div>
       <p className="text-xs text-gold">
-        今日のイベント：{event.name} クイズとカードの経験値×{event.multiplier}
+        今日のイベント：{event.name} クイズの経験値×{event.multiplier}
       </p>
       {next && (
         <p className="text-xs text-faint">

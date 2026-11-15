@@ -104,7 +104,6 @@ export default function BookView() {
             ["記録 最低ライン", `+${REWARD.minXp}`, `+${REWARD.minGold}G`],
             ["修行（タイマー）1分", `+${REWARD.minuteXp}`, `+${REWARD.minuteGold}G`],
             ["クイズ 1問正解", `+${REWARD.quizXp}`, `+${REWARD.quizGold}G`],
-            ["暗記カード 1枚（1日30枚まで）", `+${REWARD.cardXp}`, ""],
             ["台帳のモンスターに正解", `+${REWARD.hitXp}`, ""],
             ["モンスター撃破（3連続正答）", `+${REWARD.defeatXp}`, `+${REWARD.defeatGold}G`],
             ["特技を唱えて言えた（1日1回）", `+${REWARD.skillXp}`, ""],

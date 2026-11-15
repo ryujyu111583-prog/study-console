@@ -4,11 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { play } from "@/lib/game/sfx";
 
-/** コマンド窓。4列×2段に詰め、選んでいる画面に ▶ が点滅する。 */
+/** コマンド窓。4列で詰め、選んでいる画面に ▶ が点滅する。 */
 const COMMANDS = [
   { href: "/", label: "仲間" },
   { href: "/battle", label: "たたかう" },
-  { href: "/cards", label: "カード" },
   { href: "/map", label: "地図" },
   { href: "/guild", label: "ギルド" },
   { href: "/skills", label: "スキル" },

@@ -1,7 +1,6 @@
 /**
- * 内蔵クイズと暗記カード。中身は scripts/build_quiz.py が vault のノートから作った JSON。
+ * 内蔵クイズ。中身は scripts/build_quiz.py が vault のノートから作った JSON。
  */
-import cardsJson from "@/data/cards.json";
 import d1 from "@/data/quiz/d1.json";
 import d2 from "@/data/quiz/d2.json";
 import d3 from "@/data/quiz/d3.json";
@@ -28,7 +27,6 @@ import s2 from "@/data/quiz/s2.json";
 import s3 from "@/data/quiz/s3.json";
 import s4 from "@/data/quiz/s4.json";
 import trialJson from "@/data/trial.json";
-import type { Track } from "../tracks";
 
 /** 式と計算のくわしい解説。答えた後に出す。steps の改行はそのまま画面の改行になる。 */
 export type Formula = {
@@ -49,11 +47,7 @@ export type Question = {
   note: string;
 };
 
-export type Card = { id: string; front: string; back: string; note: string };
-
 export const BANK: Record<string, Question[]> = { g1, g2, g3, g4, g5, g6, g7, g8, g9, s1, s2, s3, s4, i1, i2, i3, i4, i5, i6, d1, d2, d3, d4, d5, d6 };
-
-export const CARDS: Card[] = cardsJson;
 
 /** 限定語の試練場の問題。〔〕で囲んだ語が限定語。cat は出題の分類（TRIAL_CAT） */
 export type TrialQuestion = Question & { cat: TrialCat; axis?: string };
@@ -84,21 +78,3 @@ export function pickQuestions(areaId: string, n: number): Question[] {
   }
   return pool.slice(0, n);
 }
-
-/** ノートのフォルダから、どの仲間の経験値にするかを決める */
-export const trackOfNote = (note: string): Track =>
-  note.startsWith("Learning/Statistics/")
-    ? "stat"
-    : note.startsWith("Learning/Investing/")
-      ? "inv"
-      : note.startsWith("knowledge/設計肌感")
-        ? "dsn"
-        : "ml";
-
-// ---- 暗記カード（Leitner 5箱） ----
-
-/** 箱ごとの次の出題までの日数。忘れたら箱1に戻る。 */
-export const BOX_DAYS = [0, 1, 2, 4, 7, 14];
-export const NEW_CARDS_PER_DAY = 10;
-
-export type CardState = { box: number; due: string };
