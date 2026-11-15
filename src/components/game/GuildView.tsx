@@ -27,6 +27,7 @@ const GROUPS: { label: string; color: string; quests: Quest[] }[] = [
       { title: "NotebookLM の単語帳", where: "NotebookLM「G検定」", url: NOTEBOOK, what: "Studio →「フラッシュカード」。覚えた枚数を数える", report: "終わった画面のスクショ" },
       { title: "音声解説を聞く", where: "NotebookLM「G検定」", url: NOTEBOOK, what: "通勤中に1本。聞き終えたら、何の話だったかを一言で", report: "聞いたテーマと分数" },
       { title: "公式の例題", where: "JDLA", url: "https://www.jdla.org/certificate/general/", what: "本番に近い難易度を確かめる", report: "正答数" },
+      { title: "AI用語つながりマップで説明する", where: "図解（Artifact）", url: "https://claude.ai/artifact/DdxE8oLXSgxK9otj7RfYTT", what: "用語を1つ選び、押す前に「何か・良いところ・弱いところ」を声に出す。押して答え合わせし、つながる隣の用語へ進む。「⑥ しくみ（G検定）」を出すと試験の範囲", report: "説明できた語の数と、詰まった語" },
       { title: "MOC で次にやることを決める", where: "vault", note: "Learning/ML/G検定 MOC", what: "現在地と次の演習を確認する", report: "不要" },
     ],
   },
@@ -64,6 +65,7 @@ const GROUPS: { label: string; color: string; quests: Quest[] }[] = [
     quests: [
       { title: "断面ラボで効き方を確かめる", where: "アプリ内", url: "/lab", what: "動かす前に「高さを2倍にしたら I・Z・たわみは何倍か」を声に出して予想し、スライダーで答え合わせする。外れた組み合わせだけメモ", report: "予想した数と、外れた組み合わせ" },
       { title: "10秒ドリルを5問", where: "設計肌感トレーナー", url: "https://claude.ai/artifact/SUhjE2fFNjvmrrTLhJVbTf", what: "数字を入れる見積もりドリル。1問10秒以内。断面ラボと板厚の校正もここ", report: "正答数と問題数" },
+      { title: "QC七つ道具を場面で選ぶ", where: "図解（Artifact）", url: "https://claude.ai/artifact/78BzSBwZ15AFQyzThhJgj5", what: "流れ（集める→絞る→原因→確かめる→維持）を見てから、最後の「この場面ならどれ？」7問を解く。品質の市場のボス前に", report: "7問中の正答数" },
       { title: "FE の前に手計算で予想する", where: "vault", note: "knowledge/設計肌感トレーニング", what: "実務で1断面だけ M/Z を先に出し、SECFORC と比べて誤差を残す", report: "断面と誤差の%" },
       { title: "ボルトを実物で確かめる", where: "手元の工具", what: "六角の二面幅をスパナかノギスで確かめ、呼びとピッチを当てる", report: "当てた本数" },
     ],
